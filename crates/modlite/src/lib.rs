@@ -45,8 +45,9 @@ pub const BLOCK_VOID: u8 = 0x40;
 
 /// Wasm opcodes (core, single-byte). Control-flow ops take a block type
 /// (`BLOCK_VOID` or a `val::*`); `br`/`br_if`/`call`/`local_*` take a LEB
-/// index; memory ops take TWO LEB immediates (align, offset); `*_const`
-/// take a signed LEB value.
+/// index; memory ops take TWO LEB immediates (align, offset); `i32.const`/
+/// `i64.const` take a signed LEB value; `f32.const`/`f64.const` take 4/8 RAW
+/// little-endian IEEE-754 bytes (`f.to_bits().to_le_bytes()`), not LEB.
 pub mod op {
     pub const UNREACHABLE: u8 = 0x00;
     pub const NOP: u8 = 0x01;
@@ -199,7 +200,19 @@ pub enum BuildError {
     MissingMemory(&'static str),
     /// [`Module::memory`] called twice (core wasm allows one memory).
     SecondMemory,
-    /// A function body that does not end with [`op::END`].
+    /// Memory limits no engine accepts: `min > max`, or over 2^16 pages
+    /// (the 4 GiB wasm32 address space).
+    BadMemoryLimits { min: u32, max: Option<u32> },
+    /// An active data segment that ends past the memory's INITIAL size —
+    /// instantiation would trap on every engine.
+    DataOutOfBounds { offset: u32, len: usize },
+    /// A name, function body, or data segment of 4 GiB or more — the binary
+    /// format's sizes are u32.
+    TooLarge(usize),
+    /// A function body whose LAST BYTE is not [`op::END`]. (A heuristic
+    /// tripwire, not a body decoder: it cannot see `0x0B` bytes hiding in
+    /// immediates or check block nesting — instruction encoding is the
+    /// consumer's responsibility, per the crate docs.)
     BodyMissingEnd,
 }
 
@@ -218,6 +231,18 @@ impl std::fmt::Display for BuildError {
             BuildError::DuplicateExport(n) => write!(f, "duplicate export name `{n}`"),
             BuildError::MissingMemory(what) => write!(f, "{what} requires a declared memory"),
             BuildError::SecondMemory => write!(f, "core wasm allows exactly one memory"),
+            BuildError::BadMemoryLimits { min, max } => {
+                write!(f, "memory limits min={min} max={max:?} are not spec-valid")
+            }
+            BuildError::DataOutOfBounds { offset, len } => {
+                write!(
+                    f,
+                    "data segment [{offset}..+{len}] ends past the initial memory"
+                )
+            }
+            BuildError::TooLarge(n) => {
+                write!(f, "{n} bytes does not fit the format's u32 sizes")
+            }
             BuildError::BodyMissingEnd => {
                 write!(f, "function body must end with op::END (0x0B)")
             }
@@ -334,49 +359,84 @@ impl Module {
         (self.imports.len() + self.functions.len() - 1) as u32
     }
 
-    /// Export function index `func_idx` (imported or local) as `name`.
+    /// Export function index `func_idx` as `name`. The index is validated at
+    /// [`finish`](Self::finish), so exporting before declaring is fine.
     pub fn export_func(&mut self, name: &str, func_idx: u32) {
-        if func_idx as usize >= self.imports.len() + self.functions.len() {
-            self.fault(BuildError::BadFuncIndex(func_idx));
-        }
         self.exports.push((name.to_string(), 0x00, func_idx));
     }
 
     /// Declare THE memory: `min_pages` (64 KiB each), optional `max_pages`.
+    /// Limits are validated (`min <= max`, both within the 2^16-page space).
     pub fn memory(&mut self, min_pages: u32, max_pages: Option<u32>) {
         if self.memory.is_some() {
             self.fault(BuildError::SecondMemory);
         }
+        const MAX_PAGES: u32 = 65_536; // 4 GiB / 64 KiB
+        if min_pages > MAX_PAGES || max_pages.is_some_and(|max| max > MAX_PAGES || max < min_pages)
+        {
+            self.fault(BuildError::BadMemoryLimits {
+                min: min_pages,
+                max: max_pages,
+            });
+        }
         self.memory = Some((min_pages, max_pages));
     }
 
-    /// Export the memory as `name` (requires [`memory`](Self::memory)).
+    /// Export the memory as `name`. The memory's existence is validated at
+    /// [`finish`](Self::finish), so declaration order does not matter.
     pub fn export_memory(&mut self, name: &str) {
-        if self.memory.is_none() {
-            self.fault(BuildError::MissingMemory("export_memory"));
-        }
         self.exports.push((name.to_string(), 0x02, 0));
     }
 
-    /// Add an active data segment at byte `offset` in the memory.
+    /// Add an active data segment at byte `offset`. Validated at
+    /// [`finish`](Self::finish): a memory must exist and the segment must fit
+    /// its INITIAL size.
     pub fn data(&mut self, offset: u32, bytes: &[u8]) {
-        if self.memory.is_none() {
-            self.fault(BuildError::MissingMemory("data"));
-        }
         self.data.push((offset, bytes.to_vec()));
     }
 
     /// Frame the sections (in the id order the spec requires) and return the
-    /// module bytes, or the FIRST construction fault. Empty sections are
-    /// omitted.
+    /// module bytes, or the FIRST construction fault. Order-independent rules
+    /// (export targets exist, data fits the memory, sizes fit u32) are
+    /// checked here, so declaration order never traps a consumer. Empty
+    /// sections are omitted.
     pub fn finish(self) -> Result<Vec<u8>, BuildError> {
         if let Some(e) = self.err {
             return Err(e);
         }
-        for (name, _, _) in &self.exports {
+        for (name, kind, idx) in &self.exports {
             let dups = self.exports.iter().filter(|(n, _, _)| n == name).count();
             if dups > 1 {
                 return Err(BuildError::DuplicateExport(name.clone()));
+            }
+            len32(name.len())?;
+            match kind {
+                0x00 if *idx as usize >= self.imports.len() + self.functions.len() => {
+                    return Err(BuildError::BadFuncIndex(*idx));
+                }
+                0x02 if self.memory.is_none() => {
+                    return Err(BuildError::MissingMemory("export_memory"));
+                }
+                _ => {}
+            }
+        }
+        for (module, name, _) in &self.imports {
+            len32(module.len())?;
+            len32(name.len())?;
+        }
+        for (_, locals, code) in &self.functions {
+            len32(locals.len().saturating_add(code.len()))?;
+        }
+        for (offset, bytes) in &self.data {
+            len32(bytes.len())?;
+            let Some((min_pages, _)) = self.memory else {
+                return Err(BuildError::MissingMemory("data"));
+            };
+            if u64::from(*offset) + bytes.len() as u64 > u64::from(min_pages) * 65_536 {
+                return Err(BuildError::DataOutOfBounds {
+                    offset: *offset,
+                    len: bytes.len(),
+                });
             }
         }
         let mut out = Vec::new();
@@ -461,6 +521,11 @@ impl Module {
         }
         Ok(out)
     }
+}
+
+/// A byte length as the u32 the binary format requires, or [`BuildError::TooLarge`].
+fn len32(n: usize) -> Result<u32, BuildError> {
+    u32::try_from(n).map_err(|_| BuildError::TooLarge(n))
 }
 
 fn write_name(name: &str, out: &mut Vec<u8>) {
@@ -644,6 +709,44 @@ mod tests {
         m.export_func("x", f);
         m.export_func("x", f);
         assert_eq!(m.finish(), Err(BuildError::DuplicateExport("x".into())));
+        // Spec-invalid memory limits: min > max, and past the 2^16-page space.
+        let mut m = Module::new();
+        m.memory(5, Some(2));
+        assert!(matches!(
+            m.finish(),
+            Err(BuildError::BadMemoryLimits {
+                min: 5,
+                max: Some(2)
+            })
+        ));
+        let mut m = Module::new();
+        m.memory(70_000, None);
+        assert!(matches!(
+            m.finish(),
+            Err(BuildError::BadMemoryLimits { .. })
+        ));
+        // A data segment past the initial memory can never instantiate.
+        let mut m = Module::new();
+        m.memory(1, None);
+        m.data(65_535, b"too far");
+        assert!(matches!(
+            m.finish(),
+            Err(BuildError::DataOutOfBounds { .. })
+        ));
+    }
+
+    #[test]
+    fn declaration_order_does_not_matter_for_finish_checks() {
+        // export_memory / data / export_func may precede their declarations —
+        // the rules are checked at finish, not at call order.
+        let mut m = Module::new();
+        m.export_memory("memory");
+        m.data(0, b"hi");
+        m.export_func("f", 0);
+        m.memory(1, None);
+        let sig = m.functype(&[], &[]);
+        m.func(sig, &[], vec![op::END]);
+        assert!(m.finish().is_ok());
     }
 
     /// Minimal section walker for assertions: the content of section `id`.

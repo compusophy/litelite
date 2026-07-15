@@ -19,10 +19,14 @@ inter-agent commerce need.
 
 1. **Motivation** — verifiers as the durable layer of the agent stack; the
    trust-boundary argument (testimony vs physics).
-2. **The kit** — diaglite/lexlite/parselite/fuellite/caplite; invariants paid
-   once; the three-parent dedup evidence (missing depth guard, twice-fixed
-   mojibake, three fuels, the triple-declared rustlite host table that caplite
-   kills as a class: one table → sigs, import order, docs, parity hash).
+2. **The kit** — diaglite/lexlite/parselite/fuellite/caplite plus the two
+   independent emitters (evmlite, modlite); invariants paid once; the
+   three-parent dedup evidence (missing depth guard, twice-fixed mojibake,
+   three fuels, the triple-declared rustlite host table that caplite kills as
+   a class: one table → sigs, import order, docs, parity hash). M3's port
+   lesson (an oracle diverging from the real machine masks the bug class it
+   exists to catch — GENESIS post-genesis lessons) belongs to the limits
+   discussion in §6 too.
 3. **prooflite** — the reference total language; what "every program halts within
    its fuel" costs in expressiveness, measured. Landed 2026-07-15 (M1):
    1,545 LOC incl. tests (`bash scripts/caps.sh`), 28 tests + 1 doctest

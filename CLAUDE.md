@@ -73,6 +73,15 @@ crates/
 │               validate/validate_flat (ident-only strings — EVERY interpolated
 │               string is an injection channel), docs_markdown, versioned
 │               parity manifest + FNV-1a-64 hash for the far side of a boundary
+├── evmlite/    M3 emitter: asm (op SSOT, minimal-width push, two-pass PUSH2
+│               label back-patch, init_wrapper; STICKY AsmError — never panic
+│               or truncate) + interp, its diff-oracle (step/mem/stack caps,
+│               JUMPDEST analysis excludes PUSH immediates, revert rolls back
+│               storage, KECCAK256=Unsupported: no hashing dep)
+├── modlite/    M3 emitter: wasm module builder (wasmlite was taken) — LEB128,
+│               functype interning, locals RLE, section framing; sticky
+│               BuildError makes import-after-func index shift + spec-invalid
+│               limits structural errors. Bodies are consumer bytes.
 ├── prooflite/  M1+M2 reference language ON the kit (not in the facade):
 │               total, fuel-bounded; i64+bool, let/assign/print/if/repeat,
 │               checked arithmetic, host calls via caplite (Host trait,
@@ -82,11 +91,11 @@ crates/
 scripts/caps.sh       the constitution's teeth (LOC + CLAUDE.md caps)
 paper/OUTLINE.md      the paper IS the product; experiments land as sections
 GENESIS.md            origin, distilled parent learnings, roadmap M0–M5
-port/                 FROZEN parent snapshots for the M2/M3 ports (see
-                      port/PORT.md) — reference only, never compiled, delete
-                      each file when its port lands; exempt from caps
 
 ```
+
+(The port/ snapshot staging area is gone: all five parent snapshots were
+consumed and deleted as their ports landed, per its own rule.)
 
 ## Build / test
 
@@ -104,9 +113,9 @@ bash scripts/caps.sh                                # the caps
   fueled eval) + README example. Consumer: the paper's baseline.
 - **M2 (done):** `caplite` — capability tables as data (typed sigs, import
   order, docs, parity manifest+hash). Consumer: prooflite hosts; later rustlite.
-- **M3:** port `WasmEmitter` + `EvmAsm` from the parents as independent crates
-  (`evmlite` is free on crates.io; `wasmlite` is TAKEN — name the wasm one at
-  M3). Consumer: M4 + eventual parent re-homing.
+- **M3 (done):** the emitters as independent crates: `evmlite` (asm + oracle)
+  and `modlite` (wasm module builder; wasmlite was taken). Consumer: M4 +
+  eventual parent re-homing.
 - **M4:** `stratlite` — total, fuel-bounded, backtestable trading-strategy
   language. Consumer: the trader agent; generate→verify→keep selection loop =
   the paper's core experiment.

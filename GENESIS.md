@@ -105,7 +105,7 @@ lesson "loop breadth, not one subsystem — rustlite=toys" is remembered here.
   human docs, and a machine-checkable parity manifest for the far side of a
   boundary (the parents hand-sync a Rust table with a JS worker and it has
   bitten repeatedly). Consumer: prooflite's host functions; later rustlite.
-- **M3 — the emitters.** Port rustlite's wasm binary emitter and
+- **M3 — the emitters (done 2026-07-15; the wasm one is `modlite`).** Port rustlite's wasm binary emitter and
   soliditylite's EVM assembler (`evmlite` — free on crates.io as of genesis;
   `wasmlite` is TAKEN, name the wasm one at M3) as INDEPENDENT crates
   (constitution rule 4). Consumer: M4; eventual parent re-homing.
@@ -145,6 +145,18 @@ lesson "loop breadth, not one subsystem — rustlite=toys" is remembered here.
   validated `Copy` table for the whole run. Validate every channel into the
   artifact; then use the validated VALUE, never a fresh fetch. (6-finder /
   3-refuter review: 16 confirmed, incl. one crash-grade-adjacent parity hole.)
+
+- **M3 (2026-07-15): an oracle that diverges from the real machine masks
+  exactly the bug class it exists to catch.** The ported EVM interpreter kept
+  two of the parent's silent divergences — jump validation accepted `0x5B`
+  bytes inside PUSH immediates (no JUMPDEST analysis) and reverted calls kept
+  their storage writes — either of which would have green-lit a miscompiled
+  contract that fails on-chain. Same shape for builders: `accept implies
+  valid` means modlite must reject what engines reject (memory limits, data
+  bounds), not just frame bytes prettily. And the parents' `Vec`-indexing
+  panics resurfaced through a ported API that newly CLAIMED panic-freedom —
+  a port inherits the old bugs but not the old excuses. (5-finder/3-refuter
+  review: 21 confirmed, 3 crash-or-divergence grade.)
 
 ## The three questions only reality can answer
 

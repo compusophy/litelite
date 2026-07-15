@@ -14,9 +14,15 @@
 //! brings its own interpreter or wraps this one.
 //!
 //! Arithmetic note: `ADD`/`SUB` are full 256-bit (wrapping); `MUL`/`DIV`/
-//! `MOD` operate on the LOW 128 BITS of their operands — sufficient for an
-//! oracle over bounded test values, NOT a full 256-bit ALU. Documented so the
-//! limit is a known edge, not a surprise.
+//! `MOD` compute in `u128` — operands are read as their LOW 128 BITS and a
+//! `MUL` product truncates mod 2^128 — sufficient for an oracle over bounded
+//! test values, NOT a full 256-bit ALU. Documented so the limit is a known
+//! edge, not a surprise.
+//!
+//! State semantics match the chain: a call that does not complete with
+//! `RETURN`/stop rolls its storage writes back (execution runs against a
+//! staged copy, committed only on success), and jump targets are validated
+//! against a JUMPDEST analysis that EXCLUDES `PUSH` immediate bytes.
 
 use std::collections::HashMap;
 
@@ -99,26 +105,26 @@ impl Contract {
         Ok(c)
     }
 
-    /// Execute a call against the deployed `code` with `calldata`, mutating
-    /// storage. Logs are discarded (use [`Contract::call_logs`]).
+    /// Execute a call against the deployed `code` with `calldata`. Storage
+    /// writes COMMIT only when the call completes with `RETURN`/stop — any
+    /// error (a `REVERT` included) rolls them back, as on the real chain.
+    /// Logs are discarded (use [`Contract::call_logs`]).
     pub fn call(&mut self, calldata: &[u8], env: &CallEnv) -> ExecResult {
-        let code = std::mem::take(&mut self.code);
-        let r = run(&code, calldata, env, &mut self.storage, &mut Vec::new());
-        self.code = code;
-        r
+        self.call_logs(calldata, env).map(|(ret, _)| ret)
     }
 
-    /// Like [`Contract::call`], also returning the logs emitted.
+    /// Like [`Contract::call`], also returning the logs emitted (logs, like
+    /// storage, only survive a successful call).
     pub fn call_logs(
         &mut self,
         calldata: &[u8],
         env: &CallEnv,
     ) -> Result<(Vec<u8>, Vec<LogEntry>), ExecError> {
-        let code = std::mem::take(&mut self.code);
+        let mut staged = self.storage.clone();
         let mut logs = Vec::new();
-        let r = run(&code, calldata, env, &mut self.storage, &mut logs);
-        self.code = code;
-        Ok((r?, logs))
+        let ret = run(&self.code, calldata, env, &mut staged, &mut logs)?;
+        self.storage = staged;
+        Ok((ret, logs))
     }
 
     /// Read storage slot `slot` (zero if never written) — post-state
@@ -198,6 +204,27 @@ struct Vm<'a> {
     /// Byte-addressed memory, grown on demand (zero-filled).
     memory: Vec<u8>,
     pc: usize,
+    /// Byte offsets that are REAL `JUMPDEST`s — a `0x5B` inside a `PUSH`
+    /// immediate is not one (the chain's JUMPDEST analysis).
+    jumpdests: Vec<usize>,
+}
+
+/// One linear scan collecting valid jump targets, skipping `PUSH` immediates.
+fn jumpdest_analysis(code: &[u8]) -> Vec<usize> {
+    let mut dests = Vec::new();
+    let mut pc = 0;
+    while pc < code.len() {
+        let b = code[pc];
+        if b == op::JUMPDEST {
+            dests.push(pc);
+        }
+        pc += if (op::PUSH1..=op::PUSH1 + 31).contains(&b) {
+            1 + (b - op::PUSH1) as usize + 1
+        } else {
+            1
+        };
+    }
+    dests
 }
 
 /// Execute `code` with `calldata`; `storage` is read+written in place and
@@ -218,6 +245,7 @@ fn run(
         stack: Vec::new(),
         memory: Vec::new(),
         pc: 0,
+        jumpdests: jumpdest_analysis(code),
     }
     .exec()
 }
@@ -228,8 +256,12 @@ impl Vm<'_> {
     }
 
     /// Ensure memory covers `[off, off+len)`, zero-extending; a required end
-    /// past [`MAX_MEMORY`] is a clean [`ExecError::OutOfGas`].
+    /// past [`MAX_MEMORY`] is a clean [`ExecError::OutOfGas`]. A zero-length
+    /// span touches nothing regardless of offset (the EVM's zero-size rule).
     fn ensure_mem(&mut self, off: usize, len: usize) -> Result<(), ExecError> {
+        if len == 0 {
+            return Ok(());
+        }
         let end = off.saturating_add(len);
         if end > MAX_MEMORY {
             return Err(ExecError::OutOfGas);
@@ -253,14 +285,26 @@ impl Vm<'_> {
         Ok(w)
     }
 
-    /// The `CALLDATALOAD` word: 32 bytes at `off`, zero-extended past the end.
+    /// Copy `mem[off..off+len]` out (for `RETURN`/`REVERT`/`LOGn`). A
+    /// zero-length span is empty regardless of offset — never a slice panic.
+    fn mem_slice(&mut self, off: usize, len: usize) -> Result<Vec<u8>, ExecError> {
+        if len == 0 {
+            return Ok(Vec::new());
+        }
+        self.ensure_mem(off, len)?;
+        Ok(self.memory[off..off + len].to_vec())
+    }
+
+    /// The `CALLDATALOAD` word: 32 bytes at `off`, zero-extended past the end
+    /// (checked adds — a huge offset reads zeros, never wraps to the start).
     fn calldataword(&self, off: usize) -> Word {
         let mut w = [0u8; 32];
         for (i, byte) in w.iter_mut().enumerate() {
-            let src = off.wrapping_add(i);
-            if src < self.calldata.len() {
-                *byte = self.calldata[src];
-            }
+            *byte = off
+                .checked_add(i)
+                .and_then(|src| self.calldata.get(src))
+                .copied()
+                .unwrap_or(0);
         }
         w
     }
@@ -388,13 +432,13 @@ impl Vm<'_> {
                 }
                 op::KECCAK256 => return Err(ExecError::Unsupported(opc)),
                 op::MSTORE => {
-                    let off = word_to_usize(&self.pop()?);
+                    let off = word_offset(&self.pop()?);
                     let val = self.pop()?;
                     self.mstore(off, &val)?;
                     self.pc += 1;
                 }
                 op::MLOAD => {
-                    let off = word_to_usize(&self.pop()?);
+                    let off = word_offset(&self.pop()?);
                     let w = self.mload(off)?;
                     self.stack.push(w);
                     self.pc += 1;
@@ -420,7 +464,7 @@ impl Vm<'_> {
                     self.pc += 1;
                 }
                 op::CALLDATALOAD => {
-                    let off = word_to_usize(&self.pop()?);
+                    let off = word_offset(&self.pop()?);
                     let w = self.calldataword(off);
                     self.stack.push(w);
                     self.pc += 1;
@@ -439,34 +483,40 @@ impl Vm<'_> {
                 }
                 op::CODECOPY => {
                     // CODECOPY(destOff, codeOff, len), zero-extending past code.
-                    let dest = word_to_usize(&self.pop()?);
-                    let src = word_to_usize(&self.pop()?);
-                    let len = word_to_usize(&self.pop()?);
+                    let dest = word_offset(&self.pop()?);
+                    let src = word_offset(&self.pop()?);
+                    let len = word_offset(&self.pop()?);
                     self.ensure_mem(dest, len)?;
                     for i in 0..len {
-                        self.memory[dest + i] =
-                            self.code.get(src.wrapping_add(i)).copied().unwrap_or(0);
+                        self.memory[dest + i] = src
+                            .checked_add(i)
+                            .and_then(|s| self.code.get(s))
+                            .copied()
+                            .unwrap_or(0);
                     }
                     self.pc += 1;
                 }
                 op::CALLDATACOPY => {
                     // CALLDATACOPY(destOff, srcOff, len), zero-extending.
-                    let dest = word_to_usize(&self.pop()?);
-                    let src = word_to_usize(&self.pop()?);
-                    let len = word_to_usize(&self.pop()?);
+                    let dest = word_offset(&self.pop()?);
+                    let src = word_offset(&self.pop()?);
+                    let len = word_offset(&self.pop()?);
                     self.ensure_mem(dest, len)?;
                     for i in 0..len {
-                        self.memory[dest + i] =
-                            self.calldata.get(src.wrapping_add(i)).copied().unwrap_or(0);
+                        self.memory[dest + i] = src
+                            .checked_add(i)
+                            .and_then(|s| self.calldata.get(s))
+                            .copied()
+                            .unwrap_or(0);
                     }
                     self.pc += 1;
                 }
                 op::JUMP => {
-                    let dest = word_to_usize(&self.pop()?);
+                    let dest = word_offset(&self.pop()?);
                     self.jump(dest)?;
                 }
                 op::JUMPI => {
-                    let dest = word_to_usize(&self.pop()?);
+                    let dest = word_offset(&self.pop()?);
                     let cond = self.pop()?;
                     if cond != [0u8; 32] {
                         self.jump(dest)?;
@@ -478,27 +528,24 @@ impl Vm<'_> {
                     self.pc += 1;
                 }
                 op::RETURN => {
-                    let off = word_to_usize(&self.pop()?);
-                    let len = word_to_usize(&self.pop()?);
-                    self.ensure_mem(off, len)?;
-                    return Ok(self.memory[off..off + len].to_vec());
+                    let off = word_offset(&self.pop()?);
+                    let len = word_offset(&self.pop()?);
+                    return self.mem_slice(off, len);
                 }
                 op::REVERT => {
-                    let off = word_to_usize(&self.pop()?);
-                    let len = word_to_usize(&self.pop()?);
-                    self.ensure_mem(off, len)?;
-                    return Err(ExecError::Revert(self.memory[off..off + len].to_vec()));
+                    let off = word_offset(&self.pop()?);
+                    let len = word_offset(&self.pop()?);
+                    return Err(ExecError::Revert(self.mem_slice(off, len)?));
                 }
                 o if (op::LOG0..=op::LOG4).contains(&o) => {
                     let ntopics = (o - op::LOG0) as usize;
-                    let off = word_to_usize(&self.pop()?);
-                    let len = word_to_usize(&self.pop()?);
+                    let off = word_offset(&self.pop()?);
+                    let len = word_offset(&self.pop()?);
                     let mut topics = Vec::with_capacity(ntopics);
                     for _ in 0..ntopics {
                         topics.push(self.pop()?);
                     }
-                    self.ensure_mem(off, len)?;
-                    let data = self.memory[off..off + len].to_vec();
+                    let data = self.mem_slice(off, len)?;
                     self.logs.push(LogEntry { topics, data });
                     self.pc += 1;
                 }
@@ -507,10 +554,12 @@ impl Vm<'_> {
         }
     }
 
-    /// Jump to `dest`, requiring a `JUMPDEST` there (a jump into a PUSH
-    /// immediate or off the end is [`ExecError::BadJumpDest`]).
+    /// Jump to `dest`, requiring a REAL `JUMPDEST` there — validated against
+    /// the [`jumpdest_analysis`] set, so a `0x5B` byte inside a `PUSH`
+    /// immediate, an offset off the end, or a target past the address space
+    /// is [`ExecError::BadJumpDest`] (the chain's rule).
     fn jump(&mut self, dest: usize) -> Result<(), ExecError> {
-        if self.code.get(dest) != Some(&op::JUMPDEST) {
+        if self.jumpdests.binary_search(&dest).is_err() {
             return Err(ExecError::BadJumpDest(dest));
         }
         self.pc = dest;
@@ -564,9 +613,16 @@ fn u128_to_word(v: u128) -> Word {
     w
 }
 
-/// A word as a memory/calldata offset (its low 8 bytes).
-fn word_to_usize(w: &Word) -> usize {
-    word_to_u64(w) as usize
+/// A word as a memory/calldata/code offset, SATURATING to `usize::MAX` when
+/// it exceeds the address space. Downstream guards then reject or zero-read
+/// it (memory cap → `OutOfGas`, jump set → `BadJumpDest`, calldata reads →
+/// zeros) — never a silent truncation to an aliasing small offset, and no
+/// native-vs-wasm32 divergence.
+fn word_offset(w: &Word) -> usize {
+    if w[..24].iter().any(|&b| b != 0) {
+        return usize::MAX;
+    }
+    usize::try_from(word_to_u64(w)).unwrap_or(usize::MAX)
 }
 
 #[cfg(test)]
@@ -762,6 +818,86 @@ mod tests {
             ..Default::default()
         };
         assert_eq!(c.call(&[], &e), Err(ExecError::OutOfGas));
+    }
+
+    #[test]
+    fn jumpdest_analysis_excludes_push_immediates() {
+        // PUSH1 0x5B; PUSH1 0x01; JUMP — offset 1 is a 0x5B byte, but it is
+        // PUSH data, not a JUMPDEST. Real EVM rejects the jump; so do we.
+        let code = vec![op::PUSH1, 0x5B, op::PUSH1, 0x01, op::JUMP];
+        let mut c = Contract {
+            code,
+            ..Default::default()
+        };
+        assert_eq!(c.call(&[], &env()), Err(ExecError::BadJumpDest(1)));
+    }
+
+    #[test]
+    fn reverted_calls_roll_back_storage_and_logs() {
+        // SSTORE(0, 1) then REVERT: the write must not survive the call.
+        let mut a = Asm::new();
+        a.push(&[1]).push(&[0]).emit(op::SSTORE);
+        a.push(&[7]).push(&[0]).emit(op::MSTORE);
+        a.push(&[32]).push(&[0]).emit(op::LOG0);
+        a.push(&[0]).push(&[0]).emit(op::REVERT);
+        let mut c = Contract {
+            code: a.finish().unwrap(),
+            ..Default::default()
+        };
+        assert!(matches!(c.call(&[], &env()), Err(ExecError::Revert(_))));
+        assert_eq!(c.sload(&word(0)), [0u8; 32]); // rolled back
+        // A successful call still commits.
+        let mut a = Asm::new();
+        a.push(&[9]).push(&[0]).emit(op::SSTORE);
+        let mut c = Contract {
+            code: a.finish().unwrap(),
+            ..Default::default()
+        };
+        c.call(&[], &env()).unwrap();
+        assert_eq!(word_to_u64(&c.sload(&word(0))), 9);
+    }
+
+    #[test]
+    fn offsets_past_the_address_space_never_alias_small_ones() {
+        let e = env();
+        // A 2^64-and-up offset must not wrap to offset 0: MLOAD errs...
+        let mut huge = [0u8; 32];
+        huge[23] = 1; // 2^64
+        let mut a = Asm::new();
+        a.push32(&huge).emit(op::MLOAD);
+        let mut c = Contract {
+            code: a.finish().unwrap(),
+            ..Default::default()
+        };
+        assert_eq!(c.call(&[], &e), Err(ExecError::OutOfGas));
+        // ...a JUMP there is a bad dest, not a jump to offset 0...
+        let mut a = Asm::new();
+        let l = a.new_label();
+        a.jumpdest(l);
+        a.push32(&huge).emit(op::JUMP);
+        let mut c = Contract {
+            code: a.finish().unwrap(),
+            ..Default::default()
+        };
+        assert!(matches!(c.call(&[], &e), Err(ExecError::BadJumpDest(_))));
+        // ...and CALLDATALOAD there reads zeros (no expansion involved).
+        let mut a = Asm::new();
+        a.push32(&huge).emit(op::CALLDATALOAD);
+        a.push(&[0]).emit(op::MSTORE);
+        a.push(&[32]).push(&[0]).emit(op::RETURN);
+        let mut c = Contract {
+            code: a.finish().unwrap(),
+            ..Default::default()
+        };
+        assert_eq!(c.call(&[0xFF; 64], &e).unwrap(), vec![0u8; 32]);
+        // Zero-length memory ops at huge offsets are fine (EVM zero-size rule).
+        let mut a = Asm::new();
+        a.push(&[0]).push(&u64::MAX.to_be_bytes()).emit(op::RETURN);
+        let mut c = Contract {
+            code: a.finish().unwrap(),
+            ..Default::default()
+        };
+        assert_eq!(c.call(&[], &e).unwrap(), Vec::<u8>::new());
     }
 
     #[test]

@@ -121,6 +121,8 @@ pub enum AsmError {
     JumpTargetTooFar(usize),
     /// [`init_wrapper`]'s runtime blob exceeds `u16::MAX` bytes.
     RuntimeTooLarge(usize),
+    /// A [`Label`] from a DIFFERENT `Asm` instance (labels are per-assembler).
+    UnknownLabel(usize),
 }
 
 impl std::fmt::Display for AsmError {
@@ -133,6 +135,9 @@ impl std::fmt::Display for AsmError {
                 write!(f, "jump target {o} exceeds 64KB (past EIP-170)")
             }
             AsmError::RuntimeTooLarge(n) => write!(f, "runtime is {n} bytes; the cap is 64KB"),
+            AsmError::UnknownLabel(l) => {
+                write!(f, "label {l} belongs to a different assembler")
+            }
         }
     }
 }
@@ -234,11 +239,19 @@ impl Asm {
 
     /// Place `label` at the current offset: emits `0x5B JUMPDEST` and records
     /// this offset as the label's PC. A second placement is a sticky
-    /// [`AsmError::LabelPlacedTwice`].
+    /// [`AsmError::LabelPlacedTwice`]; a label from another `Asm` is a sticky
+    /// [`AsmError::UnknownLabel`] — never a panic.
     pub fn jumpdest(&mut self, label: Label) -> &mut Self {
-        if self.dests[label.0].is_some() {
-            self.fault(AsmError::LabelPlacedTwice(label.0));
-            return self;
+        match self.dests.get(label.0) {
+            None => {
+                self.fault(AsmError::UnknownLabel(label.0));
+                return self;
+            }
+            Some(Some(_)) => {
+                self.fault(AsmError::LabelPlacedTwice(label.0));
+                return self;
+            }
+            Some(None) => {}
         }
         self.dests[label.0] = Some(self.code.len());
         self.code.push(op::JUMPDEST);
@@ -264,7 +277,10 @@ impl Asm {
             return Err(e);
         }
         for (operand_off, label) in &self.refs {
-            let Some(dest) = self.dests[label.0] else {
+            let Some(slot) = self.dests.get(label.0) else {
+                return Err(AsmError::UnknownLabel(label.0));
+            };
+            let Some(dest) = *slot else {
                 return Err(AsmError::UnplacedLabel(label.0));
             };
             let Ok(dest16) = u16::try_from(dest) else {
@@ -415,6 +431,15 @@ mod tests {
         // Oversized runtime for the init wrapper.
         let big = vec![0u8; 70_000];
         assert_eq!(init_wrapper(&big), Err(AsmError::RuntimeTooLarge(70_000)));
+        // A label from ANOTHER assembler: sticky error, never a panic.
+        let mut a = Asm::new();
+        let foreign = a.new_label();
+        let mut b = Asm::new();
+        b.jumpdest(foreign);
+        assert_eq!(b.finish(), Err(AsmError::UnknownLabel(0)));
+        let mut b = Asm::new();
+        b.push_label(foreign).emit(op::JUMP);
+        assert_eq!(b.finish(), Err(AsmError::UnknownLabel(0)));
     }
 
     #[test]

@@ -25,6 +25,8 @@ kit pays each invariant exactly once.
 | `parselite` | recursive-descent harness | the depth guard is the only way in — deeply nested input returns a `Diag`, never a stack abort |
 | `fuellite` | fuel + byte budgets | one shared budget across all composition — fractal recursion terminates by construction |
 | `caplite` | host-capability tables as data | one declaration drives checking, import order, docs, and a cross-boundary parity hash |
+| `evmlite` | EVM assembler + diff-oracle interpreter | sticky build errors — a broken build never yields wrong-but-clean bytecode |
+| `modlite` | wasm binary module builder | the import-after-function index shift is a structural error, not a runtime mystery |
 | `litelite` | facade | `cargo add litelite` re-exports the kit |
 | `prooflite` | the reference language (M1+M2) | every program halts within its fuel and provably touches only its capability table |
 
@@ -67,12 +69,14 @@ line 1, col 1
 
 ## Status
 
-M2. The kernel (M0), `prooflite` (M1), and `caplite` (M2): prooflite programs
-now carry a complete, machine-checkable effect bound — hostless runs provably
-touch nothing, hosted runs only what the table names, and the same table
-fingerprints itself for the far side of any boundary. Next: the emitters (M3).
-Roadmap and origin: [`GENESIS.md`](GENESIS.md). Research plan:
-[`paper/OUTLINE.md`](paper/OUTLINE.md).
+M3. The kernel (M0), `prooflite` (M1), `caplite` (M2), and the two independent
+emitters (M3): `evmlite` — an EVM assembler whose diff-oracle interpreter
+deploys and calls assembled bytecode in-process with chain-faithful semantics
+(JUMPDEST analysis, revert rollback, hard step/memory/stack bounds) — and
+`modlite`, a wasm module builder that turns the binary format's ordering and
+validity rules into structural errors. Next: `stratlite` and the paper's core
+experiment (M4). Roadmap and origin: [`GENESIS.md`](GENESIS.md). Research
+plan: [`paper/OUTLINE.md`](paper/OUTLINE.md).
 
 This repo is constitutionally small: ≤2,000 LOC per crate, ≤25,000 total,
 CI-enforced (`scripts/caps.sh`). The two predecessor projects each became
