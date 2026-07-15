@@ -1,5 +1,11 @@
 [workspace]
-members = ["crates/diaglite", "crates/lexlite", "crates/parselite", "crates/fuellite"]
+members = [
+    "crates/diaglite",
+    "crates/lexlite",
+    "crates/parselite",
+    "crates/fuellite",
+    "crates/prooflite",
+]
 
 [package]
 name = "litelite"
