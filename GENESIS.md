@@ -109,7 +109,9 @@ lesson "loop breadth, not one subsystem — rustlite=toys" is remembered here.
   soliditylite's EVM assembler (`evmlite` — free on crates.io as of genesis;
   `wasmlite` is TAKEN, name the wasm one at M3) as INDEPENDENT crates
   (constitution rule 4). Consumer: M4; eventual parent re-homing.
-- **M4 — `stratlite` + the experiment.** A total, fuel-bounded, backtestable
+- **M4 — `stratlite` + the experiment (language+verifier done 2026-07-15 as
+  `stratlite`+`backtestlite`; the experiment RUN — model + real data — is
+  still open).** A total, fuel-bounded, backtestable
   trading-strategy language. The experiment: generate strategies with a model,
   verify mechanically (compile + halt + backtest), select survivors —
   generate→verify→keep applied to markets, with the verified-selection loop
@@ -157,6 +159,19 @@ lesson "loop breadth, not one subsystem — rustlite=toys" is remembered here.
   panics resurfaced through a ported API that newly CLAIMED panic-freedom —
   a port inherits the old bugs but not the old excuses. (5-finder/3-refuter
   review: 21 confirmed, 3 crash-or-divergence grade.)
+
+- **M4 (2026-07-15): domain guarantees are language-design decisions, and the
+  cap picks the seams.** stratlite's headline — no look-ahead — is not a
+  backtester feature but a GRAMMAR fact (future bars have no name; fills at
+  the next open), pinned by a prefix-invariance test. The judge panel's
+  grafts all had one shape: turn a promise into a mechanism (static literal
+  windows → static fuel; equity_hash → determinism as one number; structured
+  Reject → the selection histogram). The per-crate cap fired at 2,333 and
+  forced the split that was right anyway: language (the trader's live
+  dependency) vs verifier (the selection loop's), one evaluation path under
+  both. And the review again found the same class as M3: unvalidated INPUTS
+  (Costs) can invert a documented guarantee — every input is part of the
+  contract. (5-finder/3-refuter review: 14 confirmed.)
 
 ## The three questions only reality can answer
 

@@ -108,7 +108,8 @@ impl<'s> Session<'s> {
         }
     }
 
-    /// Bars the body has actually evaluated (bars seen minus warmup).
+    /// Bars whose body evaluation BEGAN (bars seen minus warmup) — a bar
+    /// that faulted mid-body counts here, though its effects were discarded.
     pub fn bars_evaluated(&self) -> usize {
         self.bars_seen
             .saturating_sub(self.program.lookback as usize)
@@ -139,6 +140,12 @@ impl<'s> Session<'s> {
     /// target if none ran (position carries by default). Warmup bars (the
     /// first `lookback`) buffer the candle and return the standing target
     /// without evaluating.
+    ///
+    /// BARS ARE ATOMIC: on `Err`, the candle stays consumed (it entered the
+    /// ring) but the bar's effects are discarded — `var` slots, the standing
+    /// target, position, and entry are exactly as before the call, and
+    /// `max_fuel_per_bar` is not updated. Stepping the next candle is valid;
+    /// a fault caused by persistent `var` state will therefore recur.
     pub fn step(&mut self, candle: Candle) -> Result<Signal, Diag> {
         self.ring.push_back(candle);
         if self.ring.len() > self.program.lookback as usize + 1 {
@@ -171,6 +178,9 @@ impl<'s> Session<'s> {
         self.max_fuel = self.max_fuel.max(used);
         // Read the (possibly reassigned) var slots back for the next bar:
         // they are the bottom `slots.len()` bindings, in declaration order.
+        // Rebuild-then-readback (rather than a persistent scope stack) is
+        // what makes bars atomic: a faulted bar never reaches this line, so
+        // its slot writes vanish. The per-bar name clones are that price.
         for (slot, (_, v)) in self.slots.iter_mut().zip(&ev.scopes.vars) {
             *slot = *v;
         }
@@ -357,6 +367,10 @@ impl Evaluator<'_> {
     /// An indicator over the last `n` closed bars. `n` is parse-validated
     /// (1..=lookback); the window walk costs `n` fuel, charged up front.
     /// Accumulation is i128, so i64 candles cannot overflow intermediates.
+    /// NORMATIVE rounding: every indicator division truncates toward zero
+    /// (`i128` `/`) — sma's mean, each ema step, rsi's ratio — matching the
+    /// language's own `/`. (Backtested candles are positive, where truncation
+    /// and floor agree; a live feed is whatever the caller validates.)
     fn indicator(&mut self, b: Builtin, n: u32, sp: Span) -> Result<Value, Diag> {
         self.burn(u64::from(n), sp)?;
         let closes =

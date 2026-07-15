@@ -17,8 +17,9 @@ fn dir_of(s: Signal) -> i64 {
 
 /// Validate one candle (E0301, spanless — it faults the DATA, not the
 /// source; the bar index rides in the message). Prices are positive ticks
-/// with OHLC coherence, capped at [`MAX_TICKS`] so a full-lookback window
-/// sum — and honest strategy arithmetic on prices — provably fits i64.
+/// with OHLC coherence, capped at [`MAX_TICKS`]: full-lookback window sums
+/// then provably fit the indicators' i128 accumulators (their i64 results
+/// follow), and honest strategy arithmetic on prices has i64 headroom.
 fn validate(i: usize, c: &Candle) -> Result<(), Diag> {
     let ok = 0 < c.low
         && c.low <= c.open.min(c.close)
@@ -78,6 +79,19 @@ pub(crate) fn backtest(
     limits: Limits,
     costs: Costs,
 ) -> Result<Report, Diag> {
+    // Costs are inputs too: bounds make the fill arithmetic provably safe
+    // and the ADVERSE-slippage promise mechanically true (E0304).
+    if !(0..=MAX_TICKS).contains(&costs.fee_ticks)
+        || !(0..=MAX_TICKS).contains(&costs.slippage_ticks)
+    {
+        return Err(Diag::new_code(
+            codes::BAD_COSTS,
+            format!(
+                "costs must be 0..=2^53 ticks (fee {}, slippage {})",
+                costs.fee_ticks, costs.slippage_ticks
+            ),
+        ));
+    }
     for (i, c) in candles.iter().enumerate() {
         validate(i, c)?;
     }
@@ -97,8 +111,6 @@ pub(crate) fn backtest(
     let mut open: Option<Open> = None;
     let mut bars_in_market: u32 = 0;
     let mut equity_curve: Vec<i64> = Vec::with_capacity(candles.len());
-    let mut peak: i128 = 0;
-    let mut max_drawdown: i128 = 0;
     let mut pending: Option<Signal> = None;
 
     // An order's fill price: `dir` +1 buys, -1 sells; slippage is adverse.
@@ -137,8 +149,6 @@ pub(crate) fn backtest(
             None => book.realized,
         };
         equity_curve.push(to_i64(mark)?);
-        peak = peak.max(mark);
-        max_drawdown = max_drawdown.max(peak - mark);
 
         // 4. Queue the target for the next open when it changes the position.
         if dir_of(target) != open.as_ref().map_or(0, |o| o.dir) {
@@ -146,18 +156,22 @@ pub(crate) fn backtest(
         }
     }
 
-    // Force-close any open position at the final close (costs applied).
+    // Force-close any open position at the final close (costs applied); the
+    // final mark reflects the forced exit.
     if let Some(o) = open.take() {
         let last_close = candles[candles.len() - 1].close;
         book.close(&o, fill_px(last_close, -o.dir), &costs);
         let last = equity_curve.len() - 1;
         equity_curve[last] = to_i64(book.realized)?;
-        peak = peak.max(book.realized);
-        max_drawdown = max_drawdown.max(peak - book.realized);
     }
 
+    // Drawdown in ONE pass over the FINAL curve — the exact curve the hash
+    // publishes, so a pre-force-close mark can never act as a phantom peak.
+    let (mut peak, mut max_drawdown) = (0i128, 0i128);
     let mut hash_input = Vec::with_capacity(equity_curve.len() * 8);
-    for e in &equity_curve {
+    for &e in &equity_curve {
+        peak = peak.max(i128::from(e));
+        max_drawdown = max_drawdown.max(peak - i128::from(e));
         hash_input.extend_from_slice(&e.to_le_bytes());
     }
     Ok(Report {

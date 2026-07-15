@@ -356,8 +356,11 @@ fn stmt(src: &str, t: &mut Toks<'_>, lookback: u32) -> PResult<Stmt> {
             TokKind::Ident => {
                 let name = text(src, tok.span).to_string();
                 t.advance();
-                reserved(src, &name, tok.span)?;
+                // `=` first, THEN the reserved check: `sma(4);` is a missing
+                // `=` (there are no expression statements), not an assignment
+                // to a builtin — the diag must describe what the source did.
                 expect(src, t, TokKind::Assign, "`=`")?;
+                reserved(src, &name, tok.span)?;
                 let value = expr(src, t, lookback)?;
                 let end = expect(src, t, TokKind::Semi, "`;`")?;
                 Ok(Stmt::Assign {
@@ -546,6 +549,15 @@ fn primary(src: &str, t: &mut Toks<'_>, lookback: u32) -> PResult<Expr> {
             t.advance();
             let name = text(src, tok.span);
             if t.peek().kind != TokKind::LParen {
+                // A bare builtin name can never be bound (E0105), so reading
+                // one is statically dead — reject now, not at bar 1.
+                if Builtin::from_name(name).is_some() {
+                    return Err(PErr(Diag::at_code(
+                        codes::UNKNOWN_CALL,
+                        format!("`{name}` is a builtin — call it: `{name}(…)`"),
+                        tok.span,
+                    )));
+                }
                 return Ok(Expr::Ident(name.to_string(), tok.span));
             }
             call(src, t, tok, lookback)
@@ -561,7 +573,8 @@ fn primary(src: &str, t: &mut Toks<'_>, lookback: u32) -> PResult<Expr> {
 }
 
 /// A call site: the name must be a builtin (E0103), the arity is static
-/// (E0107), and indicator windows are literals within the lookback (E0108).
+/// (E0107), and indicator windows are RAW literal tokens within the lookback
+/// (E0108 — `sma((4))` is not a literal; the REFERENCE card means it).
 fn call(src: &str, t: &mut Toks<'_>, name_tok: Token, lookback: u32) -> PResult<Expr> {
     let name = text(src, name_tok.span);
     t.advance(); // the `(`
@@ -572,6 +585,33 @@ fn call(src: &str, t: &mut Toks<'_>, name_tok: Token, lookback: u32) -> PResult<
             name_tok.span,
         )));
     };
+    if matches!(builtin.kind(), Kind::Indicator) && t.peek().kind != TokKind::RParen {
+        let w = *t.peek();
+        let TokKind::Int(n) = w.kind else {
+            return Err(PErr(Diag::at_code(
+                codes::BAD_WINDOW,
+                format!("`{name}` windows are integer literals (their fuel cost is static)"),
+                w.span,
+            )));
+        };
+        t.advance();
+        if t.peek().kind == TokKind::Comma {
+            return Err(arity(src, t, name_tok, lookback, 1, 1)?);
+        }
+        let rparen = expect(src, t, TokKind::RParen, "`)`")?;
+        if !(1..=i64::from(lookback)).contains(&n) {
+            return Err(PErr(Diag::at_code(
+                codes::BAD_WINDOW,
+                format!("window {n} is outside 1..=lookback ({lookback})"),
+                w.span,
+            )));
+        }
+        return Ok(Expr::Indicator(
+            builtin,
+            n as u32,
+            Span::new(name_tok.span.start, rparen.end),
+        ));
+    }
     let mut args = Vec::new();
     if t.peek().kind != TokKind::RParen {
         loop {
@@ -586,24 +626,6 @@ fn call(src: &str, t: &mut Toks<'_>, name_tok: Token, lookback: u32) -> PResult<
     match (builtin.kind(), args.len()) {
         (Kind::Probe, 0) => Ok(Expr::Probe(builtin, span)),
         (Kind::Series, 1) => Ok(Expr::Series(builtin, Box::new(args.swap_remove(0)), span)),
-        (Kind::Indicator, 1) => {
-            let arg = args.swap_remove(0);
-            let Expr::Int(n, _) = arg else {
-                return Err(PErr(Diag::at_code(
-                    codes::BAD_WINDOW,
-                    format!("`{name}` windows are integer literals (their fuel cost is static)"),
-                    arg.span(),
-                )));
-            };
-            if !(1..=i64::from(lookback)).contains(&n) {
-                return Err(PErr(Diag::at_code(
-                    codes::BAD_WINDOW,
-                    format!("window {n} is outside 1..=lookback ({lookback})"),
-                    arg.span(),
-                )));
-            }
-            Ok(Expr::Indicator(builtin, n as u32, span))
-        }
         (kind, got) => {
             let want = if matches!(kind, Kind::Probe) { 0 } else { 1 };
             Err(PErr(Diag::at_code(
@@ -613,6 +635,32 @@ fn call(src: &str, t: &mut Toks<'_>, name_tok: Token, lookback: u32) -> PResult<
             )))
         }
     }
+}
+
+/// Consume the rest of an over-long argument list and build the E0107 diag
+/// (`already` args seen, a comma pending).
+fn arity(
+    src: &str,
+    t: &mut Toks<'_>,
+    name_tok: Token,
+    lookback: u32,
+    want: usize,
+    already: usize,
+) -> PResult<PErr> {
+    let mut got = already;
+    while t.eat(|x| x.kind == TokKind::Comma).is_some() {
+        expr(src, t, lookback)?;
+        got += 1;
+    }
+    let rparen = expect(src, t, TokKind::RParen, "`)`")?;
+    Ok(PErr(Diag::at_code(
+        codes::CALL_ARITY,
+        format!(
+            "`{}` takes {want} argument(s), got {got}",
+            text(src, name_tok.span)
+        ),
+        Span::new(name_tok.span.start, rparen.end),
+    )))
 }
 
 fn ident(src: &str, t: &mut Toks<'_>, what: &str) -> PResult<(String, Span)> {
@@ -693,6 +741,11 @@ mod tests {
             ("let x = sma(1);", codes::BAD_WINDOW),             // lookback 0
             ("lookback 5; let x = sma(0);", codes::BAD_WINDOW),
             ("lookback 5; let n = 5; let x = sma(n);", codes::BAD_WINDOW), // literal only
+            ("lookback 5; let x = sma((5));", codes::BAD_WINDOW),          // RAW literal only
+            ("lookback 5; let x = sma();", codes::CALL_ARITY),
+            ("lookback 5; let x = sma(5, 2);", codes::CALL_ARITY),
+            ("position();", codes::UNEXPECTED_TOKEN), // missing `=`, not E0105
+            ("lookback 4; let x = sma;", codes::UNKNOWN_CALL), // statically dead read
             ("signal maybe;", codes::UNEXPECTED_TOKEN),
         ] {
             let e = parse(src).unwrap_err();

@@ -161,6 +161,9 @@ pub mod codes {
     pub const ACCOUNT_OVERFLOW: u16 = 302;
     /// Fewer candles than the lookback needs to warm up and evaluate.
     pub const SHORT_DATA: u16 = 303;
+    /// Costs outside 0..=2^53 ticks (negative slippage would silently invert
+    /// the ADVERSE guarantee; huge values would overflow fill arithmetic).
+    pub const BAD_COSTS: u16 = 304;
 }
 
 /// Deterministically backtest `strategy` over `candles` (see the crate docs
@@ -379,5 +382,75 @@ mod tests {
         }];
         let e = backtest(&s, &huge, Limits::default(), Costs::default()).unwrap_err();
         assert_eq!(e.code, Some(codes::BAD_CANDLE));
+        // Costs are inputs too: negative slippage would invert ADVERSE and
+        // huge values would overflow fill arithmetic — both are E0304.
+        for costs in [
+            Costs {
+                fee_ticks: -1,
+                slippage_ticks: 0,
+            },
+            Costs {
+                fee_ticks: 0,
+                slippage_ticks: i64::MAX,
+            },
+        ] {
+            let e = backtest(&s, &series(24), Limits::default(), costs).unwrap_err();
+            assert_eq!(e.code, Some(codes::BAD_COSTS));
+        }
+    }
+
+    #[test]
+    fn drawdown_is_of_the_final_curve_no_phantom_peak() {
+        // Rising closes with a costly forced exit: the pre-force-close mark
+        // must NOT count as a peak. Curve: [0, 99, 199, 99] → drawdown 100.
+        let candles: Vec<Candle> = (0..4)
+            .map(|i| Candle {
+                open: 1000 + i,
+                high: 2000,
+                low: 900,
+                close: 1000 + (i + 1) * 100,
+                volume: 1,
+            })
+            .collect();
+        let r = backtest(
+            &compile("signal long;").unwrap(),
+            &candles,
+            Limits::default(),
+            Costs {
+                fee_ticks: 100,
+                slippage_ticks: 0,
+            },
+        )
+        .unwrap();
+        assert_eq!(r.net_pnl_ticks, 199); // (1400 - 1001) - 2×100
+        // Final curve [0, 99, 199, 199]: drawdown 0. The pre-force-close
+        // mark (299) must NOT count as a peak — the old incremental pass
+        // reported 100 here.
+        assert_eq!(r.max_drawdown_ticks, 0);
+    }
+
+    #[test]
+    fn faulted_bars_are_atomic_and_the_fault_recurs() {
+        // Bars are atomic: a faulted bar's var writes vanish, so `n` sticks
+        // at 2 and the `n == 3` fault RECURS on every later bar — exactly
+        // the documented contract (a fault caused by persistent state does
+        // not clear itself). The session stays steppable throughout.
+        use stratlite::{Session, compile as sc};
+        let s = sc("var n = 0;
+             n = n + 1;
+             if n == 3 { let x = 1 / 0; }")
+        .unwrap();
+        let mut session = Session::new(&s, Limits::default());
+        let mut errs = 0;
+        for c in &series(8) {
+            match session.step(*c) {
+                Ok(sig) => assert_eq!(sig, Signal::Flat),
+                Err(e) => {
+                    errs += 1;
+                    assert_eq!(e.code, Some(stratlite::codes::DIV_BY_ZERO));
+                }
+            }
+        }
+        assert_eq!(errs, 6); // bars 3..=8 all fault; bars 1-2 ran clean
     }
 }

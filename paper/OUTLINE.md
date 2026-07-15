@@ -45,6 +45,16 @@ inter-agent commerce need.
    strategies with a model; verify (compile + halt + backtest); select.
    Compare against unstructured generation on held-out data. The
    generate→verify→keep loop with real selection pressure.
+   INSTRUMENT LANDED 2026-07-15 (M4): `stratlite` (1,910 LOC incl tests) +
+   `backtestlite` (655) — `verify()` returns the Reject{Compile,Run,Gate}
+   histogram, `Report::equity_hash` makes every backtest one reproducible
+   number, `stratlite::REFERENCE` is the generation prompt's language card
+   (a const, so prompt/verifier drift is impossible), and no-look-ahead is
+   pinned by the prefix-invariance test. STILL NEEDED to run §5: a model
+   (generation), real candle data with a held-out split, and the thin
+   harness gluing them — all outside the kit by design (the harness may use
+   f64 and deps). Repro once run: every number traces to
+   `cargo test -p stratlite -p backtestlite` + the harness's pinned seeds.
 6. **Limits** — what smallness cannot buy (semantic correctness beyond the
    checked properties); Goodhart risks (caps pushing complexity into seams);
    when a general-purpose language + tests beats a purpose-sized language.

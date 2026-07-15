@@ -25,7 +25,8 @@ if [ "$total" -gt "$REPO_CAP" ]; then
   fail=1
 fi
 
-chars=$(wc -c <CLAUDE.md)
+# Normalize CRLF so the cap measures canonical bytes on Windows checkouts too.
+chars=$(tr -d '\r' <CLAUDE.md | wc -c)
 printf '%-22s %6d chars (cap %d)\n' "CLAUDE.md" "$chars" "$CLAUDE_CAP"
 if [ "$chars" -gt "$CLAUDE_CAP" ]; then
   echo "FAIL: CLAUDE.md exceeds the surface cap"

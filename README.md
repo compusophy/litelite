@@ -29,6 +29,8 @@ kit pays each invariant exactly once.
 | `modlite` | wasm binary module builder | the import-after-function index shift is a structural error, not a runtime mystery |
 | `litelite` | facade | `cargo add litelite` re-exports the kit |
 | `prooflite` | the reference language (M1+M2) | every program halts within its fuel and provably touches only its capability table |
+| `stratlite` | the strategy language (M4) | every trading decision halts within its fuel, and look-ahead is unrepresentable |
+| `backtestlite` | the strategy verifier (M4) | a backtest is one reproducible integer hash; verification is compile + halt + survive + trade |
 
 Zero external dependencies. Native + `wasm32-unknown-unknown`.
 
@@ -69,14 +71,15 @@ line 1, col 1
 
 ## Status
 
-M3. The kernel (M0), `prooflite` (M1), `caplite` (M2), and the two independent
-emitters (M3): `evmlite` — an EVM assembler whose diff-oracle interpreter
-deploys and calls assembled bytecode in-process with chain-faithful semantics
-(JUMPDEST analysis, revert rollback, hard step/memory/stack bounds) — and
-`modlite`, a wasm module builder that turns the binary format's ordering and
-validity rules into structural errors. Next: `stratlite` and the paper's core
-experiment (M4). Roadmap and origin: [`GENESIS.md`](GENESIS.md). Research
-plan: [`paper/OUTLINE.md`](paper/OUTLINE.md).
+M4. The kernel (M0), `prooflite` (M1), `caplite` (M2), the emitters (M3), and
+now the paper's core instrument (M4): `stratlite`, a strategy language where
+every per-bar decision halts within its fuel and future bars are grammatically
+unrepresentable (prefix-invariance is a test, not a promise), plus
+`backtestlite`, whose all-integer engine makes a whole backtest one
+reproducible hash and whose `verify()` is the generate→verify→keep predicate.
+Still open: running the §5 experiment (a model + real market data) and
+re-homing bashlite (M5). Roadmap and origin: [`GENESIS.md`](GENESIS.md).
+Research plan: [`paper/OUTLINE.md`](paper/OUTLINE.md).
 
 This repo is constitutionally small: ≤2,000 LOC per crate, ≤25,000 total,
 CI-enforced (`scripts/caps.sh`). The two predecessor projects each became

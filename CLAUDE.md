@@ -14,12 +14,10 @@ product is **guarantees, not languages**: pick the guarantees (halts within N
 fuel, touches only these capabilities, output ≤ Y bytes), get the largest
 language for which they stay mechanical.
 
-Parents: rustlite (Rust-subset→wasm, 8.0K LOC), soliditylite
-(Solidity-subset→EVM, 7.6K), bashlite (sandboxed shell, 3.1K) — all living in
-`localharness`, each hand-rolled these kernel pieces with divergent bugs
-(bashlite shipped with NO parser depth guard; the UTF-8 mojibake bug was fixed
-twice, differently; fuel exists in three unrelated forms there). This kit pays
-each invariant once.
+Parents: rustlite, soliditylite, bashlite (~19K LOC in `localharness`), each
+hand-rolled these kernel pieces with divergent bugs (a missing depth guard,
+the twice-fixed mojibake bug, three unrelated fuels — GENESIS has the full
+story). This kit pays each invariant once.
 
 ## THE CONSTITUTION (hard rules — CI-enforced where possible)
 
@@ -73,29 +71,36 @@ crates/
 │               validate/validate_flat (ident-only strings — EVERY interpolated
 │               string is an injection channel), docs_markdown, versioned
 │               parity manifest + FNV-1a-64 hash for the far side of a boundary
-├── evmlite/    M3 emitter: asm (op SSOT, minimal-width push, two-pass PUSH2
-│               label back-patch, init_wrapper; STICKY AsmError — never panic
-│               or truncate) + interp, its diff-oracle (step/mem/stack caps,
-│               JUMPDEST analysis excludes PUSH immediates, revert rolls back
-│               storage, KECCAK256=Unsupported: no hashing dep)
-├── modlite/    M3 emitter: wasm module builder (wasmlite was taken) — LEB128,
+├── evmlite/    M3 emitter: asm (op SSOT, min-width push, two-pass PUSH2 label
+│               back-patch, init_wrapper; sticky AsmError — never panic or
+│               truncate) + interp diff-oracle (step/mem/stack caps, real
+│               JUMPDEST analysis, revert rollback, keccak=Unsupported)
+├── modlite/    M3 emitter: wasm module builder (wasmlite taken) — LEB128,
 │               functype interning, locals RLE, section framing; sticky
-│               BuildError makes import-after-func index shift + spec-invalid
-│               limits structural errors. Bodies are consumer bytes.
+│               BuildError (import-after-func shift, spec-invalid limits)
 ├── prooflite/  M1+M2 reference language ON the kit (not in the facade):
 │               total, fuel-bounded; i64+bool, let/assign/print/if/repeat,
 │               checked arithmetic, host calls via caplite (Host trait,
 │               run_with_host — table SNAPSHOTTED once per run); codes lex
 │               E00xx/parse E01xx/eval-host E02xx. NB: binary folds charge the
 │               depth guard — it bounds parser recursion, NOT AST depth
+├── stratlite/  M4 language: total, fuel-bounded strategies. lookback pragma,
+│               var slots (bar-ATOMIC: faulted bars roll back), per-bar body →
+│               signal; fresh fuel/bar; indicator windows are static literals;
+│               no look-ahead BY CONSTRUCTION (prefix-invariance tested);
+│               REFERENCE = the prompt card, a const of the crate
+├── backtestlite/ M4 verifier: deterministic integer engine (fills at next
+│               open, adverse validated Costs), Report: Eq + equity_hash
+│               (FNV over the final curve), Gate, verify() →
+│               Reject{Compile,Run,Gate} — paper §5's predicate. Codes E03xx
 scripts/caps.sh       the constitution's teeth (LOC + CLAUDE.md caps)
 paper/OUTLINE.md      the paper IS the product; experiments land as sections
 GENESIS.md            origin, distilled parent learnings, roadmap M0–M5
 
 ```
 
-(The port/ snapshot staging area is gone: all five parent snapshots were
-consumed and deleted as their ports landed, per its own rule.)
+(port/ is gone: all five parent snapshots were consumed and deleted as their
+ports landed.)
 
 ## Build / test
 
@@ -116,20 +121,16 @@ bash scripts/caps.sh                                # the caps
 - **M3 (done):** the emitters as independent crates: `evmlite` (asm + oracle)
   and `modlite` (wasm module builder; wasmlite was taken). Consumer: M4 +
   eventual parent re-homing.
-- **M4:** `stratlite` — total, fuel-bounded, backtestable trading-strategy
-  language. Consumer: the trader agent; generate→verify→keep selection loop =
-  the paper's core experiment.
+- **M4 (done):** `stratlite` + `backtestlite` — the strategy language and its
+  verifier. Consumer: the trader agent + paper §5. The experiment RUN (model +
+  real market data) is external and still open.
 - **M5:** re-home bashlite onto the kit inside localharness (it gains the
   depth guard + spanned errors). Consumer: localharness, −LOC there.
 
-## Context / lineage (one paragraph, so you never need the parent repo)
+## Context / lineage (GENESIS.md has the full story)
 
-localharness (github.com/compusophy/localharness) is the product this grew out
-of: browser-resident self-owning agents on Tempo (payments L1). Its author
-found the Tempo tx-0x76 spec bugs (fee-payer hash preimage) — upstreamed as
-tempoxyz/tempo#6842 + tempoxyz/docs#696. Its predecessor tempo-x402 (agent
-colony, 750 commits) ended as a paper: compiler-verified self-play lifted a
-0.5B model from 1.5%→16.4% pass@1 — the empirical seed of this repo's thesis
-that cheap mechanical verification is the durable layer of the agent stack.
-A possible sibling extraction (separate repo, not here): `tempotx`, the ~2.4K
-LOC Tempo tx encoder from localharness.
+localharness (github.com/compusophy/localharness): browser-resident
+self-owning agents on Tempo. Its predecessor tempo-x402 ended as a paper —
+compiler-verified self-play lifted a 0.5B model 1.5%→16.4% pass@1 — the
+empirical seed of this repo's thesis that cheap mechanical verification is
+the durable layer of the agent stack.
