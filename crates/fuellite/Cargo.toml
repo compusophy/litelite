@@ -1,0 +1,10 @@
+[package]
+name = "fuellite"
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.85"
+license = "Apache-2.0"
+description = "Fuel and byte-budget primitives: mechanical termination and output bounds for purpose-sized languages."
+repository = "https://github.com/compusophy/litelite"
+
+[dependencies]

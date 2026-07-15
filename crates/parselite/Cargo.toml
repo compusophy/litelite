@@ -1,0 +1,11 @@
+[package]
+name = "parselite"
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.85"
+license = "Apache-2.0"
+description = "Recursive-descent parser harness with the depth guard baked in — for purpose-sized languages."
+repository = "https://github.com/compusophy/litelite"
+
+[dependencies]
+diaglite = { path = "../diaglite", version = "0.0.1" }

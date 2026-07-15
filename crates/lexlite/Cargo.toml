@@ -1,0 +1,11 @@
+[package]
+name = "lexlite"
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.85"
+license = "Apache-2.0"
+description = "Byte-cursor lexer kit for purpose-sized languages: comments, idents, digits, UTF-8-safe char decode."
+repository = "https://github.com/compusophy/litelite"
+
+[dependencies]
+diaglite = { path = "../diaglite", version = "0.0.1" }

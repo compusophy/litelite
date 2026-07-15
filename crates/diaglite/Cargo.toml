@@ -1,0 +1,10 @@
+[package]
+name = "diaglite"
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.85"
+license = "Apache-2.0"
+description = "Span + Diag diagnostics kernel for purpose-sized languages: byte spans, line/col, caret snippets."
+repository = "https://github.com/compusophy/litelite"
+
+[dependencies]

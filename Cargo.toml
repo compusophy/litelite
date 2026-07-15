@@ -1,0 +1,19 @@
+[workspace]
+members = ["crates/diaglite", "crates/lexlite", "crates/parselite", "crates/fuellite"]
+
+[package]
+name = "litelite"
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.85"
+license = "Apache-2.0"
+description = "A kit for purpose-sized languages: buy total verification with smallness. Diagnostics, lexing, parsing, and fuel — the invariants paid once."
+repository = "https://github.com/compusophy/litelite"
+keywords = ["language", "compiler", "sandbox", "fuel", "verification"]
+categories = ["compilers", "parser-implementations", "no-std::no-alloc"]
+
+[dependencies]
+diaglite = { path = "crates/diaglite", version = "0.0.1" }
+lexlite = { path = "crates/lexlite", version = "0.0.1" }
+parselite = { path = "crates/parselite", version = "0.0.1" }
+fuellite = { path = "crates/fuellite", version = "0.0.1" }
