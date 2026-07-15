@@ -14,3 +14,4 @@ diaglite = { path = "../diaglite", version = "0.0.1" }
 lexlite = { path = "../lexlite", version = "0.0.1" }
 parselite = { path = "../parselite", version = "0.0.1" }
 fuellite = { path = "../fuellite", version = "0.0.1" }
+caplite = { path = "../caplite", version = "0.0.1" }

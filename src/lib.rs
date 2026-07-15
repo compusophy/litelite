@@ -14,9 +14,12 @@
 //! - [`lex`] — the byte-cursor lexer kit (UTF-8-safe by construction)
 //! - [`parse`] — the recursive-descent harness with the depth guard baked in
 //! - [`fuel`] — fuel + byte budgets: mechanical termination and output bounds
+//! - [`cap`] — host-capability tables as data: one declaration drives
+//!   checking, import emission, docs, and cross-boundary parity manifests
 //!
 //! Zero external dependencies. Native + wasm32.
 
+pub use caplite as cap;
 pub use diaglite as diag;
 pub use fuellite as fuel;
 pub use lexlite as lex;
@@ -31,5 +34,6 @@ mod tests {
         assert_eq!(crate::fuel::Fuel::new(1).remaining(), 1);
         assert!(crate::lex::Cursor::new("a").peek().is_some());
         assert_eq!(crate::parse::DEFAULT_MAX_DEPTH, 96);
+        assert_eq!(crate::cap::fnv1a_64(b""), 0xcbf2_9ce4_8422_2325);
     }
 }

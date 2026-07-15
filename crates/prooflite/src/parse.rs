@@ -58,6 +58,14 @@ pub(crate) enum Expr {
     Var(String, Span),
     Unary(UnOp, Box<Expr>, Span),
     Binary(BinOp, Box<Expr>, Box<Expr>, Span),
+    /// A host-capability call — the only thing that can reach past the
+    /// program's own state (and only what the host's table declares).
+    Call {
+        name: String,
+        name_span: Span,
+        args: Vec<Expr>,
+        span: Span,
+    },
 }
 
 impl Expr {
@@ -68,6 +76,7 @@ impl Expr {
             | Expr::Var(_, sp)
             | Expr::Unary(_, _, sp)
             | Expr::Binary(_, _, _, sp) => *sp,
+            Expr::Call { span, .. } => *span,
         }
     }
 
@@ -80,6 +89,17 @@ impl Expr {
             Expr::Var(n, _) => Expr::Var(n, sp),
             Expr::Unary(op, e, _) => Expr::Unary(op, e, sp),
             Expr::Binary(op, l, r, _) => Expr::Binary(op, l, r, sp),
+            Expr::Call {
+                name,
+                name_span,
+                args,
+                ..
+            } => Expr::Call {
+                name,
+                name_span,
+                args,
+                span: sp,
+            },
         }
     }
 }
@@ -353,7 +373,26 @@ fn primary(src: &str, t: &mut Toks<'_>) -> PResult<Expr> {
         }
         TokKind::Ident => {
             t.advance();
-            Ok(Expr::Var(text(src, tok.span).to_string(), tok.span))
+            if t.peek().kind != TokKind::LParen {
+                return Ok(Expr::Var(text(src, tok.span).to_string(), tok.span));
+            }
+            t.advance(); // the `(`
+            let mut args = Vec::new();
+            if t.peek().kind != TokKind::RParen {
+                loop {
+                    args.push(expr(src, t)?);
+                    if t.eat(|x| x.kind == TokKind::Comma).is_none() {
+                        break;
+                    }
+                }
+            }
+            let rparen = expect(src, t, TokKind::RParen, "`)` or `,`")?;
+            Ok(Expr::Call {
+                name: text(src, tok.span).to_string(),
+                name_span: tok.span,
+                args,
+                span: Span::new(tok.span.start, rparen.end),
+            })
         }
         TokKind::LParen => {
             t.advance();
@@ -419,6 +458,7 @@ fn describe(src: &str, tok: &Token) -> String {
         TokKind::RParen => ")",
         TokKind::LBrace => "{",
         TokKind::RBrace => "}",
+        TokKind::Comma => ",",
         TokKind::Semi => ";",
     };
     format!("`{sym}`")

@@ -12,9 +12,9 @@
 //! `x = e;`, `print e;`, `if e { … } else { … }` (else-if chains of any
 //! length — they are flat, not nested), `repeat e { … }` (count evaluated
 //! once, up front). Expressions: literals (`42`, `1_000`, `0xff`, `true`),
-//! variables, unary `- !`, binary `* / %`, `+ -`, `< <= > >=`, `== !=`,
-//! `&&`, `||` (both short-circuit), parentheses. Comments: `// line` and
-//! nested `/* block */`.
+//! variables, host-capability calls `name(a, b)` (see [`Host`]), unary `- !`,
+//! binary `* / %`, `+ -`, `< <= > >=`, `== !=`, `&&`, `||` (both
+//! short-circuit), parentheses. Comments: `// line` and nested `/* block */`.
 //!
 //! No functions, no recursion, no `while`: the only loop is `repeat` with an
 //! up-front count. Arithmetic is CHECKED — overflow, division/remainder by
@@ -27,9 +27,10 @@
 //! ## The guarantees (what smallness buys)
 //!
 //! - **Termination, mechanically.** Every statement, expression node, and
-//!   `repeat` iteration burns 1 fuel from ONE tank; a dry tank stops the
-//!   program with `E0206`. "Halts within `limits.fuel` steps" holds for every
-//!   program, adversarial ones included — by construction, not by review.
+//!   `repeat` iteration burns 1 fuel from ONE tank (a capability call burns
+//!   1 plus its declared cost); a dry tank stops the program with `E0206`.
+//!   "Halts within `limits.fuel` steps" holds for every program, adversarial
+//!   ones included — by construction, not by review.
 //! - **Bounded output.** `print` writes through a `ByteBudget`: past the cap
 //!   the output is clipped (never mid-char), the run keeps going, and
 //!   [`Outcome::output_clipped`] says so.
@@ -39,8 +40,11 @@
 //!   arbitrarily long operator chains are an `E0102` diag — never a stack
 //!   overflow, at parse, eval, or drop time. Statement sequences and else-if
 //!   chains are flat and unbounded.
-//! - **No effects.** prooflite has no host calls; its complete effect surface
-//!   is the returned `output` string. (M2 adds a capability table.)
+//! - **A complete effect bound.** The host's [`CapTable`] is the WHOLE world
+//!   a program can touch: calls resolve, type-check, and cost fuel against
+//!   it, and [`run`] (hostless) has an empty table — provably no effects
+//!   beyond the output string. The same table renders the host's docs and a
+//!   parity manifest for the far side of a boundary (`caplite`).
 //!
 //! Diagnostics are code-banded per stage — lex `E00xx`, parse `E01xx`, eval
 //! `E02xx` (see [`codes`]) — so tests and agents assert on codes, not on
@@ -71,11 +75,121 @@ mod eval;
 mod lex;
 mod parse;
 
-// Re-export the diagnostic types every public signature speaks in, so a
-// consumer can name them without a separate diaglite dependency.
+// Re-export the kit types every public signature speaks in, so a consumer
+// can name them without separate diaglite/caplite dependencies.
+pub use caplite::{Cap, CapTable, Ty};
 pub use diaglite::{Diag, Span};
+pub use eval::Value;
 pub use lex::{TokKind, Token, lex};
 pub use parse::{Program, parse};
+
+/// prooflite's type vocabulary — the symbols capability tables speak in.
+/// The `sym` strings (`i64`, `bool`) are ABI: they appear in signatures and
+/// parity manifests.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Type {
+    Int,
+    Bool,
+}
+
+impl Ty for Type {
+    fn sym(&self) -> &'static str {
+        match self {
+            Type::Int => "i64",
+            Type::Bool => "bool",
+        }
+    }
+}
+
+/// The host seam: everything a prooflite program can reach beyond its own
+/// state and output string. The capability table IS the complete effect
+/// bound — a program provably cannot touch anything the table does not name.
+///
+/// Hosts must be TOTAL (the bashlite rule): report failure as `Err(message)`
+/// (an `E0209` diag at the call site), never panic. Arguments arrive already
+/// checked against the declared params; a result that contradicts the
+/// declared type is also an `E0209`.
+///
+/// ```
+/// use prooflite::{Cap, CapTable, Host, Limits, Type, Value, run_with_host};
+///
+/// struct Counter(i64);
+/// static CAPS: CapTable<Type> = CapTable::new(&[Cap {
+///     module: "counter",
+///     name: "next",
+///     params: &[],
+///     result: Some(Type::Int),
+///     cost: 1,
+///     doc: "The next counter value.",
+/// }]);
+/// impl Host for Counter {
+///     fn caps(&self) -> &CapTable<Type> {
+///         &CAPS
+///     }
+///     fn call(&mut self, _idx: usize, _args: &[Value]) -> Result<Value, String> {
+///         self.0 += 1;
+///         Ok(Value::Int(self.0))
+///     }
+/// }
+///
+/// let mut host = Counter(0);
+/// let out = run_with_host("repeat 3 { print next(); }", Limits::default(), &mut host).unwrap();
+/// assert_eq!(out.output, "1\n2\n3\n");
+/// ```
+pub trait Host {
+    /// The capability table this host implements. Drives name resolution,
+    /// arg checking, per-call fuel costs, docs, and the parity manifest.
+    fn caps(&self) -> &CapTable<Type>;
+    /// Execute capability `idx` (an index into [`caps`](Self::caps)) with
+    /// already-checked `args`.
+    fn call(&mut self, idx: usize, args: &[Value]) -> Result<Value, String>;
+}
+
+/// The hostless host: an empty table, so every call site is an `E0207`.
+struct NoHost;
+
+static NO_CAPS: CapTable<Type> = CapTable::new(&[]);
+
+impl Host for NoHost {
+    fn caps(&self) -> &CapTable<Type> {
+        &NO_CAPS
+    }
+    fn call(&mut self, _idx: usize, _args: &[Value]) -> Result<Value, String> {
+        Err("hostless run".to_string())
+    }
+}
+
+/// prooflite-specific table rules, checked once per run: caps must declare a
+/// result (calls are expressions) and bare names must be unique across
+/// modules (call sites have a flat namespace).
+fn check_table(table: &CapTable<Type>) -> Result<(), Diag> {
+    table
+        .validate()
+        .map_err(|e| Diag::new_code(codes::BAD_CAP_TABLE, e))?;
+    for (i, cap) in table.iter() {
+        if cap.result.is_none() {
+            return Err(Diag::new_code(
+                codes::BAD_CAP_TABLE,
+                format!(
+                    "capability `{}.{}` declares no result; prooflite calls are expressions",
+                    cap.module, cap.name
+                ),
+            ));
+        }
+        for (j, other) in table.iter() {
+            if j > i && other.name == cap.name {
+                return Err(Diag::new_code(
+                    codes::BAD_CAP_TABLE,
+                    format!(
+                        "capability name `{}` appears in both `{}` and `{}`; prooflite call sites use bare names",
+                        cap.name, cap.module, other.module
+                    ),
+                ));
+            }
+        }
+    }
+    Ok(())
+}
 
 /// Stable diagnostic codes, banded by stage: lex `E00xx`, parse `E01xx`,
 /// eval `E02xx`.
@@ -92,6 +206,14 @@ pub mod codes {
     pub const TOO_DEEP: u16 = 102;
     /// Read of, or assignment to, a name with no visible `let`.
     pub const UNDEFINED_VAR: u16 = 201;
+    /// Call of a name the host's capability table does not declare.
+    pub const UNKNOWN_CAP: u16 = 207;
+    /// Capability call with the wrong number or types of arguments.
+    pub const CAP_ARGS: u16 = 208;
+    /// The host failed, or returned a value contradicting its own table.
+    pub const HOST_FAULT: u16 = 209;
+    /// The host's capability table itself is unusable from prooflite.
+    pub const BAD_CAP_TABLE: u16 = 210;
     /// An operator or construct got the wrong type of value.
     pub const TYPE_MISMATCH: u16 = 202;
     /// `/` or `%` with a zero divisor.
@@ -137,13 +259,22 @@ pub struct Outcome {
     pub fuel_used: u64,
 }
 
-/// Parse and evaluate `src` under `limits`.
+/// Parse and evaluate `src` under `limits`, hostless: the capability table
+/// is empty, so the program provably has NO effects beyond its output.
 ///
 /// `Err` is the FIRST failure at any stage, as a coded, spanned [`Diag`] —
 /// prefer `err.render(src)` on any surface a human or agent reads.
 pub fn run(src: &str, limits: Limits) -> Result<Outcome, Diag> {
+    run_with_host(src, limits, &mut NoHost)
+}
+
+/// [`run`], with `host`'s capability table as the program's COMPLETE effect
+/// surface. A call site burns 1 fuel for the node plus the capability's
+/// declared `cost`. See [`Host`] for an end-to-end example.
+pub fn run_with_host(src: &str, limits: Limits, host: &mut dyn Host) -> Result<Outcome, Diag> {
+    check_table(host.caps())?;
     let program = parse(src)?;
-    eval::eval(&program, &limits)
+    eval::eval(&program, &limits, host)
 }
 
 #[cfg(test)]
@@ -352,5 +483,203 @@ mod tests {
         assert_eq!(code("print ⚡;") / 100, 0); // lex
         assert_eq!(code("print 1") / 100, 1); // parse
         assert_eq!(code("print x;") / 100, 2); // eval
+    }
+
+    static TEST_CAPS: CapTable<Type> = CapTable::new(&[
+        Cap {
+            module: "counter",
+            name: "next",
+            params: &[],
+            result: Some(Type::Int),
+            cost: 3,
+            doc: "Monotonic counter.",
+        },
+        Cap {
+            module: "math",
+            name: "mix",
+            params: &[Type::Int, Type::Int],
+            result: Some(Type::Int),
+            cost: 0,
+            doc: "XOR of two integers.",
+        },
+        Cap {
+            module: "flag",
+            name: "both",
+            params: &[Type::Bool, Type::Bool],
+            result: Some(Type::Bool),
+            cost: 1,
+            doc: "Logical AND.",
+        },
+        Cap {
+            module: "boom",
+            name: "fail",
+            params: &[],
+            result: Some(Type::Int),
+            cost: 0,
+            doc: "Always errors.",
+        },
+    ]);
+
+    struct TestHost {
+        count: i64,
+        lie: bool,
+    }
+
+    impl Host for TestHost {
+        fn caps(&self) -> &CapTable<Type> {
+            &TEST_CAPS
+        }
+        fn call(&mut self, idx: usize, args: &[Value]) -> Result<Value, String> {
+            if self.lie {
+                return Ok(Value::Bool(true)); // wrong type for `next`/`mix`/`fail`
+            }
+            match (idx, args) {
+                (0, []) => {
+                    self.count += 1;
+                    Ok(Value::Int(self.count))
+                }
+                (1, [Value::Int(a), Value::Int(b)]) => Ok(Value::Int(a ^ b)),
+                (2, [Value::Bool(a), Value::Bool(b)]) => Ok(Value::Bool(*a && *b)),
+                (3, _) => Err("boom".to_string()),
+                _ => Err(format!("bad dispatch: idx {idx}")),
+            }
+        }
+    }
+
+    fn host() -> TestHost {
+        TestHost {
+            count: 0,
+            lie: false,
+        }
+    }
+
+    fn host_code(src: &str) -> u16 {
+        run_with_host(src, Limits::default(), &mut host())
+            .unwrap_err()
+            .code
+            .unwrap()
+    }
+
+    #[test]
+    fn capability_calls_flow_through_the_table() {
+        let src = "print next();
+                   print mix(6, next());
+                   print both(true, 1 < 2);";
+        let o = run_with_host(src, Limits::default(), &mut host()).unwrap();
+        assert_eq!(o.output, "1\n4\ntrue\n"); // 6 ^ 2 = 4
+    }
+
+    #[test]
+    fn the_table_is_the_whole_effect_surface() {
+        // Hostless runs have an empty table: every call is unknown.
+        assert_eq!(code("print next();"), codes::UNKNOWN_CAP);
+        // With a host, only declared names resolve.
+        assert_eq!(host_code("print nope(1);"), codes::UNKNOWN_CAP);
+    }
+
+    #[test]
+    fn capability_args_are_checked_against_the_declaration() {
+        let e = run_with_host("print mix(1);", Limits::default(), &mut host()).unwrap_err();
+        assert_eq!(e.code, Some(codes::CAP_ARGS));
+        assert!(e.message.contains("expects 2 argument(s), got 1"), "{e}");
+        let e = run_with_host("print mix(1, true);", Limits::default(), &mut host()).unwrap_err();
+        assert_eq!(e.code, Some(codes::CAP_ARGS));
+        assert!(
+            e.message.contains("argument 2 must be i64, got bool"),
+            "{e}"
+        );
+    }
+
+    #[test]
+    fn a_misbehaving_host_is_a_coded_diag_not_trust() {
+        assert_eq!(host_code("print fail();"), codes::HOST_FAULT);
+        let e = run_with_host(
+            "print next();",
+            Limits::default(),
+            &mut TestHost {
+                count: 0,
+                lie: true,
+            },
+        )
+        .unwrap_err();
+        assert_eq!(e.code, Some(codes::HOST_FAULT));
+        assert!(e.message.contains("returned bool"), "{e}");
+    }
+
+    #[test]
+    fn bad_tables_are_rejected_before_the_program_runs() {
+        struct BadHost(CapTable<Type>);
+        impl Host for BadHost {
+            fn caps(&self) -> &CapTable<Type> {
+                &self.0
+            }
+            fn call(&mut self, _: usize, _: &[Value]) -> Result<Value, String> {
+                Err("unreachable".to_string())
+            }
+        }
+        // Same bare name in two modules: prooflite call sites can't choose.
+        static AMBIG: &[Cap<Type>] = &[
+            Cap {
+                module: "a",
+                name: "x",
+                params: &[],
+                result: Some(Type::Int),
+                cost: 0,
+                doc: "",
+            },
+            Cap {
+                module: "b",
+                name: "x",
+                params: &[],
+                result: Some(Type::Int),
+                cost: 0,
+                doc: "",
+            },
+        ];
+        let e = run_with_host("", Limits::default(), &mut BadHost(CapTable::new(AMBIG)));
+        assert_eq!(e.unwrap_err().code, Some(codes::BAD_CAP_TABLE));
+        // A result-less cap can't be an expression.
+        static VOID: &[Cap<Type>] = &[Cap {
+            module: "a",
+            name: "x",
+            params: &[],
+            result: None,
+            cost: 0,
+            doc: "",
+        }];
+        let e = run_with_host("", Limits::default(), &mut BadHost(CapTable::new(VOID)));
+        assert_eq!(e.unwrap_err().code, Some(codes::BAD_CAP_TABLE));
+    }
+
+    #[test]
+    fn capability_costs_burn_from_the_one_tank() {
+        // print(1 stmt) + call node(1) + declared cost(3) = 5.
+        let o = run_with_host("print next();", Limits::default(), &mut host()).unwrap();
+        assert_eq!(o.fuel_used, 5);
+        // Declared costs can exhaust the tank mid-call chain.
+        let e = run_with_host(
+            "repeat 100 { print next(); }",
+            Limits {
+                fuel: 20,
+                output_bytes: 64,
+            },
+            &mut host(),
+        )
+        .unwrap_err();
+        assert_eq!(e.code, Some(codes::FUEL_EXHAUSTED));
+    }
+
+    #[test]
+    fn the_manifest_pins_prooflite_type_symbols() {
+        // `i64`/`bool` are Type's ABI symbols — a change here moves every
+        // parity hash of every prooflite host, on purpose.
+        assert_eq!(
+            TEST_CAPS.manifest(),
+            "caplite-manifest/1\n\
+             0 counter.next()->i64 cost=3\n\
+             1 math.mix(i64,i64)->i64 cost=0\n\
+             2 flag.both(bool,bool)->bool cost=1\n\
+             3 boom.fail()->i64 cost=0\n"
+        );
     }
 }

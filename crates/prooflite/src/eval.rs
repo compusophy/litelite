@@ -7,16 +7,29 @@
 //! chains are flat vectors. Whatever the parser accepts, eval (and drop glue)
 //! can walk within a bounded stack.
 
+use caplite::Ty;
 use diaglite::{Diag, Span};
 use fuellite::{ByteBudget, Fuel};
 
 use crate::parse::{BinOp, Expr, Program, Stmt, UnOp};
-use crate::{Limits, Outcome, codes};
+use crate::{Host, Limits, Outcome, Type, codes};
 
+/// A prooflite runtime value — what programs compute and hosts receive and
+/// return.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum Value {
+pub enum Value {
     Int(i64),
     Bool(bool),
+}
+
+impl Value {
+    /// The [`Type`] this value inhabits (what capability params check against).
+    pub fn type_of(&self) -> Type {
+        match self {
+            Value::Int(_) => Type::Int,
+            Value::Bool(_) => Type::Bool,
+        }
+    }
 }
 
 impl std::fmt::Display for Value {
@@ -89,13 +102,18 @@ impl Scopes {
     }
 }
 
-pub(crate) fn eval(program: &Program, limits: &Limits) -> Result<Outcome, Diag> {
+pub(crate) fn eval(
+    program: &Program,
+    limits: &Limits,
+    host: &mut dyn Host,
+) -> Result<Outcome, Diag> {
     let mut ev = Evaluator {
         fuel: Fuel::new(limits.fuel),
         budget: ByteBudget::new(limits.output_bytes),
         out: String::new(),
         clipped: false,
         scopes: Scopes::new(),
+        host,
     };
     for s in &program.stmts {
         ev.stmt(s)?;
@@ -107,15 +125,16 @@ pub(crate) fn eval(program: &Program, limits: &Limits) -> Result<Outcome, Diag> 
     })
 }
 
-struct Evaluator {
+struct Evaluator<'h> {
     fuel: Fuel,
     budget: ByteBudget,
     out: String,
     clipped: bool,
     scopes: Scopes,
+    host: &'h mut dyn Host,
 }
 
-impl Evaluator {
+impl Evaluator<'_> {
     fn burn(&mut self, sp: Span) -> Result<(), Diag> {
         self.fuel
             .burn(1)
@@ -224,19 +243,25 @@ impl Evaluator {
                     )),
                 }
             }
+            Expr::Call {
+                name,
+                name_span,
+                args,
+                span,
+            } => self.call(name, *name_span, args, *span),
             Expr::Binary(op, lhs, rhs, sp) => match op {
                 // Short-circuit: an unevaluated right side burns no fuel.
                 BinOp::And => {
-                    if !self.bool_operand(lhs, "&&")? {
+                    if !self.bool_expr(lhs, "`&&` operand")? {
                         return Ok(Value::Bool(false));
                     }
-                    Ok(Value::Bool(self.bool_operand(rhs, "&&")?))
+                    Ok(Value::Bool(self.bool_expr(rhs, "`&&` operand")?))
                 }
                 BinOp::Or => {
-                    if self.bool_operand(lhs, "||")? {
+                    if self.bool_expr(lhs, "`||` operand")? {
                         return Ok(Value::Bool(true));
                     }
-                    Ok(Value::Bool(self.bool_operand(rhs, "||")?))
+                    Ok(Value::Bool(self.bool_expr(rhs, "`||` operand")?))
                 }
                 _ => {
                     let l = self.expr(lhs)?;
@@ -247,14 +272,64 @@ impl Evaluator {
         }
     }
 
-    fn bool_operand(&mut self, e: &Expr, op: &str) -> Result<bool, Diag> {
-        match self.expr(e)? {
-            Value::Bool(b) => Ok(b),
-            v => Err(mismatch(
-                format!("`{op}` needs boolean operands, got {}", kind_name(v)),
-                e.span(),
-            )),
+    /// A host-capability call: resolve against the table, evaluate and check
+    /// the arguments, burn the declared cost, dispatch, and verify the host's
+    /// answer against its own declaration.
+    fn call(
+        &mut self,
+        name: &str,
+        name_span: Span,
+        args: &[Expr],
+        span: Span,
+    ) -> Result<Value, Diag> {
+        // Cap fields are `'static`, so copy them out — the table borrow must
+        // end before the `&mut` dispatch below.
+        let Some((idx, cap)) = self.host.caps().find(name) else {
+            return Err(Diag::at_code(
+                codes::UNKNOWN_CAP,
+                format!("unknown capability `{name}` (the host table is the whole effect surface)"),
+                name_span,
+            ));
+        };
+        let (params, result, cost) = (cap.params, cap.result, cap.cost);
+        let mut vals = Vec::with_capacity(args.len());
+        for a in args {
+            vals.push(self.expr(a)?);
         }
+        let tys: Vec<Type> = vals.iter().map(Value::type_of).collect();
+        caplite::check_args(params, &tys).map_err(|e| {
+            Diag::at_code(codes::CAP_ARGS, format!("capability `{name}` {e}"), span)
+        })?;
+        self.fuel
+            .burn(cost)
+            .map_err(|_| Diag::at_code(codes::FUEL_EXHAUSTED, "fuel exhausted", span))?;
+        let v = self.host.call(idx, &vals).map_err(|msg| {
+            Diag::at_code(
+                codes::HOST_FAULT,
+                format!("capability `{name}` failed: {msg}"),
+                span,
+            )
+        })?;
+        // `check_table` guarantees a declared result; stay diag, not panic.
+        let Some(want) = result else {
+            return Err(Diag::at_code(
+                codes::BAD_CAP_TABLE,
+                format!("capability `{name}` declares no result"),
+                span,
+            ));
+        };
+        if v.type_of() != want {
+            return Err(Diag::at_code(
+                codes::HOST_FAULT,
+                format!(
+                    "capability `{name}` returned {}, but its table declares ->{}",
+                    v.type_of().sym(),
+                    want.sym()
+                ),
+                span,
+            ));
+        }
+        Ok(v)
     }
 
     fn bool_expr(&mut self, e: &Expr, what: &str) -> Result<bool, Diag> {

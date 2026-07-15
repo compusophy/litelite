@@ -37,6 +37,7 @@ pub enum TokKind {
     RParen,
     LBrace,
     RBrace,
+    Comma,
     Semi,
     Eof,
 }
@@ -141,6 +142,7 @@ fn next_kind(cur: &mut Cursor<'_>) -> Result<TokKind, Diag> {
         Some(b')') => Some(TokKind::RParen),
         Some(b'{') => Some(TokKind::LBrace),
         Some(b'}') => Some(TokKind::RBrace),
+        Some(b',') => Some(TokKind::Comma),
         Some(b';') => Some(TokKind::Semi),
         _ => None,
     };
