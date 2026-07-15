@@ -100,7 +100,7 @@ lesson "loop breadth, not one subsystem — rustlite=toys" is remembered here.
   fueled tree-walk eval; every error a coded spanned Diag. Deliverable
   includes the kit's first external-shaped README example. Consumer: the
   paper's baseline; the kit's own proof it composes.
-- **M2 — capabilities as data.** A `CapTable` type: one declarative table per
+- **M2 — capabilities as data (done 2026-07-15).** A `CapTable` type: one declarative table per
   language → typed signatures for the checker, import emission for codegen,
   human docs, and a machine-checkable parity manifest for the far side of a
   boundary (the parents hand-sync a Rust table with a JS worker and it has
@@ -134,6 +134,17 @@ lesson "loop breadth, not one subsystem — rustlite=toys" is remembered here.
   the AST. Any language on the kit must either charge iterative AST-deepening
   constructs to the guard or keep them flat. (Found by a 6-finder / 3-refuter
   adversarial review: 16 raw → 13 confirmed findings, 2 crash-grade.)
+
+- **M2 (2026-07-15): every string a canonical artifact interpolates is an
+  injection channel, and validation must BIND.** caplite's review rhymed with
+  M1's: the manifest guard validated module/name but not `Ty::sym` — a comma
+  in a type symbol collapsed arity (two different tables, one parity hash), a
+  newline forged whole lines. And prooflite validated `host.caps()` once but
+  re-fetched it at every call site, so an interior-mutability host could serve
+  one table to the checker and another to dispatch — fixed by snapshotting the
+  validated `Copy` table for the whole run. Validate every channel into the
+  artifact; then use the validated VALUE, never a fresh fetch. (6-finder /
+  3-refuter review: 16 confirmed, incl. one crash-grade-adjacent parity hole.)
 
 ## The three questions only reality can answer
 

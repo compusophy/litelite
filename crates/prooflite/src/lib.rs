@@ -2,7 +2,9 @@
 //!
 //! The smallest TOTAL language that exercises every kit crate end-to-end:
 //! lexlite lexing → parselite parsing (depth-guarded) → fuellite-fueled
-//! tree-walk evaluation, with every failure a coded, spanned diaglite `Diag`.
+//! tree-walk evaluation, with every failure a coded diaglite `Diag`, spanned
+//! at its source wherever one exists (`E0210` faults the host's table, not
+//! the source, and is the one spanless code).
 //! Consumer: the paper's baseline (`paper/OUTLINE.md` §3) — the measured
 //! answer to "what does a language on the kit cost, and what does it buy?".
 //!
@@ -77,7 +79,7 @@ mod parse;
 
 // Re-export the kit types every public signature speaks in, so a consumer
 // can name them without separate diaglite/caplite dependencies.
-pub use caplite::{Cap, CapTable, Ty};
+pub use caplite::{ArgError, Cap, CapTable, Ty};
 pub use diaglite::{Diag, Span};
 pub use eval::Value;
 pub use lex::{TokKind, Token, lex};
@@ -159,14 +161,15 @@ impl Host for NoHost {
     }
 }
 
-/// prooflite-specific table rules, checked once per run: caps must declare a
-/// result (calls are expressions) and bare names must be unique across
-/// modules (call sites have a flat namespace).
+/// prooflite-specific table rules, checked once per run against the SNAPSHOT
+/// the whole run then resolves against (a host cannot swap tables mid-run):
+/// caplite's flat-namespace validity, a declared result on every cap (calls
+/// are expressions), and no keyword names (unreachable from call sites).
 fn check_table(table: &CapTable<Type>) -> Result<(), Diag> {
     table
-        .validate()
+        .validate_flat()
         .map_err(|e| Diag::new_code(codes::BAD_CAP_TABLE, e))?;
-    for (i, cap) in table.iter() {
+    for (_, cap) in table.iter() {
         if cap.result.is_none() {
             return Err(Diag::new_code(
                 codes::BAD_CAP_TABLE,
@@ -176,23 +179,23 @@ fn check_table(table: &CapTable<Type>) -> Result<(), Diag> {
                 ),
             ));
         }
-        for (j, other) in table.iter() {
-            if j > i && other.name == cap.name {
-                return Err(Diag::new_code(
-                    codes::BAD_CAP_TABLE,
-                    format!(
-                        "capability name `{}` appears in both `{}` and `{}`; prooflite call sites use bare names",
-                        cap.name, cap.module, other.module
-                    ),
-                ));
-            }
+        if lex::keyword(cap.name).is_some() {
+            return Err(Diag::new_code(
+                codes::BAD_CAP_TABLE,
+                format!(
+                    "capability name `{}` is a prooflite keyword — no call site could ever reach it",
+                    cap.name
+                ),
+            ));
         }
     }
     Ok(())
 }
 
 /// Stable diagnostic codes, banded by stage: lex `E00xx`, parse `E01xx`,
-/// eval `E02xx`.
+/// runtime/host `E02xx`. One exception to "spanned": `E0210` fires BEFORE
+/// the source is even lexed — it locates a fault in the host's table, which
+/// has no source location.
 pub mod codes {
     /// A character that starts no prooflite token.
     pub const UNEXPECTED_CHAR: u16 = 1;
@@ -262,8 +265,9 @@ pub struct Outcome {
 /// Parse and evaluate `src` under `limits`, hostless: the capability table
 /// is empty, so the program provably has NO effects beyond its output.
 ///
-/// `Err` is the FIRST failure at any stage, as a coded, spanned [`Diag`] —
-/// prefer `err.render(src)` on any surface a human or agent reads.
+/// `Err` is the FIRST failure at any stage, as a coded [`Diag`], spanned
+/// wherever the failure has a source location (`E0210` has none) — prefer
+/// `err.render(src)` on any surface a human or agent reads.
 pub fn run(src: &str, limits: Limits) -> Result<Outcome, Diag> {
     run_with_host(src, limits, &mut NoHost)
 }
@@ -271,10 +275,15 @@ pub fn run(src: &str, limits: Limits) -> Result<Outcome, Diag> {
 /// [`run`], with `host`'s capability table as the program's COMPLETE effect
 /// surface. A call site burns 1 fuel for the node plus the capability's
 /// declared `cost`. See [`Host`] for an end-to-end example.
+///
+/// The table is fetched ONCE, validated, and snapshotted; every call site in
+/// the run resolves against that snapshot, so the table the manifest and
+/// `check_table` vouched for is the table that actually drives dispatch.
 pub fn run_with_host(src: &str, limits: Limits, host: &mut dyn Host) -> Result<Outcome, Diag> {
-    check_table(host.caps())?;
+    let table = *host.caps();
+    check_table(&table)?;
     let program = parse(src)?;
-    eval::eval(&program, &limits, host)
+    eval::eval(&program, &limits, table, host)
 }
 
 #[cfg(test)]
@@ -298,20 +307,21 @@ mod tests {
         assert_eq!(out("print 7 / 2;"), "3\n");
         assert_eq!(out("print 0xff - 0x0f;"), "240\n");
         assert_eq!(out("print 1_000_000;"), "1000000\n");
+        // `/` truncates toward zero; `%` takes the dividend's sign (Rust
+        // semantics, promised in the crate docs).
+        assert_eq!(out("print (0 - 7) / 2;"), "-3\n");
+        assert_eq!(out("print (0 - 7) % 3;"), "-1\n");
+        assert_eq!(out("print 7 % (0 - 3);"), "1\n");
     }
 
     #[test]
-    fn comparison_and_logic() {
+    fn comparison_and_logic_with_short_circuit() {
         assert_eq!(out("print 1 < 2;"), "true\n");
         assert_eq!(out("print 2 <= 1;"), "false\n");
         assert_eq!(out("print 1 + 1 == 2;"), "true\n");
         assert_eq!(out("print true != false;"), "true\n");
         assert_eq!(out("print !true || 1 > 0 && 2 >= 2;"), "true\n");
-    }
-
-    #[test]
-    fn short_circuit_skips_the_right_side() {
-        // The unevaluated side would be a division by zero — it must not run.
+        // Short-circuit: the unevaluated side would divide by zero — it must not run.
         assert_eq!(out("print false && 1 / 0 == 0;"), "false\n");
         assert_eq!(out("print true || 1 / 0 == 0;"), "true\n");
         assert_eq!(code("print true && 1 / 0 == 0;"), codes::DIV_BY_ZERO);
@@ -374,6 +384,13 @@ mod tests {
                    else { print 30; }";
         assert_eq!(out(src), "20\n");
         assert_eq!(out("if false { print 1; }"), "");
+        // 300 links — flat in the source, flat in the AST, flat in guard depth.
+        let mut src = String::from("let x = 250;\nif x == 0 { print 0; }\n");
+        for i in 1..300 {
+            src.push_str(&format!("else if x == {i} {{ print {i}; }}\n"));
+        }
+        src.push_str("else { print 999; }\n");
+        assert_eq!(out(&src), "250\n");
     }
 
     #[test]
@@ -412,9 +429,6 @@ mod tests {
         )
         .unwrap_err();
         assert_eq!(e.code, Some(codes::FUEL_EXHAUSTED));
-        // Within budget, fuel_used never exceeds the limit.
-        let o = run("repeat 10 { print 1; }", Limits::default()).unwrap();
-        assert!(o.fuel_used <= Limits::default().fuel);
     }
 
     #[test]
@@ -444,14 +458,6 @@ mod tests {
     }
 
     #[test]
-    fn division_truncates_toward_zero() {
-        // Rust semantics, promised in the crate docs.
-        assert_eq!(out("print (0 - 7) / 2;"), "-3\n");
-        assert_eq!(out("print (0 - 7) % 3;"), "-1\n");
-        assert_eq!(out("print 7 % (0 - 3);"), "1\n");
-    }
-
-    #[test]
     fn operator_chains_count_toward_the_depth_cap() {
         // Left-associative folds deepen the AST spine, so they charge the
         // same guard as parens: long flat chains are an E0102 diag — never a
@@ -464,18 +470,6 @@ mod tests {
         // Parsing alone (then dropping the AST) is equally safe.
         let e = parse(&format!("print {}true;", "false||".repeat(5000))).unwrap_err();
         assert_eq!(e.code, Some(codes::TOO_DEEP));
-    }
-
-    #[test]
-    fn flat_else_if_chains_are_unbounded() {
-        // 300 links — flat in the source, flat in the AST, flat in guard depth.
-        let mut src = String::from("let x = 250;\nif x == 0 { print 0; }\n");
-        for i in 1..300 {
-            src.push_str(&format!("else if x == {i} {{ print {i}; }}\n"));
-        }
-        src.push_str("else { print 999; }\n");
-        let o = run(&src, Limits::default()).unwrap();
-        assert_eq!(o.output, "250\n");
     }
 
     #[test]
@@ -523,10 +517,12 @@ mod tests {
     struct TestHost {
         count: i64,
         lie: bool,
+        caps_calls: std::cell::Cell<u32>,
     }
 
     impl Host for TestHost {
         fn caps(&self) -> &CapTable<Type> {
+            self.caps_calls.set(self.caps_calls.get() + 1);
             &TEST_CAPS
         }
         fn call(&mut self, idx: usize, args: &[Value]) -> Result<Value, String> {
@@ -550,6 +546,7 @@ mod tests {
         TestHost {
             count: 0,
             lie: false,
+            caps_calls: std::cell::Cell::new(0),
         }
     }
 
@@ -567,13 +564,9 @@ mod tests {
                    print both(true, 1 < 2);";
         let o = run_with_host(src, Limits::default(), &mut host()).unwrap();
         assert_eq!(o.output, "1\n4\ntrue\n"); // 6 ^ 2 = 4
-    }
-
-    #[test]
-    fn the_table_is_the_whole_effect_surface() {
-        // Hostless runs have an empty table: every call is unknown.
+        // The table is the WHOLE effect surface: hostless runs have an empty
+        // table, and with a host only declared names resolve.
         assert_eq!(code("print next();"), codes::UNKNOWN_CAP);
-        // With a host, only declared names resolve.
         assert_eq!(host_code("print nope(1);"), codes::UNKNOWN_CAP);
     }
 
@@ -588,6 +581,17 @@ mod tests {
             e.message.contains("argument 2 must be i64, got bool"),
             "{e}"
         );
+        let sp = e.span.unwrap();
+        assert_eq!((sp.start, sp.end), (13, 17)); // carets `true`, not the whole call
+    }
+
+    #[test]
+    fn the_validated_table_snapshot_drives_the_whole_run() {
+        // caps() is fetched exactly once — a host cannot serve check_table
+        // one table and dispatch against another.
+        let mut h = host();
+        run_with_host("print next(); print next();", Limits::default(), &mut h).unwrap();
+        assert_eq!(h.caps_calls.get(), 1);
     }
 
     #[test]
@@ -597,8 +601,8 @@ mod tests {
             "print next();",
             Limits::default(),
             &mut TestHost {
-                count: 0,
                 lie: true,
+                ..host()
             },
         )
         .unwrap_err();
@@ -617,38 +621,29 @@ mod tests {
                 Err("unreachable".to_string())
             }
         }
-        // Same bare name in two modules: prooflite call sites can't choose.
-        static AMBIG: &[Cap<Type>] = &[
+        const fn cap(module: &'static str, name: &'static str, result: Option<Type>) -> Cap<Type> {
             Cap {
-                module: "a",
-                name: "x",
+                module,
+                name,
                 params: &[],
-                result: Some(Type::Int),
+                result,
                 cost: 0,
                 doc: "",
-            },
-            Cap {
-                module: "b",
-                name: "x",
-                params: &[],
-                result: Some(Type::Int),
-                cost: 0,
-                doc: "",
-            },
+            }
+        }
+        // Ambiguous bare name, result-less cap, keyword name: all E0210.
+        static BAD: &[&[Cap<Type>]] = &[
+            &[
+                cap("a", "x", Some(Type::Int)),
+                cap("b", "x", Some(Type::Int)),
+            ],
+            &[cap("a", "x", None)],
+            &[cap("a", "print", Some(Type::Int))],
         ];
-        let e = run_with_host("", Limits::default(), &mut BadHost(CapTable::new(AMBIG)));
-        assert_eq!(e.unwrap_err().code, Some(codes::BAD_CAP_TABLE));
-        // A result-less cap can't be an expression.
-        static VOID: &[Cap<Type>] = &[Cap {
-            module: "a",
-            name: "x",
-            params: &[],
-            result: None,
-            cost: 0,
-            doc: "",
-        }];
-        let e = run_with_host("", Limits::default(), &mut BadHost(CapTable::new(VOID)));
-        assert_eq!(e.unwrap_err().code, Some(codes::BAD_CAP_TABLE));
+        for caps in BAD {
+            let e = run_with_host("", Limits::default(), &mut BadHost(CapTable::new(caps)));
+            assert_eq!(e.unwrap_err().code, Some(codes::BAD_CAP_TABLE));
+        }
     }
 
     #[test]

@@ -100,18 +100,24 @@ fn skip_trivia(cur: &mut Cursor<'_>) -> Result<(), Diag> {
     }
 }
 
+/// Keyword lookup — also consulted by the capability-table check: a cap named
+/// `print` could never be called, because the lexer never emits it as `Ident`.
+pub(crate) fn keyword(text: &str) -> Option<TokKind> {
+    Some(match text {
+        "let" => TokKind::Let,
+        "if" => TokKind::If,
+        "else" => TokKind::Else,
+        "repeat" => TokKind::Repeat,
+        "print" => TokKind::Print,
+        "true" => TokKind::True,
+        "false" => TokKind::False,
+        _ => return None,
+    })
+}
+
 fn next_kind(cur: &mut Cursor<'_>) -> Result<TokKind, Diag> {
     if let Some(sp) = cur.eat_ident(ident_start, ident_cont) {
-        return Ok(match cur.text(sp) {
-            "let" => TokKind::Let,
-            "if" => TokKind::If,
-            "else" => TokKind::Else,
-            "repeat" => TokKind::Repeat,
-            "print" => TokKind::Print,
-            "true" => TokKind::True,
-            "false" => TokKind::False,
-            _ => TokKind::Ident,
-        });
+        return Ok(keyword(cur.text(sp)).unwrap_or(TokKind::Ident));
     }
     if cur.peek().is_some_and(|b| b.is_ascii_digit()) {
         return int_literal(cur);
@@ -300,12 +306,8 @@ mod tests {
         assert_eq!(e.span.unwrap().end, 'é'.len_utf8()); // whole char, both bytes
         let e = lex("1 & 2").unwrap_err(); // bare `&` is not a token
         assert_eq!(e.code, Some(codes::UNEXPECTED_CHAR));
-    }
-
-    #[test]
-    fn empty_source_is_just_the_sentinel() {
+        // Empty source is just the sentinel.
         let toks = lex("").unwrap();
-        assert_eq!(toks.len(), 1);
-        assert_eq!(toks[0].kind, TokKind::Eof);
+        assert_eq!((toks.len(), toks[0].kind), (1, TokKind::Eof));
     }
 }

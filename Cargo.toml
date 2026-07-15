@@ -21,7 +21,7 @@ license = "Apache-2.0"
 description = "A kit for purpose-sized languages: buy total verification with smallness. Diagnostics, lexing, parsing, and fuel — the invariants paid once."
 repository = "https://github.com/compusophy/litelite"
 keywords = ["language", "compiler", "sandbox", "fuel", "verification"]
-categories = ["compilers", "parser-implementations", "no-std::no-alloc"]
+categories = ["compilers", "parser-implementations"]
 
 [dependencies]
 diaglite = { path = "crates/diaglite", version = "0.0.1" }

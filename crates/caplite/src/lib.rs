@@ -28,7 +28,10 @@
 
 /// A language's type vocabulary, as stable lowercase symbols. `sym` strings
 /// appear in signatures and the parity manifest — changing one is an ABI
-/// change and moves every manifest hash.
+/// change and moves every manifest hash. The contract [`CapTable::validate`]
+/// enforces: every sym must be a plain identifier (a `,`, `(`, or newline in
+/// a sym could forge or collapse manifest lines), and distinct variants must
+/// return distinct syms or the manifest cannot tell them apart.
 pub trait Ty: Copy + PartialEq {
     fn sym(&self) -> &'static str;
 }
@@ -140,10 +143,13 @@ impl<T: Ty> CapTable<T> {
         Self { caps }
     }
 
-    /// Reject duplicate `(module, name)` declarations, and module/name
-    /// strings that are not plain identifiers (`[A-Za-z_][A-Za-z0-9_]*`) —
-    /// anything else could forge lines in the parity manifest, the exact
-    /// contract this crate exists to protect.
+    /// Reject duplicate `(module, name)` declarations, and any module, name,
+    /// or type symbol that is not a plain identifier
+    /// (`[A-Za-z_][A-Za-z0-9_]*`) — a stray `,`, `(`, or newline in ANY of
+    /// the strings the manifest interpolates could forge or collapse manifest
+    /// lines, the exact contract this crate exists to protect. (Type symbols
+    /// are as much a channel as names: a sym `"i64,i64"` on a one-param cap
+    /// renders byte-identically to two `"i64"` params.)
     pub fn validate(&self) -> Result<(), String> {
         for (i, cap) in self.iter() {
             for part in [cap.module, cap.name] {
@@ -154,11 +160,40 @@ impl<T: Ty> CapTable<T> {
                     ));
                 }
             }
+            for t in cap.params.iter().copied().chain(cap.result) {
+                if !is_ident(t.sym()) {
+                    return Err(format!(
+                        "capability `{}.{}`: type symbol `{}` is not an identifier",
+                        cap.module,
+                        cap.name,
+                        t.sym()
+                    ));
+                }
+            }
             for (j, other) in self.iter() {
                 if j > i && other.module == cap.module && other.name == cap.name {
                     return Err(format!(
                         "duplicate capability `{}.{}`",
                         cap.module, cap.name
+                    ));
+                }
+            }
+        }
+        Ok(())
+    }
+
+    /// [`validate`](Self::validate), plus: bare names must be unique ACROSS
+    /// modules. For languages whose call sites have a single flat namespace
+    /// (prooflite-style `name(args)`), [`find`](Self::find) is only sound
+    /// under this rule — enforce it here once instead of in every language.
+    pub fn validate_flat(&self) -> Result<(), String> {
+        self.validate()?;
+        for (i, cap) in self.iter() {
+            for (j, other) in self.iter() {
+                if j > i && other.name == cap.name {
+                    return Err(format!(
+                        "capability name `{}` appears in both `{}` and `{}`; flat call sites use bare names",
+                        cap.name, cap.module, other.module
                     ));
                 }
             }
@@ -222,19 +257,21 @@ impl<T: Ty> CapTable<T> {
         fnv1a_64(self.manifest().as_bytes())
     }
 
-    /// A markdown table for human documentation.
+    /// A markdown table for human documentation. Doc strings are sanitized
+    /// (`|` escaped, newlines flattened) so a description can never break or
+    /// forge table rows.
     pub fn docs_markdown(&self) -> String {
         let mut out = String::from(
             "| # | capability | signature | cost | description |\n|---|---|---|---|---|\n",
         );
         for (i, cap) in self.iter() {
+            let doc = cap.doc.replace(['\n', '\r'], " ").replace('|', "\\|");
             out.push_str(&format!(
-                "| {i} | `{}.{}` | `{}` | {} | {} |\n",
+                "| {i} | `{}.{}` | `{}` | {} | {doc} |\n",
                 cap.module,
                 cap.name,
                 cap.sig(),
-                cap.cost,
-                cap.doc
+                cap.cost
             ));
         }
         out
@@ -340,6 +377,72 @@ mod tests {
         ];
         let err = CapTable::new(DUP).validate().unwrap_err();
         assert!(err.contains("`a.x`"), "{err}");
+    }
+
+    #[test]
+    fn non_ident_type_symbols_fail_validation() {
+        // A comma-bearing sym collapses arity (one "i64,i64" param renders
+        // like two "i64" params); a newline sym forges lines. Reject the class.
+        #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+        struct Evil(&'static str);
+        impl Ty for Evil {
+            fn sym(&self) -> &'static str {
+                self.0
+            }
+        }
+        for bad in ["i64,i64", "", "()", ")->x cost=0\n1 evil.own()->(", "a b"] {
+            let caps: &'static [Cap<Evil>] = Box::leak(Box::new([Cap {
+                module: "m",
+                name: "f",
+                params: Box::leak(Box::new([Evil(bad)])),
+                result: None,
+                cost: 0,
+                doc: "",
+            }]));
+            let err = CapTable::new(caps).validate().unwrap_err();
+            assert!(err.contains("type symbol"), "`{bad}`: {err}");
+        }
+        assert!(TABLE.validate().is_ok()); // honest syms still pass
+    }
+
+    #[test]
+    fn validate_flat_rejects_cross_module_bare_name_dups() {
+        assert!(TABLE.validate_flat().is_ok());
+        static AMBIG: &[Cap<T>] = &[
+            Cap {
+                module: "a",
+                name: "x",
+                params: &[],
+                result: Some(T::I64),
+                cost: 0,
+                doc: "",
+            },
+            Cap {
+                module: "b",
+                name: "x",
+                params: &[],
+                result: Some(T::I64),
+                cost: 0,
+                doc: "",
+            },
+        ];
+        let err = CapTable::new(AMBIG).validate_flat().unwrap_err();
+        assert!(err.contains("`x`"), "{err}");
+    }
+
+    #[test]
+    fn docs_markdown_sanitizes_doc_strings() {
+        static SNEAKY: &[Cap<T>] = &[Cap {
+            module: "m",
+            name: "f",
+            params: &[],
+            result: Some(T::I64),
+            cost: 0,
+            doc: "pipe | here\n| forged | row | injected | here |",
+        }];
+        let docs = CapTable::new(SNEAKY).docs_markdown();
+        assert_eq!(docs.lines().count(), 3); // header + divider + ONE row
+        assert!(docs.contains("pipe \\| here"), "{docs}");
     }
 
     #[test]

@@ -69,11 +69,16 @@ crates/
 ├── fuellite/   Fuel (burn/Exhausted — pass ONE &mut Fuel into every
 │               sub-evaluation; never fork a child budget) + ByteBudget
 │               (grant/push_str clip-at-char-boundary/push_bytes)
-├── prooflite/  M1 reference language ON the kit (not in the facade): total,
-│               fuel-bounded; i64+bool, let/assign/print/if/repeat, checked
-│               arithmetic; run(src, Limits)→Outcome; codes lex E00xx/parse
-│               E01xx/eval E02xx. NB: binary folds charge the depth guard —
-│               the guard bounds parser recursion, NOT AST depth (GENESIS)
+├── caplite/    M2: Cap/CapTable as DATA. trait Ty (syms are ABI), check_args,
+│               validate/validate_flat (ident-only strings — EVERY interpolated
+│               string is an injection channel), docs_markdown, versioned
+│               parity manifest + FNV-1a-64 hash for the far side of a boundary
+├── prooflite/  M1+M2 reference language ON the kit (not in the facade):
+│               total, fuel-bounded; i64+bool, let/assign/print/if/repeat,
+│               checked arithmetic, host calls via caplite (Host trait,
+│               run_with_host — table SNAPSHOTTED once per run); codes lex
+│               E00xx/parse E01xx/eval-host E02xx. NB: binary folds charge the
+│               depth guard — it bounds parser recursion, NOT AST depth
 scripts/caps.sh       the constitution's teeth (LOC + CLAUDE.md caps)
 paper/OUTLINE.md      the paper IS the product; experiments land as sections
 GENESIS.md            origin, distilled parent learnings, roadmap M0–M5
@@ -97,9 +102,8 @@ bash scripts/caps.sh                                # the caps
 - **M0 (done at genesis):** kernel crates ported from the parents, tested.
 - **M1 (done):** `prooflite` — total reference language on the kit (lex→parse→
   fueled eval) + README example. Consumer: the paper's baseline.
-- **M2:** host-capability table as DATA (one table → typed sigs + import
-  emission + docs + cross-boundary parity checklist). Consumer: prooflite caps +
-  rustlite's hand-synced loader.rs↔cartridge-worker.js footgun.
+- **M2 (done):** `caplite` — capability tables as data (typed sigs, import
+  order, docs, parity manifest+hash). Consumer: prooflite hosts; later rustlite.
 - **M3:** port `WasmEmitter` + `EvmAsm` from the parents as independent crates
   (`evmlite` is free on crates.io; `wasmlite` is TAKEN — name the wasm one at
   M3). Consumer: M4 + eventual parent re-homing.

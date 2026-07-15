@@ -19,13 +19,17 @@ inter-agent commerce need.
 
 1. **Motivation** — verifiers as the durable layer of the agent stack; the
    trust-boundary argument (testimony vs physics).
-2. **The kit** — diaglite/lexlite/parselite/fuellite; invariants paid once;
-   the three-parent dedup evidence (missing depth guard, twice-fixed mojibake,
-   three fuels).
+2. **The kit** — diaglite/lexlite/parselite/fuellite/caplite; invariants paid
+   once; the three-parent dedup evidence (missing depth guard, twice-fixed
+   mojibake, three fuels, the triple-declared rustlite host table that caplite
+   kills as a class: one table → sigs, import order, docs, parity hash).
 3. **prooflite** — the reference total language; what "every program halts within
    its fuel" costs in expressiveness, measured. Landed 2026-07-15 (M1):
    1,545 LOC incl. tests (`bash scripts/caps.sh`), 28 tests + 1 doctest
-   (`cargo test -p prooflite`), one session on the kit.
+   (`cargo test -p prooflite`), one session on the kit. M2 (same day) added
+   the complete effect bound — host capabilities as a caplite table (checked
+   calls, per-cap fuel costs, parity manifest) — at 1,997/2,000 LOC: the
+   constitutional cap fired twice and was answered by shrinking both times.
 4. **Experiment: language-construction cost** — wall-clock + LOC + defect
    count building the Nth lite language on the kit vs the parents' hand-rolled
    baselines (rustlite 8.0K/99t, soliditylite 7.6K/159t, bashlite 3.1K/64t).

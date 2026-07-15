@@ -105,6 +105,7 @@ impl Scopes {
 pub(crate) fn eval(
     program: &Program,
     limits: &Limits,
+    caps: caplite::CapTable<Type>,
     host: &mut dyn Host,
 ) -> Result<Outcome, Diag> {
     let mut ev = Evaluator {
@@ -113,6 +114,7 @@ pub(crate) fn eval(
         out: String::new(),
         clipped: false,
         scopes: Scopes::new(),
+        caps,
         host,
     };
     for s in &program.stmts {
@@ -131,6 +133,9 @@ struct Evaluator<'h> {
     out: String,
     clipped: bool,
     scopes: Scopes,
+    /// The ONE validated snapshot of the host's table — never re-fetched, so
+    /// a host cannot serve `check_table` one table and dispatch another.
+    caps: caplite::CapTable<Type>,
     host: &'h mut dyn Host,
 }
 
@@ -282,9 +287,7 @@ impl Evaluator<'_> {
         args: &[Expr],
         span: Span,
     ) -> Result<Value, Diag> {
-        // Cap fields are `'static`, so copy them out — the table borrow must
-        // end before the `&mut` dispatch below.
-        let Some((idx, cap)) = self.host.caps().find(name) else {
+        let Some((idx, cap)) = self.caps.find(name) else {
             return Err(Diag::at_code(
                 codes::UNKNOWN_CAP,
                 format!("unknown capability `{name}` (the host table is the whole effect surface)"),
@@ -298,7 +301,13 @@ impl Evaluator<'_> {
         }
         let tys: Vec<Type> = vals.iter().map(Value::type_of).collect();
         caplite::check_args(params, &tys).map_err(|e| {
-            Diag::at_code(codes::CAP_ARGS, format!("capability `{name}` {e}"), span)
+            // A type mismatch carets the offending argument, like every other
+            // prooflite type error; an arity mismatch carets the whole call.
+            let sp = match e {
+                caplite::ArgError::Type { index, .. } if index < args.len() => args[index].span(),
+                _ => span,
+            };
+            Diag::at_code(codes::CAP_ARGS, format!("capability `{name}` {e}"), sp)
         })?;
         self.fuel
             .burn(cost)

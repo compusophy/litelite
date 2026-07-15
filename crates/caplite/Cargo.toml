@@ -7,6 +7,6 @@ license = "Apache-2.0"
 description = "Host-capability tables as data: one declarative table per language drives type checking, import emission, docs, and a machine-checkable cross-boundary parity manifest."
 repository = "https://github.com/compusophy/litelite"
 keywords = ["capability", "sandbox", "host", "manifest", "language"]
-categories = ["compilers", "no-std::no-alloc"]
+categories = ["compilers"]
 
 [dependencies]
