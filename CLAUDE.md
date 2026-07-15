@@ -72,6 +72,10 @@ crates/
 scripts/caps.sh       the constitution's teeth (LOC + CLAUDE.md caps)
 paper/OUTLINE.md      the paper IS the product; experiments land as sections
 GENESIS.md            origin, distilled parent learnings, roadmap M0–M5
+port/                 FROZEN parent snapshots for the M2/M3 ports (see
+                      port/PORT.md) — reference only, never compiled, delete
+                      each file when its port lands; exempt from caps
+
 ```
 
 ## Build / test
