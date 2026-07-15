@@ -1,0 +1,15 @@
+[package]
+name = "backtestlite"
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.85"
+license = "Apache-2.0"
+description = "The stratlite verifier: a deterministic integer backtest engine plus the generate-verify-keep predicate — compile, halt within fuel, survive the data, clear the activity gate."
+repository = "https://github.com/compusophy/litelite"
+keywords = ["backtest", "trading", "deterministic", "verification", "strategy"]
+categories = ["finance", "simulation"]
+
+[dependencies]
+diaglite = { path = "../diaglite", version = "0.0.1" }
+caplite = { path = "../caplite", version = "0.0.1" }
+stratlite = { path = "../stratlite", version = "0.0.1" }
