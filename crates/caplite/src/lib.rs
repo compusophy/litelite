@@ -140,9 +140,20 @@ impl<T: Ty> CapTable<T> {
         Self { caps }
     }
 
-    /// Reject duplicate `(module, name)` declarations.
+    /// Reject duplicate `(module, name)` declarations, and module/name
+    /// strings that are not plain identifiers (`[A-Za-z_][A-Za-z0-9_]*`) —
+    /// anything else could forge lines in the parity manifest, the exact
+    /// contract this crate exists to protect.
     pub fn validate(&self) -> Result<(), String> {
         for (i, cap) in self.iter() {
+            for part in [cap.module, cap.name] {
+                if !is_ident(part) {
+                    return Err(format!(
+                        "capability `{}.{}`: `{part}` is not an identifier",
+                        cap.module, cap.name
+                    ));
+                }
+            }
             for (j, other) in self.iter() {
                 if j > i && other.module == cap.module && other.name == cap.name {
                     return Err(format!(
@@ -228,6 +239,15 @@ impl<T: Ty> CapTable<T> {
         }
         out
     }
+}
+
+fn is_ident(s: &str) -> bool {
+    let mut bytes = s.bytes();
+    let Some(first) = bytes.next() else {
+        return false;
+    };
+    (first.is_ascii_alphabetic() || first == b'_')
+        && bytes.all(|b| b.is_ascii_alphanumeric() || b == b'_')
 }
 
 /// FNV-1a, 64-bit. Public so consumers can hash manifests received over a
@@ -320,6 +340,25 @@ mod tests {
         ];
         let err = CapTable::new(DUP).validate().unwrap_err();
         assert!(err.contains("`a.x`"), "{err}");
+    }
+
+    #[test]
+    fn non_ident_names_fail_validation() {
+        // A newline in a name could forge manifest lines; reject the class.
+        for bad in ["a\nb", "", "1x", "a.b", "a b", "café"] {
+            let caps: &'static [Cap<T>] = Box::leak(Box::new([Cap {
+                module: "ok",
+                name: Box::leak(bad.to_string().into_boxed_str()),
+                params: &[],
+                result: None,
+                cost: 0,
+                doc: "",
+            }]));
+            assert!(
+                CapTable::new(caps).validate().is_err(),
+                "`{bad}` should fail"
+            );
+        }
     }
 
     #[test]
