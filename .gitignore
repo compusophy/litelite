@@ -3,3 +3,7 @@ Cargo.lock
 # The release workflow extracts the tag's notes here. Ignored so cargo's
 # dirty-tree check (which counts untracked files) cannot fail the publish.
 /NOTES.md
+
+# CARGO_REGISTRY_TOKEN for a local `scripts/publish.sh --execute` — the resume
+# path when CI's rate limit outlasts a job. Same dirty-tree reason as above.
+/.env
