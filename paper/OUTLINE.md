@@ -23,10 +23,16 @@ inter-agent commerce need.
    the three-parent dedup evidence (missing depth guard, twice-fixed mojibake,
    three fuels).
 3. **prooflite** — the reference total language; what "every program halts within
-   its fuel" costs in expressiveness, measured.
+   its fuel" costs in expressiveness, measured. Landed 2026-07-15 (M1):
+   1,545 LOC incl. tests (`bash scripts/caps.sh`), 28 tests + 1 doctest
+   (`cargo test -p prooflite`), one session on the kit.
 4. **Experiment: language-construction cost** — wall-clock + LOC + defect
    count building the Nth lite language on the kit vs the parents' hand-rolled
    baselines (rustlite 8.0K/99t, soliditylite 7.6K/159t, bashlite 3.1K/64t).
+   First data point (prooflite, N=1): one session, 1,545 LOC, and a 13-finding
+   review whose two crash-grade defects were BOTH instances of one lesson —
+   the parser depth guard bounds recursion, not AST depth (GENESIS,
+   post-genesis lessons) — now paid once in the kit's consumption idiom.
 5. **Experiment: verified selection (stratlite)** — generate trading
    strategies with a model; verify (compile + halt + backtest); select.
    Compare against unstructured generation on held-out data. The

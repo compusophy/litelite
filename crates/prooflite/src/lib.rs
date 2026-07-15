@@ -9,18 +9,20 @@
 //! ## The language
 //!
 //! Values: 64-bit signed integers and booleans. Statements: `let x = e;`,
-//! `x = e;`, `print e;`, `if e { … } else { … }` (else-if chains allowed),
-//! `repeat e { … }` (count evaluated once, up front). Expressions: literals
-//! (`42`, `1_000`, `0xff`, `true`), variables, unary `- !`, binary `* / %`,
-//! `+ -`, `< <= > >=`, `== !=`, `&&`, `||` (both short-circuit), parentheses.
-//! Comments: `// line` and nested `/* block */`.
+//! `x = e;`, `print e;`, `if e { … } else { … }` (else-if chains of any
+//! length — they are flat, not nested), `repeat e { … }` (count evaluated
+//! once, up front). Expressions: literals (`42`, `1_000`, `0xff`, `true`),
+//! variables, unary `- !`, binary `* / %`, `+ -`, `< <= > >=`, `== !=`,
+//! `&&`, `||` (both short-circuit), parentheses. Comments: `// line` and
+//! nested `/* block */`.
 //!
 //! No functions, no recursion, no `while`: the only loop is `repeat` with an
 //! up-front count. Arithmetic is CHECKED — overflow, division/remainder by
 //! zero, and negation of `i64::MIN` are diagnostics, never wraparound (a
-//! wrong-but-clean result is worse than an error). `i64::MIN` itself is not
-//! writable as a literal (`-` is an operator, so the literal half overflows
-//! first) — reach it arithmetically if you need it.
+//! wrong-but-clean result is worse than an error). `/` truncates toward zero
+//! and `%` takes the dividend's sign: `(0-7)/2` is `-3`, `(0-7)%3` is `-1`.
+//! `i64::MIN` itself is not writable as a literal (`-` is an operator, so the
+//! literal half overflows first) — reach it arithmetically if you need it.
 //!
 //! ## The guarantees (what smallness buys)
 //!
@@ -31,8 +33,12 @@
 //! - **Bounded output.** `print` writes through a `ByteBudget`: past the cap
 //!   the output is clipped (never mid-char), the run keeps going, and
 //!   [`Outcome::output_clipped`] says so.
-//! - **Bounded nesting.** The parser rides parselite's depth guard, so deeply
-//!   nested source is an `E0102` diag — never a stack overflow.
+//! - **Bounded nesting.** The parser rides parselite's depth guard, and
+//!   left-associative operator chains charge it one entry per fold (each fold
+//!   deepens the AST spine the evaluator must later walk). Deep nesting AND
+//!   arbitrarily long operator chains are an `E0102` diag — never a stack
+//!   overflow, at parse, eval, or drop time. Statement sequences and else-if
+//!   chains are flat and unbounded.
 //! - **No effects.** prooflite has no host calls; its complete effect surface
 //!   is the returned `output` string. (M2 adds a capability table.)
 //!
@@ -61,12 +67,13 @@
 //! assert_eq!(err.code, Some(prooflite::codes::FUEL_EXHAUSTED));
 //! ```
 
-use diaglite::Diag;
-
 mod eval;
 mod lex;
 mod parse;
 
+// Re-export the diagnostic types every public signature speaks in, so a
+// consumer can name them without a separate diaglite dependency.
+pub use diaglite::{Diag, Span};
 pub use lex::{TokKind, Token, lex};
 pub use parse::{Program, parse};
 
@@ -303,6 +310,41 @@ mod tests {
         assert!(r.contains("line 2, col 11"), "{r}");
         assert!(r.contains("print x + true;"), "{r}");
         assert!(r.lines().last().unwrap().trim() == "^^^^", "{r}");
+    }
+
+    #[test]
+    fn division_truncates_toward_zero() {
+        // Rust semantics, promised in the crate docs.
+        assert_eq!(out("print (0 - 7) / 2;"), "-3\n");
+        assert_eq!(out("print (0 - 7) % 3;"), "-1\n");
+        assert_eq!(out("print 7 % (0 - 3);"), "1\n");
+    }
+
+    #[test]
+    fn operator_chains_count_toward_the_depth_cap() {
+        // Left-associative folds deepen the AST spine, so they charge the
+        // same guard as parens: long flat chains are an E0102 diag — never a
+        // stack overflow in eval or in drop glue.
+        let ok = format!("print {}0;", "1+".repeat(50));
+        assert_eq!(run(&ok, Limits::default()).unwrap().output, "50\n");
+        let deep = format!("print {}0;", "1+".repeat(500));
+        let e = run(&deep, Limits::default()).unwrap_err();
+        assert_eq!(e.code, Some(codes::TOO_DEEP));
+        // Parsing alone (then dropping the AST) is equally safe.
+        let e = parse(&format!("print {}true;", "false||".repeat(5000))).unwrap_err();
+        assert_eq!(e.code, Some(codes::TOO_DEEP));
+    }
+
+    #[test]
+    fn flat_else_if_chains_are_unbounded() {
+        // 300 links — flat in the source, flat in the AST, flat in guard depth.
+        let mut src = String::from("let x = 250;\nif x == 0 { print 0; }\n");
+        for i in 1..300 {
+            src.push_str(&format!("else if x == {i} {{ print {i}; }}\n"));
+        }
+        src.push_str("else { print 999; }\n");
+        let o = run(&src, Limits::default()).unwrap();
+        assert_eq!(o.output, "250\n");
     }
 
     #[test]

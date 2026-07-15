@@ -6,6 +6,10 @@ members = [
     "crates/fuellite",
     "crates/prooflite",
 ]
+# Plain `cargo test` / `cargo check` at the root must cover EVERY crate, not
+# just the facade's dependency graph — prooflite is a member the facade does
+# not depend on, and a green that skips it is a false green.
+default-members = ["crates/*", "."]
 
 [package]
 name = "litelite"

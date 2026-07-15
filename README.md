@@ -25,21 +25,50 @@ kit pays each invariant exactly once.
 | `parselite` | recursive-descent harness | the depth guard is the only way in — deeply nested input returns a `Diag`, never a stack abort |
 | `fuellite` | fuel + byte budgets | one shared budget across all composition — fractal recursion terminates by construction |
 | `litelite` | facade | `cargo add litelite` re-exports the four |
+| `prooflite` | the reference language (M1) | every program halts within its fuel — the kit's end-to-end proof |
 
 Zero external dependencies. Native + `wasm32-unknown-unknown`.
 
-```rust
-use litelite::{diag::Diag, fuel::Fuel, lex::Cursor, parse::TokCursor};
+## The proof: `prooflite`
 
-let mut fuel = Fuel::new(10_000);       // every loop iteration burns —
-fuel.burn(1)?;                          // the program halts, mechanically
+The smallest total language that exercises the whole kit — integers, booleans,
+`let` / `if` / `repeat` / `print`, checked arithmetic, every failure a coded,
+spanned diagnostic:
+
+```rust
+use prooflite::{Limits, run};
+
+let out = run(
+    "let acc = 1;
+     repeat 10 { acc = acc * 2; }
+     print acc;",
+    Limits::default(),
+)?;
+assert_eq!(out.output, "1024\n");
+```
+
+The headline guarantee — **any** prooflite program halts within its fuel, and
+the failure is a rendered diagnostic, not a hung process or a dead tab:
+
+```rust
+let spin = "repeat 1000000000 { }";
+let err = run(spin, Limits { fuel: 1_000, output_bytes: 0 }).unwrap_err();
+assert_eq!(err.code, Some(prooflite::codes::FUEL_EXHAUSTED));
+println!("{}", err.render(spin));
+```
+
+```text
+E0206: fuel exhausted [0..21]
+line 1, col 1
+  repeat 1000000000 { }
+  ^^^^^^^^^^^^^^^^^^^^^
 ```
 
 ## Status
 
-Genesis (M0). The kernel is ported and tested; the first language built on it
-(`prooflite`) is next. Roadmap and origin: [`GENESIS.md`](GENESIS.md).
-Research plan: [`paper/OUTLINE.md`](paper/OUTLINE.md).
+M1. The kernel (M0) plus `prooflite`, the total reference language proving the
+kit composes end-to-end. Next: capabilities as data (M2). Roadmap and origin:
+[`GENESIS.md`](GENESIS.md). Research plan: [`paper/OUTLINE.md`](paper/OUTLINE.md).
 
 This repo is constitutionally small: ≤2,000 LOC per crate, ≤25,000 total,
 CI-enforced (`scripts/caps.sh`). The two predecessor projects each became

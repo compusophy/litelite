@@ -173,9 +173,12 @@ fn int_literal(cur: &mut Cursor<'_>) -> Result<TokKind, Diag> {
         cur.bump();
         cur.bump();
         let Some(sp) = cur.eat_hex(true) else {
+            // Cover whatever follows (`0x_f`, `0xg`, bare `0x`) so the caret
+            // spans the whole malformed literal, not just the prefix.
+            cur.eat_while(ident_cont);
             return Err(Diag::at_code(
                 codes::BAD_INT,
-                "expected hex digits after `0x`",
+                "`0x` must be immediately followed by a hex digit",
                 cur.span_from(start),
             ));
         };
@@ -258,10 +261,19 @@ mod tests {
 
     #[test]
     fn malformed_and_oversized_literals_are_coded() {
-        for src in ["123abc", "0x", "0xg", "0x12g", "9223372036854775808"] {
+        for src in [
+            "123abc",
+            "0x",
+            "0xg",
+            "0x_f",
+            "0x12g",
+            "9223372036854775808",
+        ] {
             let e = lex(src).unwrap_err();
             assert_eq!(e.code, Some(codes::BAD_INT), "{src}: {e}");
-            assert_eq!(e.span.unwrap().start, 0, "{src}");
+            // The span covers the WHOLE malformed literal, whatever the shape.
+            let sp = e.span.unwrap();
+            assert_eq!((sp.start, sp.end), (0, src.len()), "{src}: {e}");
         }
     }
 

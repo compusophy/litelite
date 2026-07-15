@@ -70,6 +70,18 @@ impl Expr {
             | Expr::Binary(_, _, _, sp) => *sp,
         }
     }
+
+    /// Replace the node's span — used to widen a parenthesized expression to
+    /// its parens, so spans joined from it always cover balanced source text.
+    fn with_span(self, sp: Span) -> Expr {
+        match self {
+            Expr::Int(v, _) => Expr::Int(v, sp),
+            Expr::Bool(b, _) => Expr::Bool(b, sp),
+            Expr::Var(n, _) => Expr::Var(n, sp),
+            Expr::Unary(op, e, _) => Expr::Unary(op, e, sp),
+            Expr::Binary(op, l, r, _) => Expr::Binary(op, l, r, sp),
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -90,8 +102,10 @@ pub(crate) enum Stmt {
         span: Span,
     },
     If {
-        cond: Expr,
-        then: Vec<Stmt>,
+        /// The `if` and every `else if` link, in source order: (condition,
+        /// block). Flat on purpose — a chain must not deepen the AST.
+        arms: Vec<(Expr, Vec<Stmt>)>,
+        /// The final `else` block; empty when absent.
         els: Vec<Stmt>,
         span: Span,
     },
@@ -189,25 +203,31 @@ fn stmt(src: &str, t: &mut Toks<'_>) -> PResult<Stmt> {
                 })
             }
             TokKind::If => {
-                t.advance();
-                let cond = expr(src, t)?;
-                let (then, then_end) = block(src, t)?;
-                let (els, end) = if t.eat(|x| x.kind == TokKind::Else).is_some() {
-                    if t.peek().kind == TokKind::If {
-                        // `else if …` is sugar: an else-branch of one statement.
-                        let chained = stmt(src, t)?;
-                        let end = chained.span().end;
-                        (vec![chained], end)
-                    } else {
-                        let (body, end) = block(src, t)?;
-                        (body, end.end)
+                // The whole `if / else if / … / else` chain parses ITERATIVELY
+                // inside this one statement's guard entry: the chain is flat in
+                // the source, flat in the AST, and must cost flat guard depth.
+                let mut arms = Vec::new();
+                let mut els = Vec::new();
+                let mut end;
+                loop {
+                    t.advance(); // the `if`
+                    let cond = expr(src, t)?;
+                    let (body, bend) = block(src, t)?;
+                    end = bend.end;
+                    arms.push((cond, body));
+                    if t.eat(|x| x.kind == TokKind::Else).is_none() {
+                        break;
                     }
-                } else {
-                    (Vec::new(), then_end.end)
-                };
+                    if t.peek().kind == TokKind::If {
+                        continue;
+                    }
+                    let (body, bend) = block(src, t)?;
+                    els = body;
+                    end = bend.end;
+                    break;
+                }
                 Ok(Stmt::If {
-                    cond,
-                    then,
+                    arms,
                     els,
                     span: Span::new(tok.span.start, end),
                 })
@@ -268,10 +288,28 @@ fn binary(src: &str, t: &mut Toks<'_>, level: usize) -> PResult<Expr> {
     if level == LADDER.len() {
         return unary(src, t);
     }
+    // The fold below is iterative, but each fold deepens the AST's left spine
+    // by one Binary node — and the evaluator (and drop glue) later recurse one
+    // frame per node. So every fold charges one kit guard entry, exactly like
+    // a paren level; the entries release together when this level completes.
+    // Without this, a flat `1+1+…+1` is O(1) guard depth at parse time yet
+    // overflows the stack at eval/drop time — the guard bounds parser
+    // recursion, not AST depth, unless folds are charged too.
+    let mut entered = 0usize;
+    let r = fold_level(src, t, level, &mut entered);
+    for _ in 0..entered {
+        t.leave();
+    }
+    r
+}
+
+fn fold_level(src: &str, t: &mut Toks<'_>, level: usize, entered: &mut usize) -> PResult<Expr> {
     let mut lhs = binary(src, t, level + 1)?;
     'level: loop {
         for &(kind, op) in LADDER[level] {
             if t.peek().kind == kind {
+                *entered += 1; // enter() counts even when it trips; binary() leaves
+                t.enter()?;
                 t.advance();
                 let rhs = binary(src, t, level + 1)?;
                 let span = Span::new(lhs.span().start, rhs.span().end);
@@ -320,8 +358,8 @@ fn primary(src: &str, t: &mut Toks<'_>) -> PResult<Expr> {
         TokKind::LParen => {
             t.advance();
             let inner = expr(src, t)?;
-            expect(src, t, TokKind::RParen, "`)`")?;
-            Ok(inner)
+            let rparen = expect(src, t, TokKind::RParen, "`)`")?;
+            Ok(inner.with_span(Span::new(tok.span.start, rparen.end)))
         }
         _ => Err(unexpected(src, t, "an expression")),
     }
@@ -353,8 +391,8 @@ fn unexpected(src: &str, t: &Toks<'_>, what: &str) -> PErr {
 fn describe(src: &str, tok: &Token) -> String {
     let sym = match tok.kind {
         TokKind::Eof => return "end of input".to_string(),
-        TokKind::Int(v) => return format!("`{v}`"),
-        TokKind::Ident => return format!("`{}`", text(src, tok.span)),
+        // Quote the source text, not the decoded value — `0xff` is not `255`.
+        TokKind::Int(_) | TokKind::Ident => return format!("`{}`", text(src, tok.span)),
         TokKind::True => "true",
         TokKind::False => "false",
         TokKind::Let => "let",
@@ -411,13 +449,33 @@ mod tests {
     }
 
     #[test]
-    fn else_if_desugars_to_a_nested_if() {
-        let p = parse("if a { } else if b { } else { }").unwrap();
-        let Stmt::If { els, .. } = &p.stmts[0] else {
+    fn else_if_chains_are_flat_in_the_ast() {
+        let p = parse("if a { } else if b { } else { print 1; }").unwrap();
+        let Stmt::If { arms, els, .. } = &p.stmts[0] else {
             panic!()
         };
+        assert_eq!(arms.len(), 2);
         assert_eq!(els.len(), 1);
-        assert!(matches!(els[0], Stmt::If { .. }));
+        let p = parse("if a { }").unwrap();
+        let Stmt::If { arms, els, .. } = &p.stmts[0] else {
+            panic!()
+        };
+        assert_eq!((arms.len(), els.len()), (1, 0));
+    }
+
+    #[test]
+    fn parenthesized_spans_include_the_parens() {
+        let p = parse("print (1) == (true);").unwrap();
+        let Stmt::Print { value, .. } = &p.stmts[0] else {
+            panic!()
+        };
+        let sp = value.span();
+        assert_eq!((sp.start, sp.end), (6, 19)); // covers `(1) == (true)`
+        let Expr::Binary(_, lhs, _, _) = value else {
+            panic!()
+        };
+        let l = lhs.span();
+        assert_eq!((l.start, l.end), (6, 9)); // covers `(1)`, both parens
     }
 
     #[test]

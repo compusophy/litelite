@@ -1,8 +1,11 @@
 //! prooflite evaluator: a fueled tree-walk. One `Fuel` tank and one
 //! `ByteBudget` serve the whole program — every statement, expression node,
 //! and `repeat` iteration burns 1 unit, so "halts within `limits.fuel` steps"
-//! is mechanical. Evaluation recursion needs no guard of its own: the parser's
-//! depth cap already bounds the AST.
+//! is mechanical. Evaluation recursion needs no guard of its own — but only
+//! because the parser bounds AST DEPTH, not just its own recursion: nesting
+//! is guarded, binary folds charge the guard per spine node, and if/else-if
+//! chains are flat vectors. Whatever the parser accepts, eval (and drop glue)
+//! can walk within a bounded stack.
 
 use diaglite::{Diag, Span};
 use fuellite::{ByteBudget, Fuel};
@@ -154,15 +157,13 @@ impl Evaluator {
                 }
                 Ok(())
             }
-            Stmt::If {
-                cond, then, els, ..
-            } => {
-                let branch = if self.bool_expr(cond, "`if` condition")? {
-                    then
-                } else {
-                    els
-                };
-                self.block(branch)
+            Stmt::If { arms, els, .. } => {
+                for (cond, body) in arms {
+                    if self.bool_expr(cond, "`if` condition")? {
+                        return self.block(body);
+                    }
+                }
+                self.block(els)
             }
             Stmt::Repeat { count, body, span } => {
                 // The count is evaluated ONCE, up front — the loop bound cannot

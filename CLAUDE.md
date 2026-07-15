@@ -69,6 +69,11 @@ crates/
 ├── fuellite/   Fuel (burn/Exhausted — pass ONE &mut Fuel into every
 │               sub-evaluation; never fork a child budget) + ByteBudget
 │               (grant/push_str clip-at-char-boundary/push_bytes)
+├── prooflite/  M1 reference language ON the kit (not in the facade): total,
+│               fuel-bounded; i64+bool, let/assign/print/if/repeat, checked
+│               arithmetic; run(src, Limits)→Outcome; codes lex E00xx/parse
+│               E01xx/eval E02xx. NB: binary folds charge the depth guard —
+│               the guard bounds parser recursion, NOT AST depth (GENESIS)
 scripts/caps.sh       the constitution's teeth (LOC + CLAUDE.md caps)
 paper/OUTLINE.md      the paper IS the product; experiments land as sections
 GENESIS.md            origin, distilled parent learnings, roadmap M0–M5
@@ -90,8 +95,8 @@ bash scripts/caps.sh                                # the caps
 ## Roadmap (detail in GENESIS.md)
 
 - **M0 (done at genesis):** kernel crates ported from the parents, tested.
-- **M1:** `prooflite` — a tiny total reference language ON the kit (lex→parse→
-  fueled eval), proving the kit end-to-end. Consumer: the paper's baseline.
+- **M1 (done):** `prooflite` — total reference language on the kit (lex→parse→
+  fueled eval) + README example. Consumer: the paper's baseline.
 - **M2:** host-capability table as DATA (one table → typed sigs + import
   emission + docs + cross-boundary parity checklist). Consumer: prooflite caps +
   rustlite's hand-synced loader.rs↔cartridge-worker.js footgun.

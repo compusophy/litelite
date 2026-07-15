@@ -95,7 +95,7 @@ lesson "loop breadth, not one subsystem — rustlite=toys" is remembered here.
 
 - **M0 — genesis (done).** The four kernel crates + facade, tested, wasm-green,
   caps enforced, pushed.
-- **M1 — `prooflite`, the reference language.** Smallest total language that
+- **M1 — `prooflite`, the reference language (done 2026-07-15).** Smallest total language that
   exercises the whole kit: expressions, let, if, bounded loops; lex → parse →
   fueled tree-walk eval; every error a coded spanned Diag. Deliverable
   includes the kit's first external-shaped README example. Consumer: the
@@ -120,6 +120,20 @@ lesson "loop breadth, not one subsystem — rustlite=toys" is remembered here.
   migration must be a net simplification there or it doesn't happen — this is
   the honest test of whether the kit carries its weight (the "seam-tax"
   question, answered by reality instead of argument).
+
+## Post-genesis lessons
+
+- **M1 (2026-07-15): the depth guard bounds parser recursion, not AST depth.**
+  prooflite's review caught a process-killing stack overflow the tests missed:
+  left-associative operator chains (`1+1+…+1`) fold ITERATIVELY in the parser
+  (O(1) guard entries) yet build an AST spine the evaluator — and even the drop
+  glue — later recurse down, so a flat 50K-term source aborted the process with
+  fuel utterly unable to help. Fix: every fold charges one guard entry, so spine
+  depth obeys the same cap as nesting; and else-if chains became a flat
+  `Vec<(cond, block)>` so common flat shapes stay unbounded without deepening
+  the AST. Any language on the kit must either charge iterative AST-deepening
+  constructs to the guard or keep them flat. (Found by a 6-finder / 3-refuter
+  adversarial review: 16 raw → 13 confirmed findings, 2 crash-grade.)
 
 ## The three questions only reality can answer
 
