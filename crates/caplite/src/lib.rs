@@ -129,6 +129,10 @@ impl<T: Ty> std::fmt::Display for ArgError<T> {
     }
 }
 
+// `Error: Debug`, and `Ty` does not require it — so the bound is `Ty + Debug`
+// rather than widening `Ty` itself, which would constrain every implementor.
+impl<T: Ty + std::fmt::Debug> std::error::Error for ArgError<T> {}
+
 /// A capability table: the single declaration everything else derives from.
 /// Declared order is import order; the index of a cap is stable ABI.
 #[derive(Debug, Clone, Copy)]

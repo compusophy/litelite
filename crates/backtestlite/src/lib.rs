@@ -34,8 +34,7 @@
 //! failures are structured ([`Reject::Gate`]), not diags.
 //!
 //! ```
-//! use backtestlite::{Costs, Gate, verify};
-//! use stratlite::{Candle, Limits};
+//! use backtestlite::{Candle, Costs, Gate, Limits, verify};
 //!
 //! // A sawtooth market with drift — enough structure that crossovers trade.
 //! let candles: Vec<Candle> = (0..128i64)

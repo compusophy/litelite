@@ -51,6 +51,27 @@ pub enum ExecError {
     OutOfGas,
 }
 
+impl std::fmt::Display for ExecError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ExecError::Revert(d) => write!(f, "REVERT with {} bytes of data", d.len()),
+            ExecError::UnknownOpcode(b) => write!(f, "opcode 0x{b:02x} is outside the subset"),
+            ExecError::Unsupported(b) => {
+                write!(
+                    f,
+                    "opcode 0x{b:02x} needs a dependency the kit does not take"
+                )
+            }
+            ExecError::StackUnderflow => write!(f, "stack underflow"),
+            ExecError::StackOverflow => write!(f, "stack exceeded the EVM 1024-item limit"),
+            ExecError::BadJumpDest(pc) => write!(f, "jump target {pc} is not a JUMPDEST"),
+            ExecError::OutOfGas => write!(f, "the step budget or memory cap was exhausted"),
+        }
+    }
+}
+
+impl std::error::Error for ExecError {}
+
 /// The result of a successful call: the `RETURN`ed data (possibly empty).
 pub type ExecResult = Result<Vec<u8>, ExecError>;
 
