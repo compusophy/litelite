@@ -44,13 +44,14 @@ Zero external dependencies. Native + `wasm32-unknown-unknown`.
 cargo add litelite      # the kernel, re-exported: diag lex parse fuel cap evm wasm
 ```
 
-Every crate also stands alone — take only what you need:
+Or add exactly what you need — each crate carries its own dependencies and
+re-exports the types its API speaks, so one `cargo add` is always enough:
 
 ```sh
 cargo add fuellite                     # just the termination proof
 cargo add diaglite lexlite parselite   # just the front-end kernel
 cargo add prooflite                    # a total language, ready to embed
-cargo add stratlite backtestlite       # strategies + their verifier
+cargo add backtestlite                 # strategies + their verifier
 ```
 
 ## The proof: `prooflite`
@@ -67,7 +68,8 @@ let out = run(
      repeat 10 { acc = acc * 2; }
      print acc;",
     Limits::default(),
-)?;
+)
+.unwrap();
 assert_eq!(out.output, "1024\n");
 ```
 

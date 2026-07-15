@@ -7,7 +7,9 @@
 //!
 //! Zero dependencies beyond `diaglite`. Native + wasm32.
 
-use diaglite::Span;
+// `Tok::span`, `enter`, and `guarded`'s error all speak Span, so
+// `cargo add parselite` alone must be enough to name one.
+pub use diaglite::Span;
 
 /// Hard cap on recursive-descent nesting depth. Purpose-sized languages run on
 /// agent/LLM-authored source, often inside a browser wasm stack; without a cap,

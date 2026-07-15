@@ -6,7 +6,9 @@
 //!
 //! Zero dependencies beyond `diaglite`. Native + wasm32.
 
-use diaglite::Span;
+// Every primitive here hands back a Span, so `cargo add lexlite` alone must
+// be enough to name one.
+pub use diaglite::Span;
 
 /// A byte cursor over source text. The kit's primitives return [`Span`]s so
 /// every token a language builds is location-pinned by construction.

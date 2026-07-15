@@ -57,10 +57,14 @@
 //! assert_eq!(again.unwrap().equity_hash, report.equity_hash);
 //! ```
 
-use diaglite::Diag;
-use stratlite::{Candle, Limits, Strategy, compile};
+use stratlite::compile;
 
 mod engine;
+
+// The whole API speaks these: `cargo add backtestlite` alone must be enough
+// to name what verify()/backtest() take and return.
+pub use diaglite::{Diag, Span};
+pub use stratlite::{Candle, Limits, Session, Signal, Strategy};
 
 /// Price/volume cap (2^53): honest strategy arithmetic on validated prices
 /// provably has i64 headroom, and full-lookback window sums fit i128.
@@ -137,6 +141,17 @@ impl std::fmt::Display for Reject {
     }
 }
 
+// The error of the headline `verify()`: a selection harness must be able to
+// `?` it like every other error in the kit (Diag, AsmError, BuildError, …).
+impl std::error::Error for Reject {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            Reject::Compile(d) | Reject::Run(d) => Some(d),
+            Reject::Gate(_) => None,
+        }
+    }
+}
+
 /// A failed activity gate, structured for feedback loops.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct GateFail {
@@ -151,6 +166,8 @@ impl std::fmt::Display for GateFail {
         write!(f, "{}: {} < the required {}", self.what, self.got, self.min)
     }
 }
+
+impl std::error::Error for GateFail {}
 
 /// The DATA band: these fault the candles (or the accounting they force),
 /// not the source, so they are spanless — the bar index rides the message.

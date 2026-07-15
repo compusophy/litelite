@@ -84,15 +84,20 @@ pub struct LogEntry {
     pub data: Vec<u8>,
 }
 
-/// Hard cap on executed instructions — a runaway/loop guard.
-const STEP_BUDGET: usize = 1_000_000;
+// The oracle's three hard bounds are public: they are what makes hostile
+// bytecode an error instead of a hang, so a consumer is entitled to know
+// them (and the module docs above link to them).
+
+/// Hard cap on executed instructions — a runaway/loop guard. Past it,
+/// execution stops with [`ExecError::OutOfGas`].
+pub const STEP_BUDGET: usize = 1_000_000;
 
 /// Hard cap on memory growth (16 MiB) — a huge required end offset is a
 /// clean [`ExecError::OutOfGas`] instead of a giant allocation.
-const MAX_MEMORY: usize = 16 * 1024 * 1024;
+pub const MAX_MEMORY: usize = 16 * 1024 * 1024;
 
-/// The real EVM's stack-depth limit.
-const MAX_STACK: usize = 1024;
+/// The real EVM's stack-depth limit; past it, [`ExecError::StackOverflow`].
+pub const MAX_STACK: usize = 1024;
 
 impl Contract {
     /// "Deploy" INIT code EVM-style: run it with empty calldata, and the

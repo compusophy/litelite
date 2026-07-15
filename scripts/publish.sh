@@ -28,19 +28,36 @@ version=$(cargo tree --workspace --depth 0 2>/dev/null |
 [ -n "$members" ] && [ -n "$version" ] || { echo "FAIL: cargo told us nothing"; exit 1; }
 echo "litelite $version — $(wc -w <<<"$members") crates"
 
+# Who we expect to own these names, derived from the repository field so it
+# cannot drift from the manifest.
+repo=$(grep -m1 '^repository = ' Cargo.toml | cut -d'"' -f2)
+owner=$(basename "$(dirname "$repo")")
+[ -n "$owner" ] || { echo "FAIL: no repository owner in Cargo.toml"; exit 1; }
+
 # Exclude what is already live. Order-independent, so it cannot disagree with
 # cargo's ordering; it only ever removes work. (crates.io 403s any request
 # without an identifying User-Agent — its documented policy.)
-ua="litelite-publish (https://github.com/compusophy/litelite)"
+ua="litelite-publish ($repo)"
+get() { curl -s --max-time 20 --retry 3 --retry-connrefused -A "$ua" "$@"; }
+
 excludes=()
 pending=0
 for name in $members; do
-  code=$(curl -s -o /dev/null -w '%{http_code}' -A "$ua" \
+  code=$(get -o /dev/null -w '%{http_code}' \
     "https://crates.io/api/v1/crates/$name/$version")
   case "$code" in
     200)
-      printf '  %-14s already on crates.io\n' "$name"
-      excludes+=(--exclude "$name")
+      # 200 only means the name@version EXISTS — it says nothing about who
+      # published it. Excluding a squatted name would report someone else's
+      # crate as our success, so prove it is ours before skipping it.
+      if get "https://crates.io/api/v1/crates/$name/owners" |
+        grep -qi "\"login\"[[:space:]]*:[[:space:]]*\"$owner\""; then
+        printf '  %-14s already ours on crates.io\n' "$name"
+        excludes+=(--exclude "$name")
+      else
+        echo "FAIL: $name $version exists on crates.io and $owner does not own it"
+        exit 1
+      fi
       ;;
     404)
       printf '  %-14s to publish\n' "$name"
@@ -54,7 +71,7 @@ for name in $members; do
 done
 
 if [ "$pending" -eq 0 ]; then
-  echo "nothing to do: every crate is published at $version"
+  echo "nothing to do: every crate is already ours at $version (bump it to ship)"
   exit 0
 fi
 
