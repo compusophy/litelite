@@ -1,0 +1,12 @@
+[package]
+name = "modlite"
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.85"
+license = "Apache-2.0"
+description = "A wasm binary module builder: LEB128, section framing, function/import/export/memory/data assembly with index discipline. The mechanical layer of a wasm backend, no language lowering."
+repository = "https://github.com/compusophy/litelite"
+keywords = ["wasm", "webassembly", "emitter", "codegen", "binary"]
+categories = ["compilers", "wasm"]
+
+[dependencies]

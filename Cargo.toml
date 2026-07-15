@@ -6,6 +6,8 @@ members = [
     "crates/fuellite",
     "crates/caplite",
     "crates/prooflite",
+    "crates/evmlite",
+    "crates/modlite",
 ]
 # Plain `cargo test` / `cargo check` at the root must cover EVERY crate, not
 # just the facade's dependency graph — prooflite is a member the facade does
@@ -29,3 +31,5 @@ lexlite = { path = "crates/lexlite", version = "0.0.1" }
 parselite = { path = "crates/parselite", version = "0.0.1" }
 fuellite = { path = "crates/fuellite", version = "0.0.1" }
 caplite = { path = "crates/caplite", version = "0.0.1" }
+evmlite = { path = "crates/evmlite", version = "0.0.1" }
+modlite = { path = "crates/modlite", version = "0.0.1" }

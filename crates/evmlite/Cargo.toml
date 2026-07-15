@@ -1,0 +1,12 @@
+[package]
+name = "evmlite"
+version = "0.0.1"
+edition = "2024"
+rust-version = "1.85"
+license = "Apache-2.0"
+description = "EVM bytecode assembler (two-pass label resolution, minimal-width push, init wrapper) plus a minimal dependency-free EVM-subset interpreter as its diff-oracle."
+repository = "https://github.com/compusophy/litelite"
+keywords = ["evm", "assembler", "bytecode", "ethereum", "interpreter"]
+categories = ["compilers", "emulators"]
+
+[dependencies]

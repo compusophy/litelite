@@ -16,13 +16,18 @@
 //! - [`fuel`] — fuel + byte budgets: mechanical termination and output bounds
 //! - [`cap`] — host-capability tables as data: one declaration drives
 //!   checking, import emission, docs, and cross-boundary parity manifests
+//! - [`evm`] / [`wasm`] — the two INDEPENDENT emitters (constitution rule 4:
+//!   absolute jumps and structured control flow share no abstraction):
+//!   an EVM assembler + diff-oracle interpreter, and a wasm module builder
 //!
 //! Zero external dependencies. Native + wasm32.
 
 pub use caplite as cap;
 pub use diaglite as diag;
+pub use evmlite as evm;
 pub use fuellite as fuel;
 pub use lexlite as lex;
+pub use modlite as wasm;
 pub use parselite as parse;
 
 #[cfg(test)]
@@ -35,5 +40,7 @@ mod tests {
         assert!(crate::lex::Cursor::new("a").peek().is_some());
         assert_eq!(crate::parse::DEFAULT_MAX_DEPTH, 96);
         assert_eq!(crate::cap::fnv1a_64(b""), 0xcbf2_9ce4_8422_2325);
+        assert_eq!(crate::evm::asm::op::JUMPDEST, 0x5B);
+        assert_eq!(crate::wasm::op::END, 0x0B);
     }
 }
