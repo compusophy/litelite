@@ -1,2 +1,5 @@
 /target
 Cargo.lock
+# The release workflow extracts the tag's notes here. Ignored so cargo's
+# dirty-tree check (which counts untracked files) cannot fail the publish.
+/NOTES.md

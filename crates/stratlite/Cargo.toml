@@ -1,16 +1,17 @@
 [package]
 name = "stratlite"
-version = "0.0.1"
-edition = "2024"
-rust-version = "1.85"
-license = "Apache-2.0"
-description = "A total, fuel-bounded, backtestable trading-strategy language: every decision halts within its fuel, look-ahead is unrepresentable, and every backtest is one reproducible integer hash."
-repository = "https://github.com/compusophy/litelite"
-keywords = ["language", "trading", "backtest", "sandbox", "deterministic"]
+description = "A total, fuel-bounded trading-strategy language: every decision halts within its fuel and look-ahead is unrepresentable. Pairs with backtestlite, its deterministic verifier."
+keywords = ["language", "trading", "strategy", "sandbox", "deterministic"]
 categories = ["compilers", "finance"]
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+readme.workspace = true
 
 [dependencies]
-diaglite = { path = "../diaglite", version = "0.0.1" }
-lexlite = { path = "../lexlite", version = "0.0.1" }
-parselite = { path = "../parselite", version = "0.0.1" }
-fuellite = { path = "../fuellite", version = "0.0.1" }
+diaglite.workspace = true
+lexlite.workspace = true
+parselite.workspace = true
+fuellite.workspace = true

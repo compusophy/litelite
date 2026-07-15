@@ -16,22 +16,46 @@ members = [
 # not depend on, and a green that skips it is a false green.
 default-members = ["crates/*", "."]
 
-[package]
-name = "litelite"
-version = "0.0.1"
+# Every crate inherits these. The version lives HERE, once: a release is a
+# one-line edit, and cargo itself rejects drift between it and the
+# [workspace.dependencies] versions below (a publish would fail).
+[workspace.package]
+version = "0.1.0"
 edition = "2024"
 rust-version = "1.85"
 license = "Apache-2.0"
-description = "A kit for purpose-sized languages: buy total verification with smallness. Diagnostics, lexing, parsing, and fuel — the invariants paid once."
 repository = "https://github.com/compusophy/litelite"
+readme = "README.md"
+
+# Internal deps, declared once. `version` + `path` means a git checkout builds
+# against the local crate while a published crate depends on the registry one.
+[workspace.dependencies]
+diaglite = { path = "crates/diaglite", version = "0.1.0" }
+lexlite = { path = "crates/lexlite", version = "0.1.0" }
+parselite = { path = "crates/parselite", version = "0.1.0" }
+fuellite = { path = "crates/fuellite", version = "0.1.0" }
+caplite = { path = "crates/caplite", version = "0.1.0" }
+evmlite = { path = "crates/evmlite", version = "0.1.0" }
+modlite = { path = "crates/modlite", version = "0.1.0" }
+stratlite = { path = "crates/stratlite", version = "0.1.0" }
+
+[package]
+name = "litelite"
+description = "A kit for purpose-sized languages: buy total verification with smallness. Diagnostics, lexing, parsing, fuel, and capability tables — the invariants paid once."
 keywords = ["language", "compiler", "sandbox", "fuel", "verification"]
 categories = ["compilers", "parser-implementations"]
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+readme.workspace = true
 
 [dependencies]
-diaglite = { path = "crates/diaglite", version = "0.0.1" }
-lexlite = { path = "crates/lexlite", version = "0.0.1" }
-parselite = { path = "crates/parselite", version = "0.0.1" }
-fuellite = { path = "crates/fuellite", version = "0.0.1" }
-caplite = { path = "crates/caplite", version = "0.0.1" }
-evmlite = { path = "crates/evmlite", version = "0.0.1" }
-modlite = { path = "crates/modlite", version = "0.0.1" }
+diaglite.workspace = true
+lexlite.workspace = true
+parselite.workspace = true
+fuellite.workspace = true
+caplite.workspace = true
+evmlite.workspace = true
+modlite.workspace = true

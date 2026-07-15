@@ -1,0 +1,3 @@
+# LF everywhere: the constitution's caps measure bytes, and a CRLF checkout
+# inflates CLAUDE.md past its cap on Windows for no semantic reason.
+* text=auto eol=lf

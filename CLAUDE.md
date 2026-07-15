@@ -2,8 +2,8 @@
 
 Read this first. It is the whole operating map; `GENESIS.md` is the origin
 story + full roadmap; `paper/OUTLINE.md` is the research plan. This repo is
-SELF-CONTAINED — never read the parent `localharness` repo into context (131K
-LOC; the knowledge that matters was distilled here at genesis).
+SELF-CONTAINED — never read the parent `localharness` repo into context; its
+knowledge was distilled here at genesis.
 
 ## What this is
 
@@ -39,8 +39,7 @@ story). This kit pays each invariant once.
 5. **wasm32 always green**: `cargo check --target wasm32-unknown-unknown`
    passes at every commit. No cfg-gated escape hatches in kit crates.
 6. **Narrative lives in GENESIS.md and the paper, never in code.** Crate and
-   symbol names stay boring and literal. (The predecessor project named nine
-   crates after a consciousness metaphor; 49% of its commits say "fix".)
+   symbol names stay boring and literal.
 7. **Naming: NO dashes, lite goes LAST.** Crates are single dashless words
    with the `lite` suffix (`diaglite`, `lexlite`, `parselite`, `fuellite`;
    languages too: `bashlite`, `prooflite`, `stratlite`). The facade alone is
@@ -94,38 +93,39 @@ crates/
 │               (FNV over the final curve), Gate, verify() →
 │               Reject{Compile,Run,Gate} — paper §5's predicate. Codes E03xx
 scripts/caps.sh       the constitution's teeth (LOC + CLAUDE.md caps)
+scripts/publish.sh    dry run by default, --execute uploads; resumable (crates.io
+                      rate-limits NEW crates: a first publish can stop partway)
+CHANGELOG.md          ONE version across every crate; a tag's notes come from here
 paper/OUTLINE.md      the paper IS the product; experiments land as sections
 GENESIS.md            origin, distilled parent learnings, roadmap M0–M5
 
 ```
 
-(port/ is gone: all five parent snapshots were consumed and deleted as their
-ports landed.)
-
-## Build / test
+## Build / test / release
 
 ```sh
 cargo test                                          # workspace + facade
 cargo check --target wasm32-unknown-unknown         # must stay green
 cargo fmt --check && cargo clippy -- -D warnings
 bash scripts/caps.sh                                # the caps
+bash scripts/publish.sh                             # rehearse a release
 ```
 
-## Roadmap (detail in GENESIS.md)
+Version lives ONCE in `[workspace.package]` (cargo rejects drift against
+`[workspace.dependencies]`). Tag `vX.Y.Z` → `release.yml`: every gate,
+tag==version, CHANGELOG has that section, publish, GitHub release. Needs
+`CARGO_REGISTRY_TOKEN`.
 
-- **M0 (done at genesis):** kernel crates ported from the parents, tested.
-- **M1 (done):** `prooflite` — total reference language on the kit (lex→parse→
-  fueled eval) + README example. Consumer: the paper's baseline.
-- **M2 (done):** `caplite` — capability tables as data (typed sigs, import
-  order, docs, parity manifest+hash). Consumer: prooflite hosts; later rustlite.
-- **M3 (done):** the emitters as independent crates: `evmlite` (asm + oracle)
-  and `modlite` (wasm module builder; wasmlite was taken). Consumer: M4 +
-  eventual parent re-homing.
-- **M4 (done):** `stratlite` + `backtestlite` — the strategy language and its
-  verifier. Consumer: the trader agent + paper §5. The experiment RUN (model +
-  real market data) is external and still open.
+## Roadmap (each milestone's consumer + lesson: GENESIS.md)
+
+- **M0–M4 (done, published as 0.1.0):** the kernel, then `prooflite`,
+  `caplite`, the emitters, `stratlite`+`backtestlite` — the Map above IS the
+  result; every crate there is one of them.
 - **M5:** re-home bashlite onto the kit inside localharness (it gains the
-  depth guard + spanned errors). Consumer: localharness, −LOC there.
+  depth guard + spanned errors). Consumer: localharness, −LOC there — and the
+  honest test of whether the kit carries its weight.
+- **Open, not a milestone:** the §5 experiment RUN (a model + real market data
+  + a thin harness). The instrument shipped at M4.
 
 ## Context / lineage (GENESIS.md has the full story)
 

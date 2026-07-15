@@ -1,11 +1,14 @@
 [package]
 name = "parselite"
-version = "0.0.1"
-edition = "2024"
-rust-version = "1.85"
-license = "Apache-2.0"
-description = "Recursive-descent parser harness with the depth guard baked in — for purpose-sized languages."
-repository = "https://github.com/compusophy/litelite"
+description = "Recursive-descent parser harness with the depth guard baked in: deeply nested input returns a diagnostic, never a stack overflow."
+keywords = ["parser", "recursive-descent", "compiler", "language", "sandbox"]
+categories = ["compilers", "parser-implementations"]
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+readme.workspace = true
 
 [dependencies]
-diaglite = { path = "../diaglite", version = "0.0.1" }
+diaglite.workspace = true

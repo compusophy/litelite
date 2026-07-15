@@ -1,12 +1,13 @@
 [package]
 name = "caplite"
-version = "0.0.1"
-edition = "2024"
-rust-version = "1.85"
-license = "Apache-2.0"
 description = "Host-capability tables as data: one declarative table per language drives type checking, import emission, docs, and a machine-checkable cross-boundary parity manifest."
-repository = "https://github.com/compusophy/litelite"
 keywords = ["capability", "sandbox", "host", "manifest", "language"]
-categories = ["compilers"]
+categories = ["compilers", "development-tools"]
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+readme.workspace = true
 
 [dependencies]

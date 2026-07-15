@@ -1,10 +1,13 @@
 [package]
 name = "diaglite"
-version = "0.0.1"
-edition = "2024"
-rust-version = "1.85"
-license = "Apache-2.0"
-description = "Span + Diag diagnostics kernel for purpose-sized languages: byte spans, line/col, caret snippets."
-repository = "https://github.com/compusophy/litelite"
+description = "Span + Diag diagnostics kernel for purpose-sized languages: byte spans, line/col, caret snippets that never panic on mid-char offsets."
+keywords = ["diagnostics", "span", "error", "compiler", "language"]
+categories = ["compilers", "parser-implementations"]
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+readme.workspace = true
 
 [dependencies]

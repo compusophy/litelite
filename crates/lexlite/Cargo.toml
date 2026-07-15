@@ -1,11 +1,14 @@
 [package]
 name = "lexlite"
-version = "0.0.1"
-edition = "2024"
-rust-version = "1.85"
-license = "Apache-2.0"
-description = "Byte-cursor lexer kit for purpose-sized languages: comments, idents, digits, UTF-8-safe char decode."
-repository = "https://github.com/compusophy/litelite"
+description = "Byte-cursor lexer kit for purpose-sized languages: comments, idents, digits, and UTF-8-safe char decode by construction."
+keywords = ["lexer", "tokenizer", "compiler", "language", "parsing"]
+categories = ["compilers", "parser-implementations"]
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+readme.workspace = true
 
 [dependencies]
-diaglite = { path = "../diaglite", version = "0.0.1" }
+diaglite.workspace = true

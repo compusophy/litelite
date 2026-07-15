@@ -1,17 +1,18 @@
 [package]
 name = "prooflite"
-version = "0.0.1"
-edition = "2024"
-rust-version = "1.85"
-license = "Apache-2.0"
 description = "The litelite reference language: total, fuel-bounded, output-capped. Every program halts within its fuel — by construction."
-repository = "https://github.com/compusophy/litelite"
 keywords = ["language", "interpreter", "sandbox", "fuel", "total"]
 categories = ["compilers", "parser-implementations"]
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+readme.workspace = true
 
 [dependencies]
-diaglite = { path = "../diaglite", version = "0.0.1" }
-lexlite = { path = "../lexlite", version = "0.0.1" }
-parselite = { path = "../parselite", version = "0.0.1" }
-fuellite = { path = "../fuellite", version = "0.0.1" }
-caplite = { path = "../caplite", version = "0.0.1" }
+diaglite.workspace = true
+lexlite.workspace = true
+parselite.workspace = true
+fuellite.workspace = true
+caplite.workspace = true
