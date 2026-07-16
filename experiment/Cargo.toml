@@ -17,7 +17,7 @@ publish = false
 [dependencies]
 # Blocking HTTPS. The Batch API is not latency-sensitive, so an async runtime
 # would be pure ceremony for a program that submits, sleeps, and polls.
-ureq = "2"
+ureq = { version = "2", features = ["json"] }
 # Strategy sources come back inside JSON strings, full of newlines and braces.
 # M2's lesson is that every interpolated string is an injection channel — parse
 # with a real parser, never by hand.

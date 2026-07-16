@@ -7,6 +7,11 @@ cd "$(dirname "$0")/.."
 CRATE_CAP=2000
 REPO_CAP=25000
 CLAUDE_CAP=8000
+# experiment/ is outside the kit's WORKSPACE (it takes deps; rules 1+5 keep
+# them out of the graph) — but not outside the constitution. Without a counter
+# here the seam is a hole the caps cannot see, and "the cap can't count it"
+# is exactly the Goodhart failure the paper's §6 lists as a known limit.
+EXP_CAP=1500
 fail=0
 
 for c in crates/*/; do
@@ -25,6 +30,15 @@ if [ "$total" -gt "$REPO_CAP" ]; then
   fail=1
 fi
 
+if [ -d experiment/src ]; then
+  n=$(find experiment/src -name '*.rs' -print0 | xargs -0 cat | wc -l)
+  printf '%-22s %6d LOC (cap %d)\n' "experiment/" "$n" "$EXP_CAP"
+  if [ "$n" -gt "$EXP_CAP" ]; then
+    echo "FAIL: experiment/ exceeds its cap — the harness is thin BY DESIGN"
+    fail=1
+  fi
+fi
+
 # Normalize CRLF so the cap measures canonical bytes on Windows checkouts too.
 chars=$(tr -d '\r' <CLAUDE.md | wc -c)
 printf '%-22s %6d chars (cap %d)\n' "CLAUDE.md" "$chars" "$CLAUDE_CAP"
@@ -33,7 +47,7 @@ if [ "$chars" -gt "$CLAUDE_CAP" ]; then
   fail=1
 fi
 
-if grep -rn -- '[-]lite' crates src scripts paper .github ./*.md ./*.toml; then
+if grep -rn -- '[-]lite' crates src scripts paper .github experiment/src experiment/*.toml ./*.md ./*.toml; then
   echo "FAIL: dashed lite reference found (constitution rule 7)"
   fail=1
 fi
