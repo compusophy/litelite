@@ -325,16 +325,20 @@ fn cmd_reward(args: &[String]) -> Result<(), String> {
 
     let rewards = reward::reward_pool(&sources, &all, &split, limits, costs, gate);
     let mut out = String::new();
-    for (id, r) in ids.iter().zip(&rewards) {
+    for ((id, src), r) in ids.iter().zip(&sources).zip(&rewards) {
+        // `nkey` is the source-canonical dedup key — emitted so the trainer can
+        // resist mode collapse at every rung, including below survivor where
+        // `hash` is 0 for everything.
         out.push_str(&format!(
-            "{{\"id\":{},\"value\":{:.6},\"class\":\"{}\",\"fuel\":{},\"trades\":{},\"train_pnl\":{},\"hash\":\"0x{:016x}\"}}\n",
+            "{{\"id\":{},\"value\":{:.6},\"class\":\"{}\",\"fuel\":{},\"trades\":{},\"train_pnl\":{},\"hash\":\"0x{:016x}\",\"nkey\":\"0x{:016x}\"}}\n",
             serde_json::to_string(id).unwrap(),
             r.value,
             r.class.as_str(),
             r.fuel,
             r.trades,
             r.train_pnl,
-            r.hash
+            r.hash,
+            reward::novelty_key(src)
         ));
     }
     print!("{out}");

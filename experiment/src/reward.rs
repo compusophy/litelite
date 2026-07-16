@@ -158,6 +158,58 @@ pub fn reward_pool(
         .collect()
 }
 
+/// A SOURCE-canonical dedup key: FNV-1a-64 over the source with comments
+/// removed and whitespace collapsed. The trainer dedups its SFT admission set
+/// by this to resist mode collapse onto one template.
+///
+/// Why source-canonical and not `equity_hash`: `equity_hash` is 0 for every
+/// non-survivor, so early in training — when the whole population sits at the
+/// compile/run/gate rungs — a behavioral key cannot see collapse at all. And
+/// above the survivor rung it is gameable: perturb one constant by a tick and
+/// the equity curve, hence the hash, changes, so a one-template family reads as
+/// diverse. A textual key works at every rung and cannot be dodged by comment
+/// or whitespace noise.
+///
+/// Honest limit: this catches comment/formatting clones, NOT
+/// constant-perturbation or semantically-equivalent clones (`lookback 4` vs
+/// `lookback 5`). Structural/AST canonicalization is the future refinement.
+pub fn novelty_key(src: &str) -> u64 {
+    let canon = strip_and_collapse(src);
+    let mut hash = 0xcbf2_9ce4_8422_2325u64;
+    for b in canon.bytes() {
+        hash ^= b as u64;
+        hash = hash.wrapping_mul(0x0000_0100_0000_01b3);
+    }
+    hash
+}
+
+/// Remove `//` line and `/* */` block comments (non-nested — a dedup key does
+/// not need a real lexer) and collapse every whitespace run to one space.
+/// stratlite has no string literals, so there is nothing a comment strip could
+/// wrongly eat.
+fn strip_and_collapse(src: &str) -> String {
+    let b = src.as_bytes();
+    let mut out = String::with_capacity(src.len());
+    let mut i = 0;
+    while i < b.len() {
+        if b[i] == b'/' && i + 1 < b.len() && b[i + 1] == b'/' {
+            while i < b.len() && b[i] != b'\n' {
+                i += 1;
+            }
+        } else if b[i] == b'/' && i + 1 < b.len() && b[i + 1] == b'*' {
+            i += 2;
+            while i + 1 < b.len() && !(b[i] == b'*' && b[i + 1] == b'/') {
+                i += 1;
+            }
+            i = (i + 2).min(b.len());
+        } else {
+            out.push(b[i] as char);
+            i += 1;
+        }
+    }
+    out.split_whitespace().collect::<Vec<_>>().join(" ")
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -265,6 +317,30 @@ mod tests {
                 "{empty:?} must score zero"
             );
         }
+    }
+
+    #[test]
+    fn novelty_key_ignores_comments_and_whitespace_but_not_logic() {
+        // The cheapest way to fake diversity is to re-comment or re-format one
+        // template. The key must see through both.
+        let a = "lookback 4; signal long;";
+        let b = "lookback 4;   signal long;   // a comment";
+        let c = "lookback 4;\n/* block */ signal long;";
+        assert_eq!(novelty_key(a), novelty_key(b));
+        assert_eq!(novelty_key(a), novelty_key(c));
+        // But a real logic change is a different program.
+        assert_ne!(novelty_key(a), novelty_key("lookback 4; signal short;"));
+    }
+
+    #[test]
+    fn novelty_key_works_below_the_survivor_rung() {
+        // The whole point: it keys a program that never even runs, where
+        // equity_hash is 0 for everything and cannot tell templates apart.
+        let x = novelty_key("garbage one");
+        let y = novelty_key("garbage two");
+        let x2 = novelty_key("garbage    one   // note");
+        assert_ne!(x, y);
+        assert_eq!(x, x2);
     }
 
     #[test]

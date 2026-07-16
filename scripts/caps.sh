@@ -47,7 +47,7 @@ if [ "$chars" -gt "$CLAUDE_CAP" ]; then
   fail=1
 fi
 
-if grep -rn -- '[-]lite' crates src scripts paper .github experiment/src experiment/*.toml ./*.md ./*.toml; then
+if grep -rn -- '[-]lite' crates src scripts paper .github experiment/src experiment/*.toml experiment/*.md ./*.md ./*.toml; then
   echo "FAIL: dashed lite reference found (constitution rule 7)"
   fail=1
 fi
