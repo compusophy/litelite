@@ -17,19 +17,21 @@
 
 mod api;
 mod data;
+mod reward;
 mod score;
 
 use score::Split;
 use std::process::ExitCode;
 
 const USAGE: &str = "\
-s5 — the §5 experiment harness
+s5 — the §5 experiment harness + M6 reward oracle
 
-  s5 data  <csv>...              parse pinned klines, check the verifier's contract
-  s5 pilot                       a few SYNC requests before any batch is billed
-  s5 submit <n> <out.json>       submit a batch of n candidates; records the id
-  s5 poll   <batch_id> <out>     poll until ended, write results verbatim
-  s5 score  <raw.jsonl> <csv>... re-derive §5's numbers (pure; no network)
+  s5 data   <csv>...              parse pinned klines, check the verifier's contract
+  s5 pilot                        a few SYNC requests before any batch is billed
+  s5 submit <n> <out.json>        submit a batch of n candidates; records the id
+  s5 poll   <batch_id> <out>      poll until ended, write results verbatim
+  s5 score  <raw.jsonl> <csv>...  re-derive §5's numbers (pure; no network)
+  s5 reward <pool.jsonl> <csv>... M6: verifier reward per rollout (pure; no network)
 ";
 
 /// The recorded diversity axis. With no temperature and no seed, THIS is what
@@ -63,6 +65,7 @@ fn main() -> ExitCode {
         Some("submit") => cmd_submit(&args[1..]),
         Some("poll") => cmd_poll(&args[1..]),
         Some("score") => cmd_score(&args[1..]),
+        Some("reward") => cmd_reward(&args[1..]),
         _ => {
             eprint!("{USAGE}");
             return ExitCode::FAILURE;
@@ -287,5 +290,53 @@ fn cmd_score(args: &[String]) -> Result<(), String> {
          so this quantifies the cost-model bias against arm V",
         score::price_drift(&all, &split)
     );
+    Ok(())
+}
+
+/// M6: score a batch of model rollouts with the verifier reward. Input is
+/// JSONL, one `{"id","source"}` per line (what a trainer emits); output is
+/// JSONL, one reward record per input line, IN THE SAME ORDER and carrying the
+/// id — so an async/batched trainer can map rewards back to rollouts. Pure and
+/// deterministic: no network, no key, and the same rollouts always score the
+/// same. This is the boundary the Python trainer shells out to.
+fn cmd_reward(args: &[String]) -> Result<(), String> {
+    let pool_path = args
+        .first()
+        .ok_or("usage: s5 reward <pool.jsonl> <csv>...")?;
+    let all = load(&args[1..])?;
+    let pool = std::fs::read_to_string(pool_path).map_err(|e| format!("{pool_path}: {e}"))?;
+
+    let split = Split::at_fraction(all.len(), TRAIN_FRACTION);
+    let costs = score::costs_from_train(split.train(&all), FEE_BPS, SLIP_BPS);
+    let limits = stratlite::Limits::default();
+    let gate = backtestlite::Gate::default();
+
+    // Parse rollouts, preserving id and order. A missing/non-string source is
+    // not an error — it is an empty rollout, a compile-class zero, exactly like
+    // the model emitting junk.
+    let mut ids: Vec<String> = Vec::new();
+    let mut sources: Vec<String> = Vec::new();
+    for (n, line) in pool.lines().filter(|l| !l.trim().is_empty()).enumerate() {
+        let v: serde_json::Value =
+            serde_json::from_str(line).map_err(|e| format!("line {}: {e}", n + 1))?;
+        ids.push(v["id"].as_str().unwrap_or("?").to_string());
+        sources.push(v["source"].as_str().unwrap_or("").to_string());
+    }
+
+    let rewards = reward::reward_pool(&sources, &all, &split, limits, costs, gate);
+    let mut out = String::new();
+    for (id, r) in ids.iter().zip(&rewards) {
+        out.push_str(&format!(
+            "{{\"id\":{},\"value\":{:.6},\"class\":\"{}\",\"fuel\":{},\"trades\":{},\"train_pnl\":{},\"hash\":\"0x{:016x}\"}}\n",
+            serde_json::to_string(id).unwrap(),
+            r.value,
+            r.class.as_str(),
+            r.fuel,
+            r.trades,
+            r.train_pnl,
+            r.hash
+        ));
+    }
+    print!("{out}");
     Ok(())
 }
