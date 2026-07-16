@@ -34,6 +34,19 @@ jobs:
       - run: cargo clippy --manifest-path experiment/Cargo.toml --all-targets -- -D warnings
       - run: cargo test --manifest-path experiment/Cargo.toml
 
+  # The M6 trainer's torch loop needs a GPU and is NOT run here — but its
+  # anti-collapse guards (select.py) are stdlib-only and load-bearing, so they
+  # are byte-compiled and TESTED on every push. No torch installed.
+  trainer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: python -m py_compile experiment/train/*.py
+      - run: python experiment/train/test_select.py
+
   # `rust-version = "1.85"` is a PUBLISHED promise. Unverified, it rots the
   # first time someone uses a newer std method — and the rot only surfaces in
   # a downstream build. Make the claim mechanical, like every other one here.

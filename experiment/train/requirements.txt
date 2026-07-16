@@ -1,0 +1,6 @@
+# M6 trainer deps — GPU-side only. NOT installed in this repo's CI (the guard
+# logic in select.py is tested with the stdlib alone). Pin before a real run.
+torch>=2.2
+transformers>=4.44
+trl>=0.9          # SFTTrainer (and GRPOTrainer for the escalation)
+accelerate>=0.30

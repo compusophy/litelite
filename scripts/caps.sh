@@ -12,6 +12,10 @@ CLAUDE_CAP=8000
 # here the seam is a hole the caps cannot see, and "the cap can't count it"
 # is exactly the Goodhart failure the paper's §6 lists as a known limit.
 EXP_CAP=1500
+# The M6 trainer (experiment/train/*.py) is thin BY DESIGN — the guards are
+# the load-bearing part and the torch loop is a shell. Its own counter, because
+# the constitution's discipline does not stop at the language boundary.
+TRAIN_CAP=800
 fail=0
 
 for c in crates/*/; do
@@ -39,6 +43,15 @@ if [ -d experiment/src ]; then
   fi
 fi
 
+if [ -d experiment/train ]; then
+  n=$(find experiment/train -name '*.py' -print0 | xargs -0 cat | wc -l)
+  printf '%-22s %6d LOC (cap %d)\n' "experiment/train/" "$n" "$TRAIN_CAP"
+  if [ "$n" -gt "$TRAIN_CAP" ]; then
+    echo "FAIL: experiment/train/ exceeds its cap — the trainer is a shell BY DESIGN"
+    fail=1
+  fi
+fi
+
 # Normalize CRLF so the cap measures canonical bytes on Windows checkouts too.
 chars=$(tr -d '\r' <CLAUDE.md | wc -c)
 printf '%-22s %6d chars (cap %d)\n' "CLAUDE.md" "$chars" "$CLAUDE_CAP"
@@ -47,7 +60,7 @@ if [ "$chars" -gt "$CLAUDE_CAP" ]; then
   fail=1
 fi
 
-if grep -rn -- '[-]lite' crates src scripts paper .github experiment/src experiment/*.toml experiment/*.md ./*.md ./*.toml; then
+if grep -rn -- '[-]lite' crates src scripts paper .github experiment/src experiment/train experiment/*.toml experiment/*.md ./*.md ./*.toml; then
   echo "FAIL: dashed lite reference found (constitution rule 7)"
   fail=1
 fi
