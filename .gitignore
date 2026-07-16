@@ -1,5 +1,9 @@
 /target
 Cargo.lock
+# ...but experiment/ is a BINARY, not a library: the paper's numbers have to
+# reproduce from a command in this repo, and that needs its deps pinned. The
+# rule above is unanchored, so it would swallow this lock without the negation.
+!experiment/Cargo.lock
 # The release workflow extracts the tag's notes here. Ignored so cargo's
 # dirty-tree check (which counts untracked files) cannot fail the publish.
 /NOTES.md

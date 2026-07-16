@@ -1,0 +1,29 @@
+# §5's harness. NOT a member of the kit's workspace — see the root Cargo.toml's
+# `exclude`. Its own `[workspace]` table makes it a workspace root, so building
+# in here does not consult the parent (and cargo does not error).
+#
+# This is the ONLY place in the repo that takes external dependencies. It is
+# allowed to, because it is not the kit: paper/OUTLINE.md §5 scopes the harness
+# outside by design. Each dep still has to earn its place.
+[workspace]
+
+[package]
+name = "s5"
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.85"
+publish = false
+
+[dependencies]
+# Blocking HTTPS. The Batch API is not latency-sensitive, so an async runtime
+# would be pure ceremony for a program that submits, sleeps, and polls.
+ureq = "2"
+# Strategy sources come back inside JSON strings, full of newlines and braces.
+# M2's lesson is that every interpolated string is an injection channel — parse
+# with a real parser, never by hand.
+serde_json = "1"
+
+# The kit, by path. At tag v0.1.0 these are byte-identical to the published
+# crates; the harness deliberately depends on the SAME code the paper describes.
+stratlite = { path = "../crates/stratlite" }
+backtestlite = { path = "../crates/backtestlite" }

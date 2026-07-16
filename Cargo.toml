@@ -16,6 +16,12 @@ members = [
 # not depend on, and a green that skips it is a false green.
 default-members = ["crates/*", "."]
 
+# §5's harness takes deps (HTTP, JSON) and so can never join this graph:
+# rule 1 forbids them in the kit, and rule 5 requires every member to stay
+# wasm32-green. Excluded here AND its own workspace root, so neither side can
+# accidentally pull the other in.
+exclude = ["experiment"]
+
 # Every crate inherits these. The version lives HERE, once: a release is a
 # one-line edit, and cargo itself rejects drift between it and the
 # [workspace.dependencies] versions below (a publish would fail).

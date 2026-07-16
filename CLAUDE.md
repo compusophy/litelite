@@ -98,6 +98,8 @@ scripts/publish.sh    dry run by default, --execute uploads; resumable (crates.i
 CHANGELOG.md          ONE version across every crate; a tag's notes come from here
 paper/OUTLINE.md      the paper IS the product; experiments land as sections
 GENESIS.md            origin, distilled parent learnings, roadmap M0–M5
+experiment/           §5's RUN: model + pinned candles + harness. NOT a workspace
+                      member — it takes deps; rules 1+5 keep them out of the kit
 
 ```
 
@@ -118,19 +120,16 @@ tag==version, CHANGELOG has that section, publish, GitHub release. Needs
 
 ## Roadmap (each milestone's consumer + lesson: GENESIS.md)
 
-- **M0–M4 (done, published as 0.1.0):** the kernel, then `prooflite`,
-  `caplite`, the emitters, `stratlite`+`backtestlite` — the Map above IS the
-  result; every crate there is one of them.
+- **M0–M4 (done, live on crates.io at 0.1.0):** the Map above IS the result.
 - **M5:** re-home bashlite onto the kit inside localharness (it gains the
   depth guard + spanned errors). Consumer: localharness, −LOC there — and the
   honest test of whether the kit carries its weight.
-- **Open, not a milestone:** the §5 experiment RUN (a model + real market data
-  + a thin harness). The instrument shipped at M4.
+- **§5 RUN (open):** `experiment/` tests verified SELECTION; language size is
+  §4's claim (construction cost vs the parents).
 
 ## Context / lineage (GENESIS.md has the full story)
 
 localharness (github.com/compusophy/localharness): browser-resident
 self-owning agents on Tempo. Its predecessor tempo-x402 ended as a paper —
 compiler-verified self-play lifted a 0.5B model 1.5%→16.4% pass@1 — the
-empirical seed of this repo's thesis that cheap mechanical verification is
-the durable layer of the agent stack.
+empirical seed of this repo's thesis.
