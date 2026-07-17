@@ -1,4 +1,4 @@
-# N=2 result — the same verifier-only method, a structurally different language
+# N=2 result — the same verifier-only recipe, a structurally different language
 
 The §5 fine-tune, run a SECOND time on `prooflite` — a total, fuel-bounded
 *compute* language with no market data, no trading, no candles. Same
@@ -77,11 +77,14 @@ narrowing is the training-curve decline, not the benchmark.
 
 ## What this establishes — and what it does not
 
-ESTABLISHES: the verifier-only fine-tune is a METHOD, not a one-grammar
-artifact. Run unchanged on a language with no data, no market, no trading —
-only checked arithmetic and bounded loops — it takes the same small model from
-3.5% to ~95% rich generation, and the programs are ~100% novel. Two
-independent purpose-sized languages, one recipe.
+ESTABLISHES: the verifier-only fine-tune is not a ONE-grammar artifact. Run
+unchanged on a language with no data, no market, no trading — only checked
+arithmetic and bounded loops — it takes the same small model from 3.5% to ~95%
+rich generation, and the programs are ~100% novel against the human corpus. It
+does NOT establish generality past the confounds both arms share (§4.5: same
+kit, same author, same base `Qwen3-0.6B`, trainer, and reward shape) — cross-
+model generality in particular is untested. N = 2 rules out one-grammar
+specificity, not a recipe that generalizes to any model or language.
 
 DOES NOT establish that every generated program is INTERESTING — only that it
 is well-formed, runs, and prints real varied output (the RICH rung's bar).
