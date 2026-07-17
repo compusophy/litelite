@@ -75,6 +75,9 @@ class Config:
     # rejection sampling would admit nothing (measured: 8/8 compile-fails).
     corpus: str = ""
     cold_epochs: int = 3
+    # Stratlite needs a candle window for its reward; prooflite (p6) does not —
+    # its reward is intrinsic to a program's execution.
+    needs_candles: bool = True
     # Hardware
     device: str = "cuda"
     dtype: str = "bfloat16"  # Ampere (3090) supports bf16
@@ -210,10 +213,17 @@ class Policy:
 
 def cold_start(cfg: Config, policy: Policy, style_list: list[str]) -> None:
     """SFT on the committed corpus survivors, mapped to the full style
-    sentences so training prompts match sampling prompts exactly."""
+    sentences so training prompts match sampling prompts exactly. A corpus row
+    carries either a "style_idx" (language-agnostic, preferred) or a stratlite
+    family key in "style" (the original corpus format)."""
     fam = {"trend": 0, "meanrev": 1, "breakout": 2, "momentum": 3, "stateful": 4, "combo": 6}
+
+    def style_of(r: dict) -> str:
+        idx = r["style_idx"] if "style_idx" in r else fam.get(r.get("style", ""), 6)
+        return style_list[idx]
+
     rows = [json.loads(l) for l in open(cfg.corpus, encoding="utf-8") if l.strip()]
-    rollouts = [Rollout(r["id"], style_list[fam.get(r["style"], 6)], r["source"]) for r in rows]
+    rollouts = [Rollout(r["id"], style_of(r), r["source"]) for r in rows]
     rewards = score(cfg, rollouts)
     admitted, stats = build_admission_set(
         rollouts, rewards, per_key_cap=cfg.per_key_cap, per_style_frac=cfg.per_style_frac
@@ -226,7 +236,7 @@ def cold_start(cfg: Config, policy: Policy, style_list: list[str]) -> None:
 
 
 def run(cfg: Config) -> None:
-    if not cfg.candles:
+    if cfg.needs_candles and not cfg.candles:
         raise SystemExit("wire pinned candle CSVs into Config.candles before running")
     system, style_list = card(cfg), styles(cfg)
     policy = Policy(cfg, system)
