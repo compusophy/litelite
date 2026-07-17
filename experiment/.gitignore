@@ -1,2 +1,5 @@
 /target
 /data
+# M6 trainer run artifacts — model checkpoints and the venv are big and local.
+train/checkpoints/
+train/.venv/

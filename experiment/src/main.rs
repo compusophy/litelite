@@ -32,6 +32,8 @@ s5 — the §5 experiment harness + M6 reward oracle
   s5 poll   <batch_id> <out>      poll until ended, write results verbatim
   s5 score  <raw.jsonl> <csv>...  re-derive §5's numbers (pure; no network)
   s5 reward <pool.jsonl> <csv>... M6: verifier reward per rollout (pure; no network)
+  s5 card                         print stratlite::REFERENCE — the ONE prompt card
+  s5 styles                       print the diversity styles, one per line
 ";
 
 /// The recorded diversity axis. With no temperature and no seed, THIS is what
@@ -66,6 +68,19 @@ fn main() -> ExitCode {
         Some("poll") => cmd_poll(&args[1..]),
         Some("score") => cmd_score(&args[1..]),
         Some("reward") => cmd_reward(&args[1..]),
+        // The trainer reads the card and styles from HERE rather than copying
+        // them, so the prompt the model learns and the language the verifier
+        // enforces stay ONE artifact across the Rust/Python boundary.
+        Some("card") => {
+            print!("{}", stratlite::REFERENCE);
+            Ok(())
+        }
+        Some("styles") => {
+            for s in STYLES {
+                println!("{s}");
+            }
+            Ok(())
+        }
         _ => {
             eprint!("{USAGE}");
             return ExitCode::FAILURE;

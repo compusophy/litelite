@@ -1,6 +1,10 @@
-# M6 trainer deps — GPU-side only. NOT installed in this repo's CI (the guard
-# logic in select.py is tested with the stdlib alone). Pin before a real run.
-torch>=2.2
-transformers>=4.44
-trl>=0.9          # SFTTrainer (and GRPOTrainer for the escalation)
-accelerate>=0.30
+# M6 trainer deps — GPU-side only. NOT installed in this repo's CI (the guards
+# in select.py are tested with the stdlib alone). The default 0.5B full
+# fine-tune needs only these two; add peft/bitsandbytes for 1.5B LoRA or 7B
+# 4-bit. Pin exact versions before a real run.
+torch>=2.2          # CUDA build; a 3090 (Ampere) supports bfloat16
+transformers>=4.44  # AutoModelForCausalLM, chat templates
+
+# For scaling past 0.5B on 24GB (see README): LoRA / 4-bit
+# peft>=0.11
+# bitsandbytes>=0.43

@@ -1,7 +1,7 @@
 """M6 rejection-sampling SFT loop (expert iteration) -- the tempo-x402 recipe.
 
     ┌─ sample K programs per style from the current policy   (torch)
-    │  write rollouts.jsonl {id, style, source}
+    │  write rollouts {id, style, source}
     ├─ score them with the verifier                          `s5 reward`
     ├─ build the SFT admission set                           select.py (tested)
     │  keep Ok-rung only, dedup by nkey, cap per style
@@ -9,129 +9,224 @@
     └─ checkpoint, log the round's Reject histogram + fuel spectrum
        repeat until the held-out gate-clear lift plateaus
 
-NOT RUNNABLE IN THIS REPO'S CI: it needs a GPU and torch/transformers. The
-load-bearing part -- the admission-set guards in select.py -- IS tested here
-with plain python, because that is where the reward hacks live. The torch calls
-below are deliberately isolated behind `Policy` so the orchestration is
-readable and the ML dependency is a thin shell, not the whole file.
+Runs on a single 24GB GPU (a 3090 is ample). The default is a full fine-tune of
+the small dense Qwen3-0.6B -- ~8-9GB peak, tiny context, CPU-free reward. For 4B
+use LoRA. Model sizing (Qwen3-Coder is all too big; use the dense line) and the
+non-thinking detail are in README.md.
 
-Reproducibility, honestly: the model is NOT reproducible (no seed makes a
-fine-tune deterministic across hardware, and sampling is stochastic). What
-reproduces from a command is the REWARD -- `s5 reward` is deterministic -- and
-therefore, given a pinned checkpoint, its eval numbers. So the run COMMITS its
-checkpoints and rollouts as artifacts; it does not pretend to regenerate them.
+The load-bearing anti-collapse logic (admission + extraction) lives in
+select.py and is TESTED without a GPU -- that is where the reward hacks live.
+The torch surface here is deliberately thin and isolated behind `Policy`. The
+prompt card and styles are read from the `s5` binary (`s5 card` / `s5 styles`)
+rather than copied, so the prompt the model learns and the language the
+verifier enforces stay ONE artifact.
+
+Reproducibility, honestly: the model is NOT reproducible (sampling is
+stochastic; a fine-tune is not bit-identical across hardware). What reproduces
+from a command is the REWARD -- `s5 reward` is deterministic -- so the run
+COMMITS its checkpoints and rollouts as artifacts rather than pretending to
+regenerate them.
 """
 
 from __future__ import annotations
 
 import json
+import random
 import subprocess
 from dataclasses import dataclass
 
-from select import Rollout, build_admission_set, parse_rewards
-
-# The generation card and the eight styles are stratlite's OWN const and the
-# §5 STYLES list -- kept in ONE place so the trainer, the §5 harness, and the
-# verifier can never disagree about the language. In practice the trainer reads
-# them from the s5 binary rather than copying them here; this list is the shape.
-STYLES = [
-    "a trend-following strategy using a fast/slow sma crossover",
-    "a mean-reversion strategy using rsi extremes",
-    "a breakout strategy using highest() and lowest() channels",
-    "a momentum strategy using ema and a position() check",
-    "a strategy that uses var state to avoid flipping position every bar",
-    "a strategy that goes flat when the recent range is narrow",
-    "a strategy combining an rsi filter with an sma trend check",
-    "a conservative strategy that trades rarely",
-]
+from select import (
+    Rollout,
+    build_admission_set,
+    extract_source,
+    parse_rewards,
+)
 
 
 @dataclass
 class Config:
-    base_model: str = "Qwen/Qwen2.5-Coder-0.5B"  # small: the trader runs it on-device
-    s5_bin: str = "../target/release/s5"  # the tested reward oracle
+    # A small DENSE current-gen model. Qwen3-Coder is all big (30B-A3B MoE and
+    # up); the small dense Qwen3 line is the right size for a 24GB card, and a
+    # general model is fine — even preferable — for a tiny DSL the model learns
+    # by verified self-play, not by pretraining. Swap freely; it is just a
+    # HuggingFace id. Qwen3 THINKS by default, so `_prompt` disables it.
+    base_model: str = "Qwen/Qwen3-0.6B"
+    s5_bin: str = "../target/release/s5"  # the tested reward oracle + card source
     candles: tuple[str, ...] = ()  # pinned klines CSVs (train+val windows)
+    out_dir: str = "checkpoints"
+    # Generation
     samples_per_style: int = 128  # K
     rounds: int = 12
+    max_new_tokens: int = 256  # a stratlite program is short
+    temperature: float = 0.9  # diversity comes from sampling + the styles
+    top_p: float = 0.95
+    sample_batch: int = 64
+    # SFT
+    sft_epochs: int = 1
+    sft_batch: int = 8
+    lr: float = 1e-5
+    # Anti-collapse (passed to select.py)
     per_key_cap: int = 2
     per_style_frac: float = 0.5
+    # Hardware
+    device: str = "cuda"
+    dtype: str = "bfloat16"  # Ampere (3090) supports bf16
+    seed: int = 0  # seeds torch/python; does NOT make a fine-tune reproducible
 
 
-class Policy:
-    """The ONLY torch-dependent surface. Everything else is plain python so the
-    guards stay testable without a GPU. Left unimplemented on purpose -- filling
-    these three methods is the GPU-side work M6 defers until compute is
-    available; the interface is the contract the rest of the loop is built to.
-    """
-
-    def __init__(self, model_name: str) -> None:
-        self.model_name = model_name
-
-    def sample(self, prompt: str, k: int) -> list[str]:
-        """Draw k completions. The local model has no constrained decoding, so
-        it emits prose/fences -- extraction is `extract_source` below, and
-        whatever it yields is verified AS GIVEN (fenced junk earns a
-        compile-zero, which is the correct training signal)."""
-        raise NotImplementedError("GPU-side: load base_model and sample k completions")
-
-    def sft(self, pairs: list[tuple[str, str]]) -> None:
-        """One SFT pass over admitted (prompt, source) pairs."""
-        raise NotImplementedError("GPU-side: a stock SFTTrainer step")
-
-    def save(self, path: str) -> None:
-        raise NotImplementedError("GPU-side: checkpoint the weights")
+def _run(cfg: Config, *args: str, stdin: str | None = None) -> str:
+    proc = subprocess.run(
+        [cfg.s5_bin, *args], input=stdin, capture_output=True, text=True, check=True
+    )
+    return proc.stdout
 
 
-def extract_source(completion: str) -> str:
-    """Pull a stratlite program out of a raw completion. A local sampler emits
-    fences and prose; take the first ```-fenced block if present, else the raw
-    text. The reward oracle is strict on purpose, so this stays a light
-    convenience -- it never tries to REPAIR a program, only to unwrap it."""
-    if "```" in completion:
-        parts = completion.split("```")
-        if len(parts) >= 3:
-            body = parts[1]
-            # drop an optional language tag on the fence's first line
-            return body.split("\n", 1)[-1] if "\n" in body else body
-    return completion
+def card(cfg: Config) -> str:
+    """The prompt card -- stratlite::REFERENCE, straight from the binary."""
+    return _run(cfg, "card")
+
+
+def styles(cfg: Config) -> list[str]:
+    return [s for s in _run(cfg, "styles").splitlines() if s.strip()]
 
 
 def score(cfg: Config, rollouts: list[Rollout]) -> dict:
-    """Shell out to the tested reward oracle. This is the whole Rust boundary:
-    JSONL of {id, source} in, JSONL of reward records out, same order, by id."""
+    """The whole Rust boundary: JSONL {id, source} in, reward records out, by id."""
     pool = "\n".join(json.dumps({"id": r.id, "source": r.source}) for r in rollouts)
-    proc = subprocess.run(
-        [cfg.s5_bin, "reward", "/dev/stdin", *cfg.candles],
-        input=pool,
-        capture_output=True,
-        text=True,
-        check=True,
-    )
-    return parse_rewards(proc.stdout)
+    out = _run(cfg, "reward", "/dev/stdin", *cfg.candles, stdin=pool)
+    return parse_rewards(out)
+
+
+class Policy:
+    """The ONLY torch-dependent surface. Imports are lazy so the module loads --
+    and select.py's guards test -- without torch installed."""
+
+    def __init__(self, cfg: Config, system: str) -> None:
+        import torch
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+
+        random.seed(cfg.seed)
+        torch.manual_seed(cfg.seed)
+        self.cfg = cfg
+        self.system = system
+        self.tok = AutoTokenizer.from_pretrained(cfg.base_model)
+        if self.tok.pad_token is None:
+            self.tok.pad_token = self.tok.eos_token
+        self.model = AutoModelForCausalLM.from_pretrained(
+            cfg.base_model, torch_dtype=getattr(torch, cfg.dtype)
+        ).to(cfg.device)
+        self.opt = torch.optim.AdamW(self.model.parameters(), lr=cfg.lr)
+
+    def _prompt(self, user: str) -> str:
+        """The chat template, with the language card as the system turn and
+        add_generation_prompt so the model completes the assistant turn. Qwen3
+        thinks by default; `enable_thinking=False` suppresses the <think> block
+        so the completion is the program, not reasoning about it. The fallback
+        keeps a non-Qwen3 model (whose template lacks that kwarg) working."""
+        msgs = [
+            {"role": "system", "content": self.system},
+            {"role": "user", "content": f"Write {user}. Emit ONE stratlite program and nothing else."},
+        ]
+        try:
+            return self.tok.apply_chat_template(
+                msgs, tokenize=False, add_generation_prompt=True, enable_thinking=False
+            )
+        except TypeError:
+            return self.tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True)
+
+    def sample(self, user: str, k: int) -> list[str]:
+        import torch
+
+        self.model.eval()
+        prompt = self._prompt(user)
+        ids = self.tok(prompt, return_tensors="pt").to(self.cfg.device)
+        plen = ids["input_ids"].shape[1]
+        out: list[str] = []
+        for start in range(0, k, self.cfg.sample_batch):
+            n = min(self.cfg.sample_batch, k - start)
+            with torch.no_grad():
+                gen = self.model.generate(
+                    **ids,
+                    do_sample=True,
+                    temperature=self.cfg.temperature,
+                    top_p=self.cfg.top_p,
+                    max_new_tokens=self.cfg.max_new_tokens,
+                    num_return_sequences=n,
+                    pad_token_id=self.tok.pad_token_id,
+                )
+            for g in gen:
+                out.append(self.tok.decode(g[plen:], skip_special_tokens=True))
+        return out
+
+    def sft(self, pairs: list[tuple[str, str]]) -> None:
+        """One or more passes over admitted (user_style, source) pairs. Loss is
+        masked to the COMPLETION only (prompt tokens are -100), so the model
+        learns to produce the program, not to re-emit the card."""
+        import torch
+
+        if not pairs:
+            return
+        self.model.train()
+        for _ in range(self.cfg.sft_epochs):
+            random.shuffle(pairs)
+            for i in range(0, len(pairs), self.cfg.sft_batch):
+                batch = pairs[i : i + self.cfg.sft_batch]
+                input_ids, labels = self._collate(batch)
+                loss = self.model(input_ids=input_ids, labels=labels).loss
+                loss.backward()
+                self.opt.step()
+                self.opt.zero_grad()
+
+    def _collate(self, batch: list[tuple[str, str]]):
+        import torch
+
+        rows, label_rows = [], []
+        for user, source in batch:
+            prompt = self._prompt(user)
+            p_ids = self.tok(prompt, add_special_tokens=False)["input_ids"]
+            c_ids = self.tok(source + self.tok.eos_token, add_special_tokens=False)["input_ids"]
+            ids = p_ids + c_ids
+            labels = [-100] * len(p_ids) + c_ids  # mask the prompt
+            rows.append(ids)
+            label_rows.append(labels)
+        width = max(len(r) for r in rows)
+        pad = self.tok.pad_token_id
+        input_ids = torch.tensor([r + [pad] * (width - len(r)) for r in rows], device=self.cfg.device)
+        labels = torch.tensor([r + [-100] * (width - len(r)) for r in label_rows], device=self.cfg.device)
+        return input_ids, labels
+
+    def save(self, path: str) -> None:
+        self.model.save_pretrained(path)
+        self.tok.save_pretrained(path)
 
 
 def run(cfg: Config) -> None:
-    policy = Policy(cfg.base_model)
+    if not cfg.candles:
+        raise SystemExit("wire pinned candle CSVs into Config.candles before running")
+    system, style_list = card(cfg), styles(cfg)
+    policy = Policy(cfg, system)
     for r in range(cfg.rounds):
         rollouts: list[Rollout] = []
-        for style in STYLES:
+        for si, style in enumerate(style_list):
             for j, completion in enumerate(policy.sample(style, cfg.samples_per_style)):
-                rollouts.append(Rollout(id=f"r{r}s{STYLES.index(style)}n{j}", style=style, source=extract_source(completion)))
+                rollouts.append(Rollout(id=f"r{r}s{si}n{j}", style=style, source=extract_source(completion)))
         rewards = score(cfg, rollouts)
         admitted, stats = build_admission_set(
             rollouts, rewards, per_key_cap=cfg.per_key_cap, per_style_frac=cfg.per_style_frac
         )
         # The histogram IS the learning curve; the fuel spectrum is the evidence
         # for whether the termination bound is load-bearing on this task.
-        print(f"round {r}: histogram={dict(stats.histogram)} admitted={len(admitted)} "
-              f"distinct_nkeys={stats.distinct_nkeys} fuel[min,max]="
-              f"{(stats.fuel_spectrum[0], stats.fuel_spectrum[-1]) if stats.fuel_spectrum else None}")
+        fuel = (stats.fuel_spectrum[0], stats.fuel_spectrum[-1]) if stats.fuel_spectrum else None
+        print(
+            f"round {r}: histogram={dict(stats.histogram)} admitted={len(admitted)} "
+            f"distinct_nkeys={stats.distinct_nkeys} fuel[min,max]={fuel}"
+        )
         policy.sft([(ro.style, ro.source) for ro in admitted])
-        policy.save(f"checkpoints/C{r}")
+        policy.save(f"{cfg.out_dir}/C{r}")
 
 
 if __name__ == "__main__":
-    raise SystemExit(
-        "train.py needs a GPU (torch/transformers) and pinned candles; it is not "
-        "run in CI. The guards it relies on are tested in test_select.py."
-    )
+    import sys
+
+    # Candle CSVs as args: python3 train.py data/BTCUSDT-1h-2024-01.csv ...
+    run(Config(candles=tuple(sys.argv[1:])))

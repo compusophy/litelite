@@ -8,7 +8,23 @@ verifiable in the build environment.
 
 from __future__ import annotations
 
-from select import Reward, Rollout, build_admission_set, parse_rewards
+from select import (
+    Reward,
+    Rollout,
+    build_admission_set,
+    extract_source,
+    parse_rewards,
+)
+
+
+def test_extract_unwraps_a_fence_but_never_repairs() -> None:
+    assert extract_source("```stratlite\nlookback 4;\nsignal long;\n```") == "lookback 4;\nsignal long;\n"
+    assert extract_source("```\nsignal flat;\n```") == "signal flat;\n"
+    # No fence: passed through verbatim, for the oracle to judge as-is.
+    assert extract_source("lookback 8; signal long;") == "lookback 8; signal long;"
+    # Prose with no closing fence is not a program; it goes through untouched
+    # and earns its compile-zero honestly.
+    assert extract_source("Sure, here you go:") == "Sure, here you go:"
 
 
 def _rewards(*triples: tuple[str, str, str]) -> dict[str, Reward]:

@@ -61,6 +61,23 @@ class AdmissionStats:
     fuel_spectrum: list[int] = field(default_factory=list)  # admitted, sorted
 
 
+def extract_source(completion: str) -> str:
+    """Pull a stratlite program out of a raw model completion. A local sampler
+    has no constrained decoding, so it emits prose and code fences; take the
+    first ```-fenced block if present, else the raw text. This NEVER repairs a
+    program -- it only unwraps -- because the reward oracle is strict on purpose
+    (fenced junk earns a compile-zero, the correct training signal). Testable
+    without a GPU, which is why it lives here and not in train.py.
+    """
+    if "```" in completion:
+        parts = completion.split("```")
+        if len(parts) >= 3:
+            body = parts[1]
+            # drop an optional language tag on the fence's opening line
+            return body.split("\n", 1)[1] if "\n" in body else body
+    return completion
+
+
 def parse_rewards(jsonl: str) -> dict[str, Reward]:
     """Parse `s5 reward` output, keyed by id (results may arrive in any order)."""
     out: dict[str, Reward] = {}
