@@ -148,20 +148,10 @@ pub fn leb128_u32(mut val: u32, out: &mut Vec<u8>) {
     }
 }
 
-/// Signed LEB128 for `i32.const` operands.
-pub fn leb128_i32(mut val: i32, out: &mut Vec<u8>) {
-    loop {
-        let mut byte = (val & 0x7F) as u8;
-        val >>= 7;
-        let more = !((val == 0 && byte & 0x40 == 0) || (val == -1 && byte & 0x40 != 0));
-        if more {
-            byte |= 0x80;
-        }
-        out.push(byte);
-        if !more {
-            break;
-        }
-    }
+/// Signed LEB128 for `i32.const` operands. The encoding depends only on the
+/// integer VALUE, not the source width, so this is exactly [`leb128_i64`].
+pub fn leb128_i32(val: i32, out: &mut Vec<u8>) {
+    leb128_i64(val.into(), out);
 }
 
 /// Signed LEB128 for `i64.const` operands.
@@ -443,82 +433,61 @@ impl Module {
         out.extend_from_slice(WASM_MAGIC);
         out.extend_from_slice(WASM_VERSION);
 
-        if !self.types.is_empty() {
-            let mut sec = Vec::new();
-            leb128_u32(self.types.len() as u32, &mut sec);
+        write_section(SEC_TYPE, self.types.len(), &mut out, |sec| {
             for ty in &self.types {
                 sec.extend_from_slice(ty);
             }
-            write_section(SEC_TYPE, &sec, &mut out);
-        }
-        if !self.imports.is_empty() {
-            let mut sec = Vec::new();
-            leb128_u32(self.imports.len() as u32, &mut sec);
+        });
+        write_section(SEC_IMPORT, self.imports.len(), &mut out, |sec| {
             for (module, name, type_idx) in &self.imports {
-                write_name(module, &mut sec);
-                write_name(name, &mut sec);
+                write_name(module, sec);
+                write_name(name, sec);
                 sec.push(0x00); // import kind: func
-                leb128_u32(*type_idx, &mut sec);
+                leb128_u32(*type_idx, sec);
             }
-            write_section(SEC_IMPORT, &sec, &mut out);
-        }
-        if !self.functions.is_empty() {
-            let mut sec = Vec::new();
-            leb128_u32(self.functions.len() as u32, &mut sec);
+        });
+        write_section(SEC_FUNCTION, self.functions.len(), &mut out, |sec| {
             for (type_idx, _, _) in &self.functions {
-                leb128_u32(*type_idx, &mut sec);
+                leb128_u32(*type_idx, sec);
             }
-            write_section(SEC_FUNCTION, &sec, &mut out);
-        }
+        });
         if let Some((min, max)) = self.memory {
-            let mut sec = Vec::new();
-            leb128_u32(1, &mut sec); // one memory
-            match max {
+            write_section(SEC_MEMORY, 1, &mut out, |sec| match max {
                 None => {
                     sec.push(0x00);
-                    leb128_u32(min, &mut sec);
+                    leb128_u32(min, sec);
                 }
                 Some(max) => {
                     sec.push(0x01);
-                    leb128_u32(min, &mut sec);
-                    leb128_u32(max, &mut sec);
+                    leb128_u32(min, sec);
+                    leb128_u32(max, sec);
                 }
-            }
-            write_section(SEC_MEMORY, &sec, &mut out);
+            });
         }
-        if !self.exports.is_empty() {
-            let mut sec = Vec::new();
-            leb128_u32(self.exports.len() as u32, &mut sec);
+        write_section(SEC_EXPORT, self.exports.len(), &mut out, |sec| {
             for (name, kind, idx) in &self.exports {
-                write_name(name, &mut sec);
+                write_name(name, sec);
                 sec.push(*kind);
-                leb128_u32(*idx, &mut sec);
+                leb128_u32(*idx, sec);
             }
-            write_section(SEC_EXPORT, &sec, &mut out);
-        }
-        if !self.functions.is_empty() {
-            let mut sec = Vec::new();
-            leb128_u32(self.functions.len() as u32, &mut sec);
+        });
+        write_section(SEC_CODE, self.functions.len(), &mut out, |sec| {
             for (_, locals, code) in &self.functions {
-                leb128_u32((locals.len() + code.len()) as u32, &mut sec);
+                leb128_u32((locals.len() + code.len()) as u32, sec);
                 sec.extend_from_slice(locals);
                 sec.extend_from_slice(code);
             }
-            write_section(SEC_CODE, &sec, &mut out);
-        }
-        if !self.data.is_empty() {
-            let mut sec = Vec::new();
-            leb128_u32(self.data.len() as u32, &mut sec);
+        });
+        write_section(SEC_DATA, self.data.len(), &mut out, |sec| {
             for (offset, bytes) in &self.data {
                 sec.push(0x00); // active, memory 0
                 sec.push(op::I32_CONST);
-                leb128_i32(*offset as i32, &mut sec);
+                leb128_i32(*offset as i32, sec);
                 sec.push(op::END);
-                leb128_u32(bytes.len() as u32, &mut sec);
+                leb128_u32(bytes.len() as u32, sec);
                 sec.extend_from_slice(bytes);
             }
-            write_section(SEC_DATA, &sec, &mut out);
-        }
+        });
         Ok(out)
     }
 }
@@ -533,10 +502,19 @@ fn write_name(name: &str, out: &mut Vec<u8>) {
     out.extend_from_slice(name.as_bytes());
 }
 
-fn write_section(id: u8, data: &[u8], out: &mut Vec<u8>) {
+/// Frame one section: id, byte length, item count, then `fill`-provided
+/// items. Every section in scope is a count-prefixed vector; a zero count
+/// emits NOTHING (empty sections are omitted, per [`Module::finish`]).
+fn write_section(id: u8, count: usize, out: &mut Vec<u8>, fill: impl FnOnce(&mut Vec<u8>)) {
+    if count == 0 {
+        return;
+    }
+    let mut sec = Vec::new();
+    leb128_u32(count as u32, &mut sec);
+    fill(&mut sec);
     out.push(id);
-    leb128_u32(data.len() as u32, out);
-    out.extend_from_slice(data);
+    leb128_u32(sec.len() as u32, out);
+    out.extend_from_slice(&sec);
 }
 
 #[cfg(test)]

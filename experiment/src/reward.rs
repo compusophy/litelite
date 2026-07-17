@@ -166,23 +166,7 @@ fn strip_and_collapse(src: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    fn candles(n: i64) -> Vec<Candle> {
-        (0..n)
-            .map(|i| {
-                let p = 10_000 + 7 * i + 300 * ((i % 16) - 8).abs();
-                Candle {
-                    open: p,
-                    high: p + 40,
-                    low: p - 40,
-                    close: p + 15,
-                    volume: 1,
-                }
-            })
-            .collect()
-    }
-
-    const CROSS: &str = "lookback 16; if sma(4) > sma(16) { signal long; } else { signal flat; }";
+    use crate::score::{CROSS, candles};
 
     #[test]
     fn the_ladder_orders_the_curriculum() {

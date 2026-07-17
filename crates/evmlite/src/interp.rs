@@ -321,6 +321,25 @@ impl Vm<'_> {
         Ok(self.memory[off..off + len].to_vec())
     }
 
+    /// `CODECOPY`/`CALLDATACOPY(destOff, srcOff, len)`: pop the three
+    /// operands and copy `data[src..src+len]` into memory, zero-extending
+    /// past the end of `data` (the EVM rule for both ops).
+    fn copy_op(&mut self, data: &[u8]) -> Result<(), ExecError> {
+        let dest = word_offset(&self.pop()?);
+        let src = word_offset(&self.pop()?);
+        let len = word_offset(&self.pop()?);
+        self.ensure_mem(dest, len)?;
+        for i in 0..len {
+            self.memory[dest + i] = src
+                .checked_add(i)
+                .and_then(|s| data.get(s))
+                .copied()
+                .unwrap_or(0);
+        }
+        self.pc += 1;
+        Ok(())
+    }
+
     /// The `CALLDATALOAD` word: 32 bytes at `off`, zero-extended past the end
     /// (checked adds — a huge offset reads zeros, never wraps to the start).
     fn calldataword(&self, off: usize) -> Word {
@@ -384,54 +403,38 @@ impl Vm<'_> {
                     self.stack.swap(n - 1, n - 2);
                     self.pc += 1;
                 }
-                op::ADD => {
+                // Binary ops share one skeleton, so the operand order — `a`
+                // is μs[0] (top), `b` is μs[1] (next) — is fixed in ONE place.
+                op::ADD
+                | op::SUB
+                | op::MUL
+                | op::DIV
+                | op::MOD
+                | op::LT
+                | op::GT
+                | op::EQ
+                | op::AND => {
                     let a = self.pop()?;
                     let b = self.pop()?;
-                    self.stack.push(add256(&a, &b));
-                    self.pc += 1;
-                }
-                op::SUB => {
-                    // μs[0] - μs[1] (top minus next).
-                    let a = self.pop()?;
-                    let b = self.pop()?;
-                    self.stack.push(sub256(&a, &b));
-                    self.pc += 1;
-                }
-                op::MUL => {
-                    let a = word_to_u128(&self.pop()?);
-                    let b = word_to_u128(&self.pop()?);
-                    self.stack.push(u128_to_word(a.wrapping_mul(b)));
-                    self.pc += 1;
-                }
-                op::DIV => {
-                    let a = word_to_u128(&self.pop()?);
-                    let b = word_to_u128(&self.pop()?);
-                    // EVM DIV-by-zero yields 0.
-                    self.stack.push(u128_to_word(a.checked_div(b).unwrap_or(0)));
-                    self.pc += 1;
-                }
-                op::MOD => {
-                    let a = word_to_u128(&self.pop()?);
-                    let b = word_to_u128(&self.pop()?);
-                    self.stack.push(u128_to_word(a.checked_rem(b).unwrap_or(0)));
-                    self.pc += 1;
-                }
-                op::LT => {
-                    let a = self.pop()?;
-                    let b = self.pop()?;
-                    self.stack.push(bool_word(a < b)); // unsigned BE compare
-                    self.pc += 1;
-                }
-                op::GT => {
-                    let a = self.pop()?;
-                    let b = self.pop()?;
-                    self.stack.push(bool_word(a > b));
-                    self.pc += 1;
-                }
-                op::EQ => {
-                    let a = self.pop()?;
-                    let b = self.pop()?;
-                    self.stack.push(bool_word(a == b));
+                    self.stack.push(match opc {
+                        op::ADD => add256(&a, &b),
+                        // μs[0] - μs[1] (top minus next).
+                        op::SUB => sub256(&a, &b),
+                        op::MUL => u128_to_word(word_to_u128(&a).wrapping_mul(word_to_u128(&b))),
+                        // EVM DIV/MOD by zero yield 0, not an error.
+                        op::DIV => u128_to_word(
+                            word_to_u128(&a).checked_div(word_to_u128(&b)).unwrap_or(0),
+                        ),
+                        op::MOD => u128_to_word(
+                            word_to_u128(&a).checked_rem(word_to_u128(&b)).unwrap_or(0),
+                        ),
+                        op::LT => bool_word(a < b), // unsigned BE compare
+                        op::GT => bool_word(a > b),
+                        op::EQ => bool_word(a == b),
+                        op::AND => std::array::from_fn(|i| a[i] & b[i]),
+                        // Unreachable: the outer arm lists exactly the above.
+                        other => return Err(ExecError::UnknownOpcode(other)),
+                    });
                     self.pc += 1;
                 }
                 op::ISZERO => {
@@ -444,16 +447,6 @@ impl Vm<'_> {
                     let shift = word_to_u128(&self.pop()?);
                     let value = self.pop()?;
                     self.stack.push(shr256(&value, shift));
-                    self.pc += 1;
-                }
-                op::AND => {
-                    let a = self.pop()?;
-                    let b = self.pop()?;
-                    let mut out = [0u8; 32];
-                    for i in 0..32 {
-                        out[i] = a[i] & b[i];
-                    }
-                    self.stack.push(out);
                     self.pc += 1;
                 }
                 op::KECCAK256 => return Err(ExecError::Unsupported(opc)),
@@ -507,36 +500,8 @@ impl Vm<'_> {
                     self.stack.push(word(self.env.number));
                     self.pc += 1;
                 }
-                op::CODECOPY => {
-                    // CODECOPY(destOff, codeOff, len), zero-extending past code.
-                    let dest = word_offset(&self.pop()?);
-                    let src = word_offset(&self.pop()?);
-                    let len = word_offset(&self.pop()?);
-                    self.ensure_mem(dest, len)?;
-                    for i in 0..len {
-                        self.memory[dest + i] = src
-                            .checked_add(i)
-                            .and_then(|s| self.code.get(s))
-                            .copied()
-                            .unwrap_or(0);
-                    }
-                    self.pc += 1;
-                }
-                op::CALLDATACOPY => {
-                    // CALLDATACOPY(destOff, srcOff, len), zero-extending.
-                    let dest = word_offset(&self.pop()?);
-                    let src = word_offset(&self.pop()?);
-                    let len = word_offset(&self.pop()?);
-                    self.ensure_mem(dest, len)?;
-                    for i in 0..len {
-                        self.memory[dest + i] = src
-                            .checked_add(i)
-                            .and_then(|s| self.calldata.get(s))
-                            .copied()
-                            .unwrap_or(0);
-                    }
-                    self.pc += 1;
-                }
+                op::CODECOPY => self.copy_op(self.code)?,
+                op::CALLDATACOPY => self.copy_op(self.calldata)?,
                 op::JUMP => {
                     let dest = word_offset(&self.pop()?);
                     self.jump(dest)?;

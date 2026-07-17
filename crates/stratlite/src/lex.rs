@@ -107,7 +107,7 @@ fn skip_trivia(cur: &mut Cursor<'_>) -> Result<(), Diag> {
 
 /// Keyword lookup. Builtin names (`close`, `sma`, …) are NOT keywords — they
 /// stay `Ident` and resolve at parse time, where declaring one is E0105.
-pub(crate) fn keyword(text: &str) -> Option<TokKind> {
+fn keyword(text: &str) -> Option<TokKind> {
     Some(match text {
         "let" => TokKind::Let,
         "if" => TokKind::If,

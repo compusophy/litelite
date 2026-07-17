@@ -35,7 +35,7 @@ jobs:
       - run: cargo test --manifest-path experiment/Cargo.toml
 
   # The M6 trainer's torch loop needs a GPU and is NOT run here — but its
-  # anti-collapse guards (select.py) are stdlib-only and load-bearing, so they
+  # anti-collapse guards (admission.py) are stdlib-only and load-bearing, so they
   # are byte-compiled and TESTED on every push. No torch installed.
   trainer:
     runs-on: ubuntu-latest

@@ -8,7 +8,7 @@ verifiable in the build environment.
 
 from __future__ import annotations
 
-from select import (
+from admission import (
     Reward,
     Rollout,
     build_admission_set,

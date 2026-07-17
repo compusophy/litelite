@@ -3,7 +3,7 @@
     ┌─ sample K programs per style from the current policy   (torch)
     │  write rollouts {id, style, source}
     ├─ score them with the verifier                          `s5 reward`
-    ├─ build the SFT admission set                           select.py (tested)
+    ├─ build the SFT admission set                           admission.py (tested)
     │  keep Ok-rung only, dedup by nkey, cap per style
     ├─ SFT the policy on the admitted {prompt, source}       (torch)
     └─ checkpoint, log the round's Reject histogram + fuel spectrum
@@ -15,7 +15,9 @@ use LoRA. Model sizing (Qwen3-Coder is all too big; use the dense line) and the
 non-thinking detail are in README.md.
 
 The load-bearing anti-collapse logic (admission + extraction) lives in
-select.py and is TESTED without a GPU -- that is where the reward hacks live.
+admission.py and is TESTED without a GPU -- that is where the reward hacks
+live. (It must never be named select.py: the script's directory shadows the
+stdlib `select` module, which subprocess/selectors import on POSIX.)
 The torch surface here is deliberately thin and isolated behind `Policy`. The
 prompt card and styles are read from the `s5` binary (`s5 card` / `s5 styles`)
 rather than copied, so the prompt the model learns and the language the
@@ -35,7 +37,7 @@ import random
 import subprocess
 from dataclasses import dataclass
 
-from select import (
+from admission import (
     Rollout,
     build_admission_set,
     extract_source,
@@ -65,7 +67,7 @@ class Config:
     sft_epochs: int = 1
     sft_batch: int = 8
     lr: float = 1e-5
-    # Anti-collapse (passed to select.py)
+    # Anti-collapse (passed to admission.py)
     per_key_cap: int = 2
     per_style_frac: float = 0.5
     # Hardware
@@ -99,7 +101,7 @@ def score(cfg: Config, rollouts: list[Rollout]) -> dict:
 
 class Policy:
     """The ONLY torch-dependent surface. Imports are lazy so the module loads --
-    and select.py's guards test -- without torch installed."""
+    and admission.py's guards test -- without torch installed."""
 
     def __init__(self, cfg: Config, system: str) -> None:
         import torch

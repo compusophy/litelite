@@ -1,5 +1,5 @@
 # M6 trainer deps — GPU-side only. NOT installed in this repo's CI (the guards
-# in select.py are tested with the stdlib alone). The default 0.5B full
+# in admission.py are tested with the stdlib alone). The default 0.5B full
 # fine-tune needs only these two; add peft/bitsandbytes for 1.5B LoRA or 7B
 # 4-bit. Pin exact versions before a real run.
 torch>=2.2          # CUDA build; a 3090 (Ampere) supports bfloat16

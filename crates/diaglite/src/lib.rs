@@ -58,19 +58,11 @@ impl Diag {
     }
     /// Coded error pinned to a span — the canonical constructor.
     pub fn at_code(code: u16, message: impl Into<String>, span: Span) -> Self {
-        Self {
-            message: message.into(),
-            span: Some(span),
-            code: Some(code),
-        }
+        Self::at(message, span).with_code(code)
     }
     /// Coded error with no span.
     pub fn new_code(code: u16, message: impl Into<String>) -> Self {
-        Self {
-            message: message.into(),
-            span: None,
-            code: Some(code),
-        }
+        Self::new(message).with_code(code)
     }
     /// Attach (or replace) the stable code.
     pub fn with_code(mut self, code: u16) -> Self {

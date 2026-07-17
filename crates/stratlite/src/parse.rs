@@ -258,7 +258,7 @@ fn parse_vars(src: &str, t: &mut Toks<'_>) -> PResult<Vec<(String, Value)>> {
     let mut vars: Vec<(String, Value)> = Vec::new();
     while t.eat(|x| x.kind == TokKind::Var).is_some() {
         let (name, name_span) = ident(src, t, "a variable name")?;
-        reserved(src, &name, name_span)?;
+        reserved(&name, name_span)?;
         if vars.iter().any(|(n, _)| *n == name) {
             return Err(PErr(Diag::at_code(
                 codes::BAD_DECL,
@@ -324,8 +324,7 @@ type PResult<T> = Result<T, PErr>;
 type Toks<'t> = TokCursor<'t, Token>;
 
 /// Names that may not be declared or assigned: the builtins.
-fn reserved(src: &str, name: &str, sp: Span) -> PResult<()> {
-    let _ = src;
+fn reserved(name: &str, sp: Span) -> PResult<()> {
     if Builtin::from_name(name).is_some() {
         return Err(PErr(Diag::at_code(
             codes::RESERVED_NAME,
@@ -343,7 +342,7 @@ fn stmt(src: &str, t: &mut Toks<'_>, lookback: u32) -> PResult<Stmt> {
             TokKind::Let => {
                 t.advance();
                 let (name, name_span) = ident(src, t, "a variable name")?;
-                reserved(src, &name, name_span)?;
+                reserved(&name, name_span)?;
                 expect(src, t, TokKind::Assign, "`=`")?;
                 let value = expr(src, t, lookback)?;
                 let end = expect(src, t, TokKind::Semi, "`;`")?;
@@ -360,7 +359,7 @@ fn stmt(src: &str, t: &mut Toks<'_>, lookback: u32) -> PResult<Stmt> {
                 // `=` (there are no expression statements), not an assignment
                 // to a builtin — the diag must describe what the source did.
                 expect(src, t, TokKind::Assign, "`=`")?;
-                reserved(src, &name, tok.span)?;
+                reserved(&name, tok.span)?;
                 let value = expr(src, t, lookback)?;
                 let end = expect(src, t, TokKind::Semi, "`;`")?;
                 Ok(Stmt::Assign {
@@ -596,7 +595,7 @@ fn call(src: &str, t: &mut Toks<'_>, name_tok: Token, lookback: u32) -> PResult<
         };
         t.advance();
         if t.peek().kind == TokKind::Comma {
-            return Err(arity(src, t, name_tok, lookback, 1, 1)?);
+            return arity(src, t, name_tok, lookback);
         }
         let rparen = expect(src, t, TokKind::RParen, "`)`")?;
         if !(1..=i64::from(lookback)).contains(&n) {
@@ -637,26 +636,19 @@ fn call(src: &str, t: &mut Toks<'_>, name_tok: Token, lookback: u32) -> PResult<
     }
 }
 
-/// Consume the rest of an over-long argument list and build the E0107 diag
-/// (`already` args seen, a comma pending).
-fn arity(
-    src: &str,
-    t: &mut Toks<'_>,
-    name_tok: Token,
-    lookback: u32,
-    want: usize,
-    already: usize,
-) -> PResult<PErr> {
-    let mut got = already;
+/// Consume the rest of an over-long indicator argument list (the window seen,
+/// a comma pending) and fail with the E0107 diag.
+fn arity(src: &str, t: &mut Toks<'_>, name_tok: Token, lookback: u32) -> PResult<Expr> {
+    let mut got = 1;
     while t.eat(|x| x.kind == TokKind::Comma).is_some() {
         expr(src, t, lookback)?;
         got += 1;
     }
     let rparen = expect(src, t, TokKind::RParen, "`)`")?;
-    Ok(PErr(Diag::at_code(
+    Err(PErr(Diag::at_code(
         codes::CALL_ARITY,
         format!(
-            "`{}` takes {want} argument(s), got {got}",
+            "`{}` takes 1 argument(s), got {got}",
             text(src, name_tok.span)
         ),
         Span::new(name_tok.span.start, rparen.end),

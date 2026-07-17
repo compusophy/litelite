@@ -215,7 +215,7 @@ pub fn verify(
     if (report.bars_evaluated as u64) < u64::from(gate.min_bars_evaluated) {
         return Err(Reject::Gate(GateFail {
             what: "bars evaluated",
-            got: report.bars_evaluated.min(u32::MAX as usize) as u32,
+            got: report.bars_evaluated as u32, // lossless: < min ≤ u32::MAX here
             min: gate.min_bars_evaluated,
         }));
     }
@@ -225,7 +225,6 @@ pub fn verify(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use stratlite::Signal;
 
     fn series(n: usize) -> Vec<Candle> {
         (0..n as i64)
@@ -371,7 +370,6 @@ mod tests {
         let r = run(src, &series(24)).unwrap();
         assert_eq!(r.trades, 1);
         assert!(r.bars_in_market >= 2);
-        let _ = Signal::Flat; // the shared vocabulary type
     }
 
     #[test]

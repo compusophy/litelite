@@ -122,6 +122,8 @@ fn next_kind(cur: &mut Cursor<'_>) -> Result<TokKind, Diag> {
     if cur.peek().is_some_and(|b| b.is_ascii_digit()) {
         return int_literal(cur);
     }
+    // One fixed-text table, longest first: a two-char operator must win over
+    // its one-char prefix (`==` before `=`).
     for (text, kind) in [
         ("&&", TokKind::AndAnd),
         ("||", TokKind::OrOr),
@@ -129,32 +131,25 @@ fn next_kind(cur: &mut Cursor<'_>) -> Result<TokKind, Diag> {
         ("!=", TokKind::BangEq),
         ("<=", TokKind::LtEq),
         (">=", TokKind::GtEq),
+        ("+", TokKind::Plus),
+        ("-", TokKind::Minus),
+        ("*", TokKind::Star),
+        ("/", TokKind::Slash),
+        ("%", TokKind::Percent),
+        ("!", TokKind::Bang),
+        ("=", TokKind::Assign),
+        ("<", TokKind::Lt),
+        (">", TokKind::Gt),
+        ("(", TokKind::LParen),
+        (")", TokKind::RParen),
+        ("{", TokKind::LBrace),
+        ("}", TokKind::RBrace),
+        (",", TokKind::Comma),
+        (";", TokKind::Semi),
     ] {
         if cur.eat_str(text) {
             return Ok(kind);
         }
-    }
-    let single = match cur.peek() {
-        Some(b'+') => Some(TokKind::Plus),
-        Some(b'-') => Some(TokKind::Minus),
-        Some(b'*') => Some(TokKind::Star),
-        Some(b'/') => Some(TokKind::Slash),
-        Some(b'%') => Some(TokKind::Percent),
-        Some(b'!') => Some(TokKind::Bang),
-        Some(b'=') => Some(TokKind::Assign),
-        Some(b'<') => Some(TokKind::Lt),
-        Some(b'>') => Some(TokKind::Gt),
-        Some(b'(') => Some(TokKind::LParen),
-        Some(b')') => Some(TokKind::RParen),
-        Some(b'{') => Some(TokKind::LBrace),
-        Some(b'}') => Some(TokKind::RBrace),
-        Some(b',') => Some(TokKind::Comma),
-        Some(b';') => Some(TokKind::Semi),
-        _ => None,
-    };
-    if let Some(kind) = single {
-        cur.bump();
-        return Ok(kind);
     }
     // Not a prooflite byte: consume ONE FULL CHAR so the diag spans it whole
     // (a byte-wide span inside a multi-byte char would render as mojibake).

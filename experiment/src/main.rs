@@ -11,8 +11,10 @@ mod data;
 mod reward;
 mod score;
 
+use backtestlite::{Costs, Gate};
 use score::Split;
 use std::process::ExitCode;
+use stratlite::{Candle, Limits};
 
 const USAGE: &str = "\
 s5 — the §5 experiment harness + M6 reward oracle
@@ -88,7 +90,7 @@ fn main() -> ExitCode {
     }
 }
 
-fn load(paths: &[String]) -> Result<Vec<stratlite::Candle>, String> {
+fn load(paths: &[String]) -> Result<Vec<Candle>, String> {
     if paths.is_empty() {
         return Err("give me at least one klines CSV".into());
     }
@@ -98,6 +100,15 @@ fn load(paths: &[String]) -> Result<Vec<stratlite::Candle>, String> {
         all.extend(data::parse(&csv).map_err(|e| format!("{p}: {e}"))?);
     }
     Ok(all)
+}
+
+/// The one verification recipe every subcommand shares: chronological split,
+/// TRAIN-only costs, default limits and gate. One copy, so `score`, `reward`
+/// and `eval` cannot drift apart on it.
+fn context(all: &[Candle]) -> (Split, Costs, Limits, Gate) {
+    let split = Split::at_fraction(all.len(), TRAIN_FRACTION);
+    let costs = score::costs_from_train(split.train(all), FEE_BPS, SLIP_BPS);
+    (split, costs, Limits::default(), Gate::default())
 }
 
 /// A rollout pool line: `{id, source, style}`, each field optional. A missing
@@ -130,8 +141,7 @@ fn cmd_data(paths: &[String]) -> Result<(), String> {
             return Err(format!("candle {i} would fail the verifier: {c:?}"));
         }
     }
-    let split = Split::at_fraction(all.len(), TRAIN_FRACTION);
-    let costs = score::costs_from_train(split.train(&all), FEE_BPS, SLIP_BPS);
+    let (split, costs, _, _) = context(&all);
     let hi = all.iter().map(|c| c.high).max().unwrap_or(1);
     println!("{} candles | price max {hi} ticks (cents)", all.len());
     println!(
@@ -249,10 +259,7 @@ fn cmd_score(args: &[String]) -> Result<(), String> {
     let generated: Vec<String> = pool.iter().filter_map(|(_, r)| r.clone().ok()).collect();
     let refused = pool.len() - generated.len();
 
-    let split = Split::at_fraction(all.len(), TRAIN_FRACTION);
-    let costs = score::costs_from_train(split.train(&all), FEE_BPS, SLIP_BPS);
-    let limits = stratlite::Limits::default();
-    let gate = backtestlite::Gate::default();
+    let (split, costs, limits, gate) = context(&all);
 
     let results = score::verify_pool(&generated, split.train(&all), limits, costs, gate);
     let hist = score::Histogram::tally(&results);
@@ -324,10 +331,7 @@ fn cmd_reward(args: &[String]) -> Result<(), String> {
     let all = load(&args[1..])?;
     let rows = read_pool(pool_path)?;
 
-    let split = Split::at_fraction(all.len(), TRAIN_FRACTION);
-    let costs = score::costs_from_train(split.train(&all), FEE_BPS, SLIP_BPS);
-    let limits = stratlite::Limits::default();
-    let gate = backtestlite::Gate::default();
+    let (split, costs, limits, gate) = context(&all);
 
     let sources: Vec<String> = rows.iter().map(|(_, s, _)| s.clone()).collect();
     let rewards = reward::reward_pool(&sources, &all, &split, limits, costs, gate);
@@ -360,10 +364,7 @@ fn cmd_eval(args: &[String]) -> Result<(), String> {
     let all = load(&args[1..])?;
     let pool = read_pool(pool_path)?;
 
-    let split = Split::at_fraction(all.len(), TRAIN_FRACTION);
-    let costs = score::costs_from_train(split.train(&all), FEE_BPS, SLIP_BPS);
-    let limits = stratlite::Limits::default();
-    let gate = backtestlite::Gate::default();
+    let (split, costs, limits, gate) = context(&all);
 
     let sources: Vec<String> = pool.iter().map(|(_, s, _)| s.clone()).collect();
     let styles: Vec<String> = pool.iter().map(|(_, _, st)| st.clone()).collect();

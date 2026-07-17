@@ -82,24 +82,14 @@ impl Expr {
 
     /// Replace the node's span — used to widen a parenthesized expression to
     /// its parens, so spans joined from it always cover balanced source text.
-    fn with_span(self, sp: Span) -> Expr {
+    fn set_span(&mut self, sp: Span) {
         match self {
-            Expr::Int(v, _) => Expr::Int(v, sp),
-            Expr::Bool(b, _) => Expr::Bool(b, sp),
-            Expr::Var(n, _) => Expr::Var(n, sp),
-            Expr::Unary(op, e, _) => Expr::Unary(op, e, sp),
-            Expr::Binary(op, l, r, _) => Expr::Binary(op, l, r, sp),
-            Expr::Call {
-                name,
-                name_span,
-                args,
-                ..
-            } => Expr::Call {
-                name,
-                name_span,
-                args,
-                span: sp,
-            },
+            Expr::Int(_, s)
+            | Expr::Bool(_, s)
+            | Expr::Var(_, s)
+            | Expr::Unary(_, _, s)
+            | Expr::Binary(_, _, _, s) => *s = sp,
+            Expr::Call { span, .. } => *span = sp,
         }
     }
 }
@@ -190,7 +180,7 @@ fn stmt(src: &str, t: &mut Toks<'_>) -> PResult<Stmt> {
         match tok.kind {
             TokKind::Let => {
                 t.advance();
-                let (name, _) = ident(src, t, "a variable name")?;
+                let name = ident(src, t, "a variable name")?;
                 expect(src, t, TokKind::Assign, "`=`")?;
                 let value = expr(src, t)?;
                 let end = expect(src, t, TokKind::Semi, "`;`")?;
@@ -396,17 +386,18 @@ fn primary(src: &str, t: &mut Toks<'_>) -> PResult<Expr> {
         }
         TokKind::LParen => {
             t.advance();
-            let inner = expr(src, t)?;
+            let mut inner = expr(src, t)?;
             let rparen = expect(src, t, TokKind::RParen, "`)`")?;
-            Ok(inner.with_span(Span::new(tok.span.start, rparen.end)))
+            inner.set_span(Span::new(tok.span.start, rparen.end));
+            Ok(inner)
         }
         _ => Err(unexpected(src, t, "an expression")),
     }
 }
 
-fn ident(src: &str, t: &mut Toks<'_>, what: &str) -> PResult<(String, Span)> {
+fn ident(src: &str, t: &mut Toks<'_>, what: &str) -> PResult<String> {
     match t.eat(|x| x.kind == TokKind::Ident) {
-        Some(tok) => Ok((text(src, tok.span).to_string(), tok.span)),
+        Some(tok) => Ok(text(src, tok.span).to_string()),
         None => Err(unexpected(src, t, what)),
     }
 }
@@ -427,41 +418,13 @@ fn unexpected(src: &str, t: &Toks<'_>, what: &str) -> PErr {
     ))
 }
 
+/// Every token except `Eof` spans exactly the source text the lexer consumed
+/// for it, so quote that — never a decoded value (`0xff` is not `255`).
 fn describe(src: &str, tok: &Token) -> String {
-    let sym = match tok.kind {
-        TokKind::Eof => return "end of input".to_string(),
-        // Quote the source text, not the decoded value — `0xff` is not `255`.
-        TokKind::Int(_) | TokKind::Ident => return format!("`{}`", text(src, tok.span)),
-        TokKind::True => "true",
-        TokKind::False => "false",
-        TokKind::Let => "let",
-        TokKind::If => "if",
-        TokKind::Else => "else",
-        TokKind::Repeat => "repeat",
-        TokKind::Print => "print",
-        TokKind::Plus => "+",
-        TokKind::Minus => "-",
-        TokKind::Star => "*",
-        TokKind::Slash => "/",
-        TokKind::Percent => "%",
-        TokKind::Bang => "!",
-        TokKind::BangEq => "!=",
-        TokKind::Assign => "=",
-        TokKind::EqEq => "==",
-        TokKind::Lt => "<",
-        TokKind::LtEq => "<=",
-        TokKind::Gt => ">",
-        TokKind::GtEq => ">=",
-        TokKind::AndAnd => "&&",
-        TokKind::OrOr => "||",
-        TokKind::LParen => "(",
-        TokKind::RParen => ")",
-        TokKind::LBrace => "{",
-        TokKind::RBrace => "}",
-        TokKind::Comma => ",",
-        TokKind::Semi => ";",
-    };
-    format!("`{sym}`")
+    match tok.kind {
+        TokKind::Eof => "end of input".to_string(),
+        _ => format!("`{}`", text(src, tok.span)),
+    }
 }
 
 /// Token spans come from the lexer, which only ever cuts on char boundaries.

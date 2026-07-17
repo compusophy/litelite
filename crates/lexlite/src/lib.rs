@@ -150,8 +150,7 @@ impl<'a> Cursor<'a> {
                 depth += 1;
             } else {
                 // Advance one full char, not one byte (multi-byte safe).
-                self.next_char()
-                    .map_err(|_| Span::new(self.pos, self.pos + 1))?;
+                self.next_char()?;
             }
         }
         Ok(true)

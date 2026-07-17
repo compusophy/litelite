@@ -228,28 +228,31 @@ pub fn agreement(a: &[Option<usize>], b: &[Option<usize>]) -> (u32, u32) {
     (same, n)
 }
 
+/// A sawtooth with drift — the same shape backtestlite's own doc example
+/// uses, so crossovers actually trade. Shared by reward.rs's tests.
+#[cfg(test)]
+pub(crate) fn candles(n: i64) -> Vec<Candle> {
+    (0..n)
+        .map(|i| {
+            let p = 10_000 + 7 * i + 300 * ((i % 16) - 8).abs();
+            Candle {
+                open: p,
+                high: p + 40,
+                low: p - 40,
+                close: p + 15,
+                volume: 1,
+            }
+        })
+        .collect()
+}
+
+#[cfg(test)]
+pub(crate) const CROSS: &str =
+    "lookback 16; if sma(4) > sma(16) { signal long; } else { signal flat; }";
+
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    /// A sawtooth with drift — the same shape backtestlite's own doc example
-    /// uses, so crossovers actually trade.
-    fn candles(n: i64) -> Vec<Candle> {
-        (0..n)
-            .map(|i| {
-                let p = 10_000 + 7 * i + 300 * ((i % 16) - 8).abs();
-                Candle {
-                    open: p,
-                    high: p + 40,
-                    low: p - 40,
-                    close: p + 15,
-                    volume: 1,
-                }
-            })
-            .collect()
-    }
-
-    const CROSS: &str = "lookback 16; if sma(4) > sma(16) { signal long; } else { signal flat; }";
 
     #[test]
     fn eval_conditions_on_compiling_and_measures_the_gap() {

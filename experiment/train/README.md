@@ -10,12 +10,12 @@ gate — the same seam `experiment/` itself uses.
 
 | File            | Deps        | Runs in CI? | Why                                            |
 |-----------------|-------------|-------------|------------------------------------------------|
-| `select.py`     | stdlib      | **yes**     | the anti-collapse guards + extraction — tested  |
+| `admission.py`  | stdlib      | **yes**     | the anti-collapse guards + extraction — tested  |
 | `test_select.py`| stdlib      | **yes**     | pins each guard against a named reward hack     |
 | `train.py`      | torch, GPU  | no          | the sampling + SFT loop; runs on your GPU       |
 
 The split is deliberate. The reward hacks the red-team named all live in *what
-you train on*, and that decision is `select.py` — Ok-rung only, dedup by the
+you train on*, and that decision is `admission.py` — Ok-rung only, dedup by the
 source-canonical `nkey`, cap each style's share. That is verifiable now, with no
 GPU, and it is tested. The torch calls in `train.py` are isolated behind
 `Policy`; CI byte-compiles the file (imports are lazy) but does not run it.

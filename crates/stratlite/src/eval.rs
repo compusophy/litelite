@@ -305,10 +305,9 @@ impl Evaluator<'_> {
                     *sp,
                 )
             }),
-            Expr::Series(b, arg, sp) => {
+            Expr::Series(b, arg, _) => {
                 let k = self.int_expr(arg, "a series offset")?;
                 let c = self.candle(k, arg.span())?;
-                let _ = sp;
                 Ok(Value::Int(match b {
                     Builtin::Open => c.open,
                     Builtin::High => c.high,
@@ -373,8 +372,8 @@ impl Evaluator<'_> {
     /// and floor agree; a live feed is whatever the caller validates.)
     fn indicator(&mut self, b: Builtin, n: u32, sp: Span) -> Result<Value, Diag> {
         self.burn(u64::from(n), sp)?;
-        let closes =
-            |k: u32| -> i128 { i128::from(self.ring[self.ring.len() - 1 - k as usize].close) };
+        let bar = |k: u32| self.ring[self.ring.len() - 1 - k as usize];
+        let closes = |k: u32| i128::from(bar(k).close);
         let v: i128 = match b {
             Builtin::Sma => {
                 let sum: i128 = (0..n).map(closes).sum();
@@ -406,16 +405,8 @@ impl Evaluator<'_> {
                     10000 * gain / (gain + loss)
                 }
             }
-            Builtin::Highest => (0..n)
-                .map(|k| self.ring[self.ring.len() - 1 - k as usize].high)
-                .max()
-                .unwrap_or(0)
-                .into(),
-            Builtin::Lowest => (0..n)
-                .map(|k| self.ring[self.ring.len() - 1 - k as usize].low)
-                .min()
-                .unwrap_or(0)
-                .into(),
+            Builtin::Highest => (0..n).map(|k| bar(k).high).max().unwrap_or(0).into(),
+            Builtin::Lowest => (0..n).map(|k| bar(k).low).min().unwrap_or(0).into(),
             _ => unreachable!("parse resolves indicator builtins only"),
         };
         // Means/extremes/ratios of i64 inputs always fit back into i64, but

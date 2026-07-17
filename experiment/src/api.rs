@@ -81,39 +81,34 @@ fn key() -> Result<String, String> {
 }
 
 fn post(path: &str, body: &Value) -> Result<Value, String> {
-    let k = key()?;
-    let resp = ureq::post(&format!("{API}{path}"))
-        .set("x-api-key", &k)
+    ureq::post(&format!("{API}{path}"))
+        .set("x-api-key", &key()?)
         .set("anthropic-version", VERSION)
         .set("content-type", "application/json")
-        .send_json(body.clone());
-    read(resp)
+        .send_json(body.clone())
+        .map_err(http_err)?
+        .into_json()
+        .map_err(|e| e.to_string())
 }
 
 fn get(path: &str) -> Result<String, String> {
-    let k = key()?;
-    let resp = ureq::get(&format!("{API}{path}"))
-        .set("x-api-key", &k)
+    ureq::get(&format!("{API}{path}"))
+        .set("x-api-key", &key()?)
         .set("anthropic-version", VERSION)
-        .call();
-    match resp {
-        Ok(r) => r.into_string().map_err(|e| e.to_string()),
-        Err(ureq::Error::Status(c, r)) => {
-            Err(format!("HTTP {c}: {}", r.into_string().unwrap_or_default()))
-        }
-        Err(e) => Err(e.to_string()),
-    }
+        .call()
+        .map_err(http_err)?
+        .into_string()
+        .map_err(|e| e.to_string())
 }
 
-fn read(resp: Result<ureq::Response, ureq::Error>) -> Result<Value, String> {
-    match resp {
-        Ok(r) => r.into_json().map_err(|e| e.to_string()),
-        // 429 carries retry-after; 529 is overload. Both are retryable, and
-        // the caller decides — we surface the code rather than swallow it.
-        Err(ureq::Error::Status(c, r)) => {
-            Err(format!("HTTP {c}: {}", r.into_string().unwrap_or_default()))
+// 429 carries retry-after; 529 is overload. Both are retryable, and the
+// caller decides — we surface the code rather than swallow it.
+fn http_err(e: ureq::Error) -> String {
+    match e {
+        ureq::Error::Status(c, r) => {
+            format!("HTTP {c}: {}", r.into_string().unwrap_or_default())
         }
-        Err(e) => Err(e.to_string()),
+        e => e.to_string(),
     }
 }
 
