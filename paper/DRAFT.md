@@ -46,6 +46,11 @@ asset (95.7% / 96.5% / 96.1%). This generalizes the predecessor tempo-x402
 result off `rustc` onto a purpose-built language and from a stronger,
 measured-zero floor; the near-zero train-vs-held-out gap marks the lift honestly
 as grammar competence, not out-of-sample edge, which stays the selector's job.
+Run a second time on `prooflite` — a data-free compute language, only the reward
+binary changed — the identical method repeats the lift, from 3.5% to ~95% rich
+generation with ~100% of it novel against the cold-start corpus, establishing
+verifier-only fine-tuning as a method on two structurally different languages
+rather than a one-grammar artifact.
 One experiment remains unrun — a frozen-model A/B arm for which there is no API
 key — and ships as an instrument with pre-registered commands, marked PENDING.
 The deterministic verifier plus committed artifacts reproduce every number in
@@ -757,7 +762,66 @@ across hardware — but the SCORING does: the two sample pools
 are committed, and the `s5 eval` command above reproduces every number in the
 table.
 
-### 5.7 PENDING (permanently keyless): the frozen-model A/B arm
+### 5.7 The second-language replication (M6, N = 2): the same reward on a data-free language
+
+If the §5.6 lift were an artifact of one grammar it would not transfer, so the
+instrument was run a second time on `prooflite` (§3) — the reference *compute*
+language, which reads no market data, places no trades, and has no held-out
+window. The language-parametric trainer ran UNCHANGED; only the reward binary
+was swapped (`s5` → the parallel `p6`, `experiment/proofbench/src/main.rs`),
+which serves the prooflite prompt card, eight computation-family styles, and the
+same validity ladder — `compile → run → gate → ok`, where the `ok`/RICH rung
+requires a clean run that prints ≥ 3 distinct lines over ≥ 30 fuel. Cold start on
+the 174 committed corpus survivors (`experiment/proofbench/corpus/seed.jsonl` —
+100% parse, 99.4% RICH when scored by `p6`), then eight rounds of the identical
+rejection-sampling self-play. Rich-rate climbed monotonically — cold-start → R0
+43.8% → R1 63.5% → R2 72.4% → R3 83.1% → R4 85.7% → R5 90.7% → R6 91.2% → R7
+95.0% → R8 96.2% (of 1,024 sampled per round).
+
+Because prooflite reads no data there is no train/held-out DATA split, so the
+generalization question changes shape: are the rich programs LEARNED, or
+MEMORIZED from the 174 human-authored cold-start examples — the only external
+data the model ever saw? The `p6 novelty` command answers it by source-canonical
+key (FNV-1a-64 over comment-stripped, whitespace-collapsed source,
+`main.rs:novelty_key`, which sees through format and comment clones).
+Benchmarking the selected checkpoint against the base model, identical
+non-thinking prompts, 256 samples each (32 per style):
+
+| model | parse | RICH (ok) | distinct rich / 256 | novel rich (∉ corpus) |
+|---|---|---|---|---|
+| base `Qwen3-0.6B` | 23.4% | 3.5% | 9 | 9 / 9 (100%) |
+| **C6 (selected)** | 99.2% | 94.5% | **216** | 242 / 242 (100%) |
+| C7 | 100.0% | 96.1% | 199 | 245 / 246 (99.6%) |
+| C8 | 98.8% | 96.1% | 205 | 245 / 246 (99.6%) |
+
+(`cd experiment/proofbench && ./target/release/p6 eval results/c6.jsonl` and
+`./target/release/p6 novelty results/c6.jsonl corpus/seed.jsonl`; full output in
+`experiment/proofbench/results/benchmark.txt`.) The floor is again true:
+prooflite is in no pretraining corpus, so base `Qwen3-0.6B` — which recognizes
+the C-like surface enough to parse 23.4% of its attempts, more than stratlite's
+0% — still writes a RICH program only 3.5% of the time (9 of 256). The lift from
+3.5% to ~95% is the fine-tune, and ~100% of the rich programs are novel against
+the corpus: the model learned to WRITE prooflite, not to recall the examples.
+
+The selected checkpoint is C6, and the reason is itself a finding. Raw validity
+saturates across C6–C8 (94.5% / 96.1% / 96.1% RICH), but DIVERSITY does not:
+admitted distinct keys peak at round 6 (823) then fall (750, 686), and the
+held-out benchmark confirms the peak on FRESH samples — C6 emits 216 distinct
+rich programs, against C7's 199 and C8's 205. Past the peak the policy trades
+breadth for reward — mild mode-narrowing that the anti-collapse guards of §5.5
+bound but do not abolish — so the method has an OBSERVABLE optimal stop, visible
+in the distinct-key curve rather than the rich-rate. What N = 2 establishes is
+that verifier-only fine-tuning is a METHOD, not a one-grammar artifact: run
+unchanged on a language with no data, no market, and no trades — only checked
+arithmetic and bounded loops — it takes the same small model from 3.5% to ~95%
+rich generation with ~100% novelty. What it does not establish is that every
+rich program is INTERESTING; the RICH rung certifies well-formed, terminating,
+and varied output, and selecting genuinely useful programs from this competent
+generator stays a downstream concern, exactly as edge does for stratlite. As in
+§5.6 the MODEL does not reproduce, but the SCORING does, from the committed
+pools.
+
+### 5.8 PENDING (permanently keyless): the frozen-model A/B arm
 
 One experiment on the instrument has complete plumbing and a committed protocol
 but has not been run, and cannot be: the frozen-model A/B arm. The §5 selection
@@ -778,10 +842,11 @@ corpus is the key-free stand-in for the generation step.
   `cd experiment && cargo run -q -- score raw.jsonl data/BTCUSDT-1h-2024-01.csv`
 
 The reproducibility split is exact and stated once: the deterministic verifier
-plus committed artifacts reproduce every number in §5.2–5.6 from a command —
-including the fine-tune's held-out scoring, from committed sample pools and
-candles; the generation itself — agents, the frozen API model, or the fine-tune
-— does not, and is committed or recorded rather than regenerated.
+plus committed artifacts reproduce every number in §5.2–5.7 from a command —
+including both fine-tunes' scoring (stratlite's held-out gate-clear from committed
+candles, prooflite's RICH-rate and novelty from committed pools and corpus); the
+generation itself — agents, the frozen API model, or either fine-tune — does not,
+and is committed or recorded rather than regenerated.
 
 ---
 
@@ -1070,6 +1135,9 @@ are committed, and each row below reproduces from a command.
 | per-style held-out gate-clear near-uniform 88–100% on the cross-asset window | `cd experiment && ./target/release/s5 eval results/c7.jsonl data/ETHUSDT-1h-2024-06.csv` |
 | training curve full-survivor cold-start → R0 39.0% → R7 98.2% (8 rounds); `distinct_nkeys` stayed high | `experiment/results/train_curve.log` |
 | pools 256 samples each (32/style × 8 styles); full benchmark output | `experiment/results/{base,c7}.jsonl`; `experiment/results/README.md`, `experiment/results/benchmark.txt` |
+| N=2 prooflite: base RICH 3.5% (9/256), C6 RICH 94.5% | `cd experiment/proofbench && ./target/release/p6 eval results/{base,c6}.jsonl` |
+| N=2 prooflite: novel rich ~100% (∉ 174-program corpus); C6 216 distinct rich | `cd experiment/proofbench && ./target/release/p6 novelty results/c6.jsonl corpus/seed.jsonl` |
+| N=2 prooflite pools 256 each; full output | `experiment/proofbench/results/{base,c6,c7,c8}.jsonl`; `experiment/proofbench/results/README.md`, `.../benchmark.txt` |
 
 ### PENDING slot — instrument shipped, run not performed (permanently keyless)
 

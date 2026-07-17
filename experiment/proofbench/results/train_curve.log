@@ -1,0 +1,16 @@
+# prooflite N=2 training curve — verifier-only rejection-sampling self-play.
+# One line per round from the run driver (experiment/train/run_prooflite.py).
+# histogram class counts sum to 1024 (128 samples x 8 styles); 'ok' = RICH rung.
+# Rich-rate/round: R0 43.8 R1 63.5 R2 72.4 R3 83.1 R4 85.7 R5 90.7 R6 91.2 R7 95.0 R8 96.2
+# distinct_nkeys (admitted diversity) peaks at R6 (823), then narrows (750, 686).
+
+cold start: 174/174 corpus programs admitted (histogram={'ok': 174})
+round 0: histogram={'compile': 158, 'gate': 344, 'ok': 448, 'run': 74} admitted=448 distinct_nkeys=445 fuel[min,max]=(30, 19022)
+round 1: histogram={'gate': 250, 'ok': 650, 'run': 59, 'compile': 65} admitted=634 distinct_nkeys=624 fuel[min,max]=(30, 29006)
+round 2: histogram={'ok': 741, 'run': 47, 'gate': 195, 'compile': 41} admitted=703 distinct_nkeys=683 fuel[min,max]=(30, 55756)
+round 3: histogram={'ok': 851, 'gate': 113, 'run': 34, 'compile': 26} admitted=793 distinct_nkeys=762 fuel[min,max]=(32, 36554)
+round 4: histogram={'ok': 878, 'gate': 87, 'compile': 34, 'run': 25} admitted=809 distinct_nkeys=774 fuel[min,max]=(30, 26756)
+round 5: histogram={'ok': 929, 'run': 32, 'gate': 53, 'compile': 10} admitted=865 distinct_nkeys=807 fuel[min,max]=(30, 19008)
+round 6: histogram={'ok': 934, 'gate': 42, 'run': 14, 'compile': 34} admitted=885 distinct_nkeys=823 fuel[min,max]=(30, 26356)
+round 7: histogram={'ok': 973, 'gate': 38, 'compile': 7, 'run': 6} admitted=849 distinct_nkeys=750 fuel[min,max]=(46, 9004)
+round 8: histogram={'ok': 985, 'run': 7, 'compile': 8, 'gate': 24} admitted=807 distinct_nkeys=686 fuel[min,max]=(34, 9004)

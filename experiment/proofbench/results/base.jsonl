@@ -1,0 +1,256 @@
+{"id": "s0n0", "style": "program", "source": "let x = 42;\nlet y = 1_000;\nlet z = 0xff;\nlet a = -x;\nlet b = !a;\nlet c = -b;\nprint c;  -- Final result\n"}
+{"id": "s0n1", "style": "program", "source": "let x = 42\nx = 1_000\nprint x\nif x { print x }\nelse if x { print x }\nelse { print x }\nrepeat x { print x }\n"}
+{"id": "s0n2", "style": "program", "source": "let x = 64;  -- introduce a variable\nx = 100;      -- reassign a variable already introduced with let\nprint x;     -- output the result\n"}
+{"id": "s0n3", "style": "program", "source": "let a = 42;\nlet b = 1000;\nlet c = a + b;\n\nprint(c);\n"}
+{"id": "s0n4", "style": "program", "source": "let a = 64;\nlet b = 64;\nprint a + b;  ;  -- 128\n"}
+{"id": "s0n5", "style": "program", "source": "let x = 1000;\nprint x;  ;  // print the result\n"}
+{"id": "s0n6", "style": "program", "source": "let x = 42;\nx = 42 + 1_000;\nprint x;\n"}
+{"id": "s0n7", "style": "program", "source": "let x = 42;\nlet y = 1000;\nlet z = x + y;\nlet w = z % 0xff;\nprint w;\n"}
+{"id": "s0n8", "style": "program", "source": "let x = 42;\nx = 1_000;\nx = 0xff;\nx = true;\nprint x;\n"}
+{"id": "s0n9", "style": "program", "source": "let x = 64;\nx + 1000;\nx;\n"}
+{"id": "s0n10", "style": "program", "source": "let x = 64 + 64 + 64 + 64;  -- sum of 4 twos\n\nx;  -- print the result\n"}
+{"id": "s0n11", "style": "program", "source": "let x = 42;  -- introduce variable x\nprint x;     -- print 42\n"}
+{"id": "s0n12", "style": "program", "source": "let x = 42;\nprint x; \n"}
+{"id": "s0n13", "style": "program", "source": "let x = 42;\nprint x;\n"}
+{"id": "s0n14", "style": "program", "source": "let x = 42\nlet y = 1_000\nlet z = 0xff\nlet a = !x\nlet b = !y\nlet c = a + b\n\nprint c\n"}
+{"id": "s0n15", "style": "program", "source": "let x = 10;          -- introduce variable\nlet y = 20;          -- introduce variable\nlet z = x + y;       -- assign value to z\nprint z;             -- print result\n"}
+{"id": "s0n16", "style": "program", "source": "let x = 64;  -- introduce variable\nlet y = 100;  -- introduce variable\nlet z = x + y;  -- assign result of x + y\nprint z;  -- print result\n"}
+{"id": "s0n17", "style": "program", "source": "let x = 42;\nprint x;\n"}
+{"id": "s0n18", "style": "program", "source": "let x = 10;\nx = 20;\nprint x;  -- Output: 20\n"}
+{"id": "s0n19", "style": "program", "source": "let x = 42;        ;  // introduce variable x\nprint x;           ;  // print value of x\nlet y = 1_000;      ;  // introduce variable y\nprint y;           ;  // print value of y\nlet z = 0xff;       ;  // introduce variable z\nprint z;           ;  // print value of z\nlet w = 0;          ;  // introduce variable w\nprint w;           ;  // print value of w\nlet a = !x;         ;  // introduce variable a\nprint a;           ;  // print value of a\nlet b = !y;         ;  // introduce variable b\nprint b;           ;  // print value of b\nrepeat w { print x; } ;  // loop with count w, print x\n"}
+{"id": "s0n20", "style": "program", "source": "let x = 1;  -- introduce variable x\nx = 2;      -- reassign x\nx = 3;      -- reassign x\n\nprint x;     -- print the result\n"}
+{"id": "s0n21", "style": "program", "source": "let x = 42;\nx = 1_000;\nx = 0xff;\nprint x;\n"}
+{"id": "s0n22", "style": "program", "source": "let x = 42;\nlet y = 1_000;\nlet z = x + y;\nlet w = z % 0xff;\nprint w;\n"}
+{"id": "s0n23", "style": "program", "source": "let a = 3\nlet b = 5\nlet c = a + b\nprint(c)\n"}
+{"id": "s0n24", "style": "program", "source": "let x = 42; x = 1_000; print x;\n"}
+{"id": "s0n25", "style": "program", "source": "let x = 42;\nx = 42;\nprint 42;\nif true { print 42; } else if true { print 42; } else { print 42; }\nrepeat 5 { print x; }\n"}
+{"id": "s0n26", "style": "program", "source": "let x = 42;\nx = 1000;\nprint(x);\n"}
+{"id": "s0n27", "style": "program", "source": "let x = 42;\nprint x\n"}
+{"id": "s0n28", "style": "program", "source": "let x = 42;\nx = 1_000;\nx = 0xff;\nx = true;\nprint x;\n"}
+{"id": "s0n29", "style": "program", "source": "let x = 42\nx = 1_000\nx = 0xff\nprint x\n"}
+{"id": "s0n30", "style": "program", "source": "let x = 42;  -- introduce variable x\n\nx = 1_000;  -- reassign variable already introduced\n\nprint x;   -- print the result\n\nif true { x = 0xff; print x; } else { x = 1_000; print x; }  -- nested integer arithmetic\n"}
+{"id": "s0n31", "style": "program", "source": "let x = 64;  -- introduce variable x\nx = 1_000;   -- reassign x\nprint x;     -- print result\nif x { 2; } else if x { 3; } else { 4; }  -- else-if chains are flat\nrepeat x { 5; }  -- repeat loop with up-front count\n"}
+{"id": "s1n0", "style": "program", "source": "let x = 42;\nif (x > 3) { print(x); }\nelse if (x < 3) { print(x); }\nelse { print(x); }\n"}
+{"id": "s1n1", "style": "program", "source": "let x = 64 * 3;              -- compute a value\nif x >= 64 { print(64); } else if x >= 128 { print(128); } else { print(0); }\n"}
+{"id": "s1n2", "style": "program", "source": "let x = 42;\nif (x == true) { print(42) } else if (x == false) { print(0xff) } else { print(\"This is a message\") }\n"}
+{"id": "s1n3", "style": "program", "source": "let x = 64;      -- introduce a variable\nlet y = 1000;    -- introduce a variable\nlet z = !x;     -- use ! as a unary operator\n\nif z { print(y) } else if z { print(x) } else { print(z) }\n"}
+{"id": "s1n4", "style": "program", "source": "let x = 2 + 3; -- introduce variable\nif x { print x } else if x { print x } else { print x }\n"}
+{"id": "s1n5", "style": "program", "source": "let x = 2 + 2;\nif (x > 5) {\n  print(\"x is greater than 5\");\n} else if (x < 5) {\n  print(\"x is less than 5\");\n} else {\n  print(\"x is equal to 5\");\n}\n"}
+{"id": "s1n6", "style": "program", "source": "let x = 1000;\nif (x == true) {\n  print(\"true\");\n} else if (x == false) {\n  print(\"false\");\n} else {\n  print(\"undefined\");\n}\n"}
+{"id": "s1n7", "style": "program", "source": "let x = 42;  -- introduce variable\nprint x;     -- output value\n"}
+{"id": "s1n8", "style": "program", "source": "let x = 10;\nif (x > 5) {\n  print(20);\n} else if (x < 10) {\n  print(30);\n} else {\n  print(40);\n}\n"}
+{"id": "s1n9", "style": "program", "source": "let x = 42\nif x > 100 then\n  print \"x is greater than 100\"\nelse if x == 100 then\n  print \"x is exactly 100\"\nelse\n  print \"x is less than 100\"\n"}
+{"id": "s1n10", "style": "program", "source": "let x = 100;\nif x == true { print 42 }\nelse if x == false { print 1_000 }\nelse { print 0xff }\n"}
+{"id": "s1n11", "style": "program", "source": "let x = 42;\nif (x > 10) { print(42) } else if (x == 10) { print(42) } else { print(42) }\n"}
+{"id": "s1n12", "style": "program", "source": "let x = 62;\nif (x == true) { print(62) }\nelse if (x == false) { print(62) }\nelse { print(62) }\n"}
+{"id": "s1n13", "style": "program", "source": "let x = 1 + 1;\nif x > 2 { print x; } else if x < 2 { print x; } else { print x; }\n"}
+{"id": "s1n14", "style": "program", "source": "let x = 64;  -- introduce a variable\nif x > 64 { print 64; }\nelse if x < 64 { print 64; }\nelse { print 64; }\n"}
+{"id": "s1n15", "style": "program", "source": "let x = 42;\nif x == 100 { print 100; } else if x == 101 { print 101; } else { print 102; }\n"}
+{"id": "s1n16", "style": "program", "source": "let x = 42;        ;  // introduce variable x\nif x == true {\n    print x;        ;  // branch on computed value\n} else if x == false {\n    print false;     ;  // branch on computed value\n} else {\n    print \"Else\";    ;  // branch on computed value\n}\n"}
+{"id": "s1n17", "style": "program", "source": "let x = 42;\nif x == true { print x; } else if x < 1_000 { print x; } else { print \"value is not found\"; }\n"}
+{"id": "s1n18", "style": "program", "source": "let x = 10;\nif x == true {\n    print 64\n}\nelse if x == false {\n    print 128\n}\nelse {\n    print 256\n}\n"}
+{"id": "s1n19", "style": "program", "source": "let x = 64;  -- introduce variable x\nx = 1_000;   -- reassign x\nprint x;      -- output: 1_000\n"}
+{"id": "s1n20", "style": "program", "source": "let x = 42;\nx = 42 + 1;\nx = 42 + 2;\n\nif x {\n  print \"Hello, World!\";\n} else if x > 42 {\n  print \"You're older!\";\n} else {\n  print \"You're the same age!\";\n}\n"}
+{"id": "s1n21", "style": "program", "source": "let x = 42;\nprint x;\n"}
+{"id": "s1n22", "style": "program", "source": "let x = 10; // initial value\n\nif x > 8 { \n  print x; \n} else if x < 16 { \n  print x; \n} else { \n  print \"value not found\";\n}\n"}
+{"id": "s1n23", "style": "program", "source": "let x = 0\nif x > 1000\n    print(\"X is greater than 1000\")\nelse\n    print(\"X is less than or equal to 1000\")\n"}
+{"id": "s1n24", "style": "program", "source": "let x = 64;  -- introduce variable x\nx = 0xff;    -- reassign a variable already introduced with let\nprint x;     -- write one line of output\nif x == true { print \"hello\" } else if x == false { print \"world\" } else { print \"unknown\" }\n"}
+{"id": "s1n25", "style": "program", "source": "let x = 64000; // compute and introduce variable\n\nif x == true { \n  print x; \n} else if x < 1000 { \n  print x; \n} else { \n  print \"else\"; \n}\n"}
+{"id": "s1n26", "style": "program", "source": "let x = 64;  -- introduce a variable\nx = 64;      -- reassign a variable already introduced\nprint x;     -- write one line of output\n"}
+{"id": "s1n27", "style": "program", "source": "let x = 42\nx = 1_000\nif x == true {\n  print x\n} else if x == false {\n  print x\n} else {\n  print x\n}\n"}
+{"id": "s1n28", "style": "program", "source": "let x = 42;\nx = 1000;\nprint(x);\n"}
+{"id": "s1n29", "style": "program", "source": "let x = 10;\nif (x == true) { print(\"Hello world!\") } else if (x > 10) { print(\"You are older!\") } else { print(\"You are too young!\") }\n"}
+{"id": "s1n30", "style": "program", "source": "let x = 42;  -- introduce a variable\nx = true;   -- reassign a variable already introduced with let\nif x { print x; } else if x { print x; } else { print x; }\n"}
+{"id": "s1n31", "style": "program", "source": "let x = 3 + 2 * 4;  -- introduction of variable x\nx = true;            -- reassignment of variable x\nif x { print x } else if x { print x } else { print x }\n"}
+{"id": "s2n0", "style": "program", "source": "let x = 42;\nrepeat x { print x }\n"}
+{"id": "s2n1", "style": "program", "source": "let x = 42;\nrepeat x { x = x + 1; print x }\n"}
+{"id": "s2n2", "style": "program", "source": "let x = 0\nrepeat x { x += 1; print x; }\n"}
+{"id": "s2n3", "style": "program", "source": "let x = 0\nrepeat 10 { x += 1 }\nprint x\n"}
+{"id": "s2n4", "style": "program", "source": "let x = 42;\nrepeat 10 { x = x + 1; print x; }\n"}
+{"id": "s2n5", "style": "program", "source": "let x = 1;          -- introduce variable\nrepeat x { x = x + 1; print x; }  -- build up with a var accumulator\n"}
+{"id": "s2n6", "style": "program", "source": "let x = 42;  ;   // introduce variable x\nrepeat 100 { x += x; print x; }\n"}
+{"id": "s2n7", "style": "program", "source": "let x = 0;\nrepeat 100 { x += 1; print x; }\n"}
+{"id": "s2n8", "style": "program", "source": "let x = 42;\nrepeat 1_000 { x += 1000; print x; }\n"}
+{"id": "s2n9", "style": "program", "source": "let x = 0\nrepeat x { x += 1; print x }\n"}
+{"id": "s2n10", "style": "program", "source": "let x = 0;\nrepeat 10 { x += 1; print x }\n"}
+{"id": "s2n11", "style": "program", "source": "let x = 0;\nrepeat x { \n  print x; \n  x += 1; \n}\n"}
+{"id": "s2n12", "style": "program", "source": "let var = 0;\nrepeat var { \n  var += 1; \n  print var\n}\n"}
+{"id": "s2n13", "style": "program", "source": "```stratlite\nlet x = 64;  ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;"}
+{"id": "s2n14", "style": "program", "source": "let x = 64;  -- variable introduced\nrepeat 10 { \n  print x;  -- build up the total\n  x += 1;  -- increment the accumulator\n}\n"}
+{"id": "s2n15", "style": "program", "source": "let x = 42;\nrepeat 1_000 { x += 1; print(x); }\n"}
+{"id": "s2n16", "style": "program", "source": "let x = 42\nrepeat 1000 { x = x + 1; print x }\n"}
+{"id": "s2n17", "style": "program", "source": "let x = 42;\nrepeat 1000 {\n  x = x + 1;\n  print x;\n}\n"}
+{"id": "s2n18", "style": "program", "source": "let x = 0\nrepeat 100 {\n  x = x + 1\n  print x\n}\n"}
+{"id": "s2n19", "style": "program", "source": "let a = 42;\nrepeat 100 { a += a; a = a; print a; }\n"}
+{"id": "s2n20", "style": "program", "source": "let x = 1\nrepeat 10 { x += 1; print x; }\n"}
+{"id": "s2n21", "style": "program", "source": "let x = 42;\nrepeat 1_000 {\n  print x\n}\n"}
+{"id": "s2n22", "style": "program", "source": "let total = 0;\n\nrepeat total { 1 }\n\nprint total\n"}
+{"id": "s2n23", "style": "program", "source": "repeat 1000 { \n  let x = 42; \n  print x \n}\n"}
+{"id": "s2n24", "style": "program", "source": "repeat 10 { \n  let x = 42; \n  print x\n}\n"}
+{"id": "s2n25", "style": "program", "source": "let x = 1;\nrepeat x { x += 1; print x; }\n"}
+{"id": "s2n26", "style": "program", "source": "let x = 0\nrepeat 3 { x += 1 }\nprint x\n"}
+{"id": "s2n27", "style": "program", "source": "repeat 20 { \n  let x = 42 \n  x = x + 1; \n  print x; \n}\n"}
+{"id": "s2n28", "style": "program", "source": "let x = 64;          -- introduce a variable\nrepeat x { \n  print x; \n  x = x + 1; \n} \n"}
+{"id": "s2n29", "style": "program", "source": "let x = 42;  -- introduce variable x\nrepeat x { x += 1 }  -- loop with accumulator x\nprint x\n"}
+{"id": "s2n30", "style": "program", "source": "let a = 0\nrepeat a { \n  a += 1\n  print a\n}\n"}
+{"id": "s2n31", "style": "program", "source": "let x = 42\nrepeat 10 { x += 1; print x }\n"}
+{"id": "s3n0", "style": "program", "source": "let x = 42\nx = 1_000\nprint true\n"}
+{"id": "s3n1", "style": "program", "source": "let x = 42;\nif x == true { print true; } else if x == false { print false; } else { print false; }\n"}
+{"id": "s3n2", "style": "program", "source": "let x = 0;\nx = false;\nprint(x);\n"}
+{"id": "s3n3", "style": "program", "source": "let x = 0xff;   -- introduce variable\nx = 0xff;       -- reassign variable\nprint x;       -- write one line of output\n"}
+{"id": "s3n4", "style": "program", "source": "let x = 1_000;\nx = 1_000;\nprint x;  -- this prints 1_000\n"}
+{"id": "s3n5", "style": "program", "source": "let x = 42;\nx = 1_000;\nx = 0xff;\nx = true;\n\nprint(x)\n"}
+{"id": "s3n6", "style": "program", "source": "let x = 1_000;\nx = 1_000;\nprint(x == true);\n"}
+{"id": "s3n7", "style": "program", "source": "let x = 42;\nx = true;\nif x { print x; } else if x { print x; } else { print x; }\n"}
+{"id": "s3n8", "style": "program", "source": "let x = 42;\nprint(x == true); -- 42 is a 64-bit signed integer\n"}
+{"id": "s3n9", "style": "program", "source": "let x = 42;\nx = 1_000;\nprint(42 == 1_000);\n"}
+{"id": "s3n10", "style": "program", "source": "let x = 42;  -- introduce variable\nx = 42;       -- reassign same variable\nprint x;      -- print 42\n"}
+{"id": "s3n11", "style": "program", "source": "let x = 64;\nx = 0xff;\nprint(x < 1000);\n"}
+{"id": "s3n12", "style": "program", "source": "let x = 42;\nx = 1_000;\nx = false;\nprint(x);\n"}
+{"id": "s3n13", "style": "program", "source": "let x = 42;\nprint if x > 0 { true } else { false };\n"}
+{"id": "s3n14", "style": "program", "source": "let x = 42;  ;  // x is a 64-bit signed integer\nprint x;  ;  // x is a boolean (true)\n"}
+{"id": "s3n15", "style": "program", "source": "let x = 64;              -- introduce a variable\nx = true;                -- reassign a variable already introduced with let\nprint x;                 -- write one line of output\n"}
+{"id": "s3n16", "style": "program", "source": "let x = 42;\nprint(x);\n"}
+{"id": "s3n17", "style": "program", "source": "let x = 42;          -- introduce a variable\nx = true;            -- reassign a variable already introduced\nif x { print x; } else { print false; }\n"}
+{"id": "s3n18", "style": "program", "source": "let x = 42;\nif x == true { print true } else if x == false { print false } else { print false };\n"}
+{"id": "s3n19", "style": "program", "source": "let x = 42;\nx = 1_000;\nx = false;\n\nprint x;\n"}
+{"id": "s3n20", "style": "program", "source": "let x = 42;\nx = false;\nprint(x);\n"}
+{"id": "s3n21", "style": "program", "source": "let x = 1_000;   ;  // introduce variable\nx = x + 1_000;  ;  // reassign variable\nprint x;        ;  // print result\n"}
+{"id": "s3n22", "style": "program", "source": "let x = 42;\nx = 1_000;\nx = 0xff;\nx = true;\nprint x;\n"}
+{"id": "s3n23", "style": "program", "source": "let x = 42;\nprint (true && false);\n"}
+{"id": "s3n24", "style": "program", "source": "let x = 64\nx = 64\nprint x\n"}
+{"id": "s3n25", "style": "program", "source": "let x = 42;       -- introduce a variable\nx = 1_000;       -- reassign a variable\nprint x;         -- print the variable value\n"}
+{"id": "s3n26", "style": "program", "source": "let x = 1000\nx = 1000\nprint x\n"}
+{"id": "s3n27", "style": "program", "source": "let x = 64;    -- introduce a variable\nx = 64;        -- reassign variable already introduced\nprint x;      -- write one line of output\n\nif x == true { ... } else if x == false { ... } else { ... }  -- else-if chains are flat\n"}
+{"id": "s3n28", "style": "program", "source": "let x = 42;                  -- introduce a variable\nx = 42;                     -- reassign a variable already introduced\nprint x;                     -- write one line of output\nif x == true { ... } else if x == false { ... } else { ... }    -- else-if chains are flat\nrepeat x { ... }            -- the count is evaluated ONCE, up front; then loops\n"}
+{"id": "s3n29", "style": "program", "source": "let x = 64\nx = 1_000\nprint x\n"}
+{"id": "s3n30", "style": "program", "source": "let x = 42;\nx = 1000;\nprint(false);\nif (true) { print(true); } else { print(false); };\nrepeat 2 { print(true); };\n"}
+{"id": "s3n31", "style": "program", "source": "let x = 42;\nx = true;\nprint(x);\n"}
+{"id": "s4n0", "style": "program", "source": "let x = 1;      ;   -- define variable x\nrepeat x { print x; x += 1; }  ;   -- print and increment the counter\n"}
+{"id": "s4n1", "style": "program", "source": "let x = 0;\nrepeat x { print x };\n"}
+{"id": "s4n2", "style": "program", "source": "let x = 0;\nrepeat x { print x; x += 1; }\n"}
+{"id": "s4n3", "style": "program", "source": "let x = 0\nrepeat x { print x; x += 1 }\n"}
+{"id": "s4n4", "style": "program", "source": "let x = 0;        -- introduce a variable\nrepeat x { print x; x += 1; }\n"}
+{"id": "s4n5", "style": "program", "source": "let count = 1;\nrepeat count { print(count); count += 1; }\n"}
+{"id": "s4n6", "style": "program", "source": "let x = 0;  -- introduce variable x\nrepeat x { \n  print x;  -- print the current value of x\n  x += 1;   -- increment the counter\n}\n"}
+{"id": "s4n7", "style": "program", "source": "let x = 1;  -- introduce a variable\nrepeat x { print x; x += 1; }  -- a repeat loop\n"}
+{"id": "s4n8", "style": "program", "source": "let x = 1;\nrepeat x { print x; x += 1 }\n"}
+{"id": "s4n9", "style": "program", "source": "repeat 4 { print 1; print 2; print 3; print 4; }\n"}
+{"id": "s4n10", "style": "program", "source": "let count = 0;\nrepeat count { print count; count += 1 }\n"}
+{"id": "s4n11", "style": "program", "source": "let x = 0\nrepeat x { print x; x = x + 1 }\n"}
+{"id": "s4n12", "style": "program", "source": "let x = 10;\nrepeat x { print x }\n"}
+{"id": "s4n13", "style": "program", "source": "let x = 1;  -- introduce variable x\n\nrepeat x { \n    print x; \n    x += 1; \n}  -- loop to print x with a running counter\n"}
+{"id": "s4n14", "style": "program", "source": "let x = 0;\nrepeat x { print x; x = x + 1; }\n"}
+{"id": "s4n15", "style": "program", "source": "let x = 6;  -- introduce a variable\nrepeat x { print(x); x += 1; }\n"}
+{"id": "s4n16", "style": "program", "source": "let x = 100;  -- introduce a variable\nrepeat x { 100; print x; }  -- loop with a fixed count and printing\n"}
+{"id": "s4n17", "style": "program", "source": "let count = 0;\nrepeat count { print(count); count += 1; }\n"}
+{"id": "s4n18", "style": "program", "source": "let x = 0;    -- introduce variable x\nrepeat x { ... }    -- loop to print numbers starting from x\nprint x;          -- print x\n"}
+{"id": "s4n19", "style": "program", "source": "let x = 1;  ;  // let x = 1\n\nrepeat x {  ;  // repeat x (count is evaluated once, then loop)\n\nprint x;  ;  // print x\n\nx += 1;  ;  // update x\n\n}\n"}
+{"id": "s4n20", "style": "program", "source": "repeat 10 { print 42; }\n"}
+{"id": "s4n21", "style": "program", "source": "let count = 0;\nrepeat count { print(count) }\n"}
+{"id": "s4n22", "style": "program", "source": "let x = 0;  -- introduce a variable\nrepeat x { print x; x = x + 1; }\n"}
+{"id": "s4n23", "style": "program", "source": "let x = 0;\nrepeat x { print x; x += 1 }\n"}
+{"id": "s4n24", "style": "program", "source": "repeat 10 { print 42 }\n"}
+{"id": "s4n25", "style": "program", "source": "let x = 1;\nrepeat x { print x; x += 1; }\n"}
+{"id": "s4n26", "style": "program", "source": "let x = 1\nrepeat x { \n  print x\n  x += 1\n} \n"}
+{"id": "s4n27", "style": "program", "source": "let x = 1\nrepeat x { print x }\n"}
+{"id": "s4n28", "style": "program", "source": "let counter = 0;  -- introduce a variable\nrepeat counter {  -- the count is evaluated ONCE, up front; then loops\n    print(counter++)  -- print the current value\n}\n"}
+{"id": "s4n29", "style": "program", "source": "let x = 0;  -- initialize variable\nrepeat x { print x; x += 1 }  -- print 0, then increment\n"}
+{"id": "s4n30", "style": "program", "source": "let count = 1\nrepeat count { print count }\n"}
+{"id": "s4n31", "style": "program", "source": "repeat 5 { print i; i += 1 }\n"}
+{"id": "s5n0", "style": "program", "source": "let a = 0\nrepeat 5 {\n  a = a + 1\n  if a == 5 { print a }\n}\n"}
+{"id": "s5n1", "style": "program", "source": "```stratlite\nlet x = 64;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;"}
+{"id": "s5n2", "style": "program", "source": "let x = 42;\nrepeat 100 {\n  x = x + 1;\n  print x;\n}\nif true {\n  x = x + 1000;\n  print x;\n}\n"}
+{"id": "s5n3", "style": "program", "source": "let x = 64;      ; \nrepeat 3 { \n    print x; \n    x = !x; \n}; \nif true { \n    x = 64; \n    print x; \n} else { \n    x = false; \n}\n"}
+{"id": "s5n4", "style": "program", "source": "let x = 42;\nrepeat 5 { print x; x = x + 1; }\nif true { print x; }\n"}
+{"id": "s5n5", "style": "program", "source": "let x = 42;  -- introduce variable x\nrepeat 3 { \n  x = x + 1;  -- repeat loop with count 3\n  print x;   -- output after each iteration\n}\n\nif true { \n  x = !x;  -- check if true and invert variable\n} else if false { \n  x = x - 1;  -- check if false and subtract variable\n}\n"}
+{"id": "s5n6", "style": "program", "source": "let x = 42;\nrepeat 10 { x = x + 1; print x; }\nif true { x = x - 1; print x; } else { print false; }\n"}
+{"id": "s5n7", "style": "program", "source": "let a = 42;\nrepeat 3 { a += 1; if a > 100 { a = !a } }\n"}
+{"id": "s5n8", "style": "program", "source": "let x = 42;\nrepeat 10 { x = x + 1 ; print x ; };\nif true { print \"Hello\" ; } else { print \"World\" ; }\n"}
+{"id": "s5n9", "style": "program", "source": "let x = 42;\nrepeat 10 { x += 1; print x; }\nif true { x = 0; print x; } else { print \"Hello\"; }\n"}
+{"id": "s5n10", "style": "program", "source": "let x = 42\nrepeat 10 { print x; x = x + 1 }\nif true { print \"Hello\" }\nelse if false { print \"World\" }\n"}
+{"id": "s5n11", "style": "program", "source": "let x = 42;\nrepeat 10 { x = x + 1; print x; };\nif true { x = 0; print x; }\n"}
+{"id": "s5n12", "style": "program", "source": "let x = 64;\nrepeat 2 { x += 1; print x; }\nif true { print false; }\n"}
+{"id": "s5n13", "style": "program", "source": "let x = 42;\nrepeat 10 { x = x + 1; print x; }\nif true { x = x * 2; print x; }\n"}
+{"id": "s5n14", "style": "program", "source": "let x = 42;\nrepeat 10 { x = x + 1; print x; };\nif true { print 1000; };\n"}
+{"id": "s5n15", "style": "program", "source": "```stratlite\nlet x = 42;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;"}
+{"id": "s5n16", "style": "program", "source": "repeat 2 { \n  let x = 64; \n  x = 1_000; \n  print x; \n}\n"}
+{"id": "s5n17", "style": "program", "source": "repeat 2 { \n  let x = 1\n  x = 2\n  print x\n}\n"}
+{"id": "s5n18", "style": "program", "source": "let x = 42;                  -- introduce variable x\nx = 1_000;                  -- reassign variable x\nprint x;                     -- output the value of x\n\nrepeat 1_000 {\n  let y = x;\n  y = 0;\n  print y;\n}\nif x { print x } else if y { print y } else { print 0 }  -- use flat else-if chains\n"}
+{"id": "s5n19", "style": "program", "source": "let x = 42;        ; \nrepeat 100 { x = x + 1; print x; } ; \nif true { print x; } else { x = 0; }\n"}
+{"id": "s5n20", "style": "program", "source": "let x = 42;  -- introduce a variable\nprint x;     -- write one line of output\nrepeat 10 { \n  if x == true { \n    x = 1_000; \n  } else if x == false { \n    x = 0xff; \n  } else { \n    x = 0; \n  }\n} ; \n"}
+{"id": "s5n21", "style": "program", "source": "let a = 64;\nrepeat 2 { \n  print a; \n  a = !a; \n}\n"}
+{"id": "s5n22", "style": "program", "source": "```stratlite\nlet x = 42;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;"}
+{"id": "s5n23", "style": "program", "source": "let x = 64;  ;  // Initialize variable x to 64\n\nrepeat 10 {  // Loop 10 times\n  x = x - 1;  ;  // Subtract 1 from x\n  print x;    ;  // Output x after each subtraction\n}\n\nif x == 0 {   ;  // Check if x is zero\n  x = false;  ;  // Set x to false\n  print x;    ;  // Print false\n}\n"}
+{"id": "s5n24", "style": "program", "source": "repeat 3 { \n  let x = 10; \n  print x; \n  let y = 20; \n  if y { \n    print y; \n    let z = y; \n  } else { \n    let w = 30; \n  } \n}\n"}
+{"id": "s5n25", "style": "program", "source": "let x = 64\nrepeat 10 { \n  print x\n  x = !x\n}\nif x { \n  print x\n  x = x\n}\n"}
+{"id": "s5n26", "style": "program", "source": "let x = 42\nrepeat 3 { x = 100 + x; print x; }\nif true { print \"Hello\" } else { print \"World\" }\n"}
+{"id": "s5n27", "style": "program", "source": "let x = 42;\nrepeat 10 { x = x + 1; x = x + 1; print x; }\nif x == true { x = 0; x = x + 1; print x; } else { print x; }\n"}
+{"id": "s5n28", "style": "program", "source": "```stratlite\nlet x = 42;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;"}
+{"id": "s5n29", "style": "program", "source": "let x = 42;\nrepeat 10 { x = 64; print x; }\nif x == true { print \"Hello\" }\nelse if x == false { print \"World\" }\n"}
+{"id": "s5n30", "style": "program", "source": "let x = 42;               -- introduce a variable\nrepeat 1 {              -- count is evaluated once\n  x = 1_000;              -- assign to the variable\n  print x;               -- output the value\n}\nif true {                   -- else-if chain\n  x = !x;                   -- apply a function\n  print x;                -- output the value\n}\n"}
+{"id": "s5n31", "style": "program", "source": "let x = 64;\nrepeat 3 { \n  if (x > 100) { print(x); } else { print(0); }\n  let x = x + 10;\n}\n"}
+{"id": "s6n0", "style": "program", "source": "let x = 100 / 0;  -- divide-by-zero error detected\nif x { print x }\nelse if x { print x }\nelse { print x }\n"}
+{"id": "s6n1", "style": "program", "source": "```stratlite\nlet x = 1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"}
+{"id": "s6n2", "style": "program", "source": "let x = 42;\nx = 42;\nprint x;\n"}
+{"id": "s6n3", "style": "program", "source": "let x = 1 / 0;\nif x {\n  print \"error\"\n}\nelse {\n  print \"0\"\n}\n"}
+{"id": "s6n4", "style": "program", "source": "let x = 42;  -- introduce variable\nprint x;     -- write one line of output\n"}
+{"id": "s6n5", "style": "program", "source": "let x = 10\nx = 100\nx = 1000\nx = 10000\nprint x\n"}
+{"id": "s6n6", "style": "program", "source": "let x = 1_000\nlet y = 0xff\nx = x / y\nif x != false { print x }\nelse if y != false { print y }\nelse { print 0 }\n"}
+{"id": "s6n7", "style": "program", "source": "let x = 1000;  -- introduce variable\n\nx = x / 10;    -- reassign variable\n\nprint x;       -- write one line of output\n\nif x == 0 {    -- guard against division by zero\n  exit\n} else if x < 1000 {  -- guard against overflow\n  exit\n} else {        -- no other guards\n  print x\n}\n"}
+{"id": "s6n8", "style": "program", "source": "let x = 42;\nx = 1_000;\nprint x;  -- output 1000\n"}
+{"id": "s6n9", "style": "program", "source": "let x = 1_000\nx = 1_000\nprint x\n"}
+{"id": "s6n10", "style": "program", "source": "let x = 10 / 0;  -- divide-by-zero check\nprint x;  -- if no division, output 10.0\n"}
+{"id": "s6n11", "style": "program", "source": "let x = 42\nx = 1_000\nprint 42\nx = !x\nrepeat x { x = !x; print x }\n"}
+{"id": "s6n12", "style": "program", "source": "let x = 6\nprint x\n"}
+{"id": "s6n13", "style": "program", "source": "let x = 10\nx = 50\nprint x\n"}
+{"id": "s6n14", "style": "program", "source": "let x = 10\nprint x\n"}
+{"id": "s6n15", "style": "program", "source": "let x = 10;  -- introduce variable\nx = 10 / 2;  -- assign value\nprint x;    -- print result\n"}
+{"id": "s6n16", "style": "program", "source": "let x = 42;\nx = 1_000;\nprint x;\nif x == 0 { print 0; } else if x > 0 { print x; } else { print x; }\nrepeat 10 { print x; }\n"}
+{"id": "s6n17", "style": "program", "source": "let x = 0;\nx = 10;\nprint x;\n"}
+{"id": "s6n18", "style": "program", "source": "let x = 42;\nprint x;\n"}
+{"id": "s6n19", "style": "program", "source": "let x = 42;  -- introduce a variable\nlet y = 1_000;  -- introduce a variable\nlet z = 0xff;  -- introduce a variable\nlet a = x / y;  -- divide x by y\nlet b = a * y;  -- multiply\nlet c = b % a;  -- take modulo\n\nprint(c);  -- output the result\n"}
+{"id": "s6n20", "style": "program", "source": "let x = 42\nx = 1000\nprint x\n"}
+{"id": "s6n21", "style": "program", "source": "let x = 42;\nprint x;\n"}
+{"id": "s6n22", "style": "program", "source": "let x = 10\nx = x / 2\nif x == false { \n  print \"0\"\n} else {\n  print \"10\"\n}\n"}
+{"id": "s6n23", "style": "program", "source": "let x = 42;  -- introduce a variable\nx = 42;      -- reassign a variable already introduced with let\nprint x;     -- write one line of output\n\nif x < 0 {  -- if x is negative\n  x = 0;\n} else if x == false {  -- if x is true\n  x = 1;\n} else {  -- else clause\n  x = 2;\n}\n\nrepeat x {  -- the count is evaluated ONCE, up front; then loops\n  print x;\n}\n"}
+{"id": "s6n24", "style": "program", "source": "let x = 42;\nx = 1_000;\nprint 1_000;\nif false { print 1_000 } else if true { print 1_000 } else { print 1_000 };\nrepeat 1 { print 1_000 };\n"}
+{"id": "s6n25", "style": "program", "source": "let x = 0;\nx = 42;\nprint x;\n"}
+{"id": "s6n26", "style": "program", "source": "let x = 10 / 0\nif x { 0 } else if x { 0 }\nrepeat 0 { print 0 }\n"}
+{"id": "s6n27", "style": "program", "source": "let x = 42;\nlet y = 1000;\nlet z = 0xff;\nprint(z);\n\nif x == 0 { print(\"Error: division by zero\") } else { repeat x { print(y); } }\n"}
+{"id": "s6n28", "style": "program", "source": "let x = 10 / 2\nif x == false { print x } else if x == true { print x } else { print x }\n"}
+{"id": "s6n29", "style": "program", "source": "let x = 10\nx = 20\n\nif x != 0 then\n  print x\nelse\n  print \"error: divide by zero\"\nendif\n\nrepeat x { print x }\n"}
+{"id": "s6n30", "style": "program", "source": "let x = 0;  -- introduce a variable\nx = 10;     -- reassign a variable already introduced with let\nx = 20;     -- reassign a variable already introduced with let\nx = x / 5;  -- compute\nif (x != 0) {  -- guard against divide-by-zero\n    x = x + 10;  -- compute overflow\n    print x;   -- output\n}\nelse {  -- guard against overflow\n    x = 5;     -- compute overflow\n    print x;   -- output\n}\n"}
+{"id": "s6n31", "style": "program", "source": "let x = 0\nprint x\n"}
+{"id": "s7n0", "style": "program", "source": "let x = 42;\nrepeat x { print x; }\n"}
+{"id": "s7n1", "style": "program", "source": "let x = 42;  ;  // initialize the variable\nrepeat if (x >= 0) {  ;  // check for non-negative value\n    print x;  ;  // print the value\n    x = 1_000;  ;  // reset the variable\n} else if (x >= 1_000) {  ;  // check for positive and non-zero value\n    print x;  ;  // print the value\n    x = 0;  ;  // reset the variable\n} else {  ;  // if both conditions fail\n    print x;  ;  // print the value\n}\n"}
+{"id": "s7n2", "style": "program", "source": "let a = 42\nlet b = 1_000\nlet c = 0xff\nlet d = true\nlet e = false\n\nrepeat a { print b; print c; print d; }\n\nif d { print e; print f; print g; }\nelse if c { print h; print i; print j; }\nelse { print k; print l; print m; }\n"}
+{"id": "s7n3", "style": "program", "source": "let x = 42\nrepeat 42 { \n  print x\n}\n"}
+{"id": "s7n4", "style": "program", "source": "let x = 42;  -- introduce variable x\nlet y = 1_000;  -- introduce variable y\nprint x;  -- write first value\nrepeat if x < y { \n  x = y;\n  print y;\n} else { \n  x = 0;  -- reset x in case y is not smaller\n  print x;\n}  -- nested if\n"}
+{"id": "s7n5", "style": "program", "source": "let x = 42;\nlet y = 1_000;\nlet z = 0xff;\nlet w = true;\n\nrepeat if (w) { print w; } else if (x) { print x; } else { print x; }  -- loop nested if\n"}
+{"id": "s7n6", "style": "program", "source": "let x = 42\nrepeat x { print x }\n"}
+{"id": "s7n7", "style": "program", "source": "let x = 42;\nrepeat 3 { print x; x = 1_000; }\n"}
+{"id": "s7n8", "style": "program", "source": "let x = 42;\nlet y = 1_000;\nlet z = 0xff;\nlet a = true;\n\nrepeat x { print z; print y; }\n"}
+{"id": "s7n9", "style": "program", "source": "let x = 64;  -- introduce a variable\nrepeat x {  print x; }\n"}
+{"id": "s7n10", "style": "program", "source": "let x = 42;                    ;  -- introduce variable\nlet y = 1_000;                  ;  -- introduce variable\nprint y;                        ;  -- print 1000\nrepeat if x < y { print x; } else if x > y { print y; } else { print y; }  ;  -- loop\n"}
+{"id": "s7n11", "style": "program", "source": "let a = 42;\nlet b = 1_000;\nlet c = 0xff;\nlet d = true;\nlet e = false;\n\nif a <= b {\n    repeat b { \n        print c;\n    }\n    print d;\n    print e;\n} else if a <= c {\n    repeat c {\n        print a;\n    }\n} else {\n    print a;\n}\n"}
+{"id": "s7n12", "style": "program", "source": "let x = 42;\nlet y = 1000;\nlet z = 0xff;\nlet w = true;\nlet v = false;\n\nrepeat w { \n  print x\n  print y\n  print z\n  print v\n}\n"}
+{"id": "s7n13", "style": "program", "source": "```stratlite\nlet x = 64;  ;  let y = 10;  ;  let z = 20;  ;  let w = 30;  ;  let v = 40;  ;  let u = 50;  ;  let t = 60;  ;  let s = 70;  ;  let r = 80;  ;  let q = 90;  ;  let p = 100;  ;  let n = 110;  ;  let m = 120;  ;  let k = 130;  ;  let l = 140;  ;  let j = 150;  ;  let i = 160;  ;  let h = 170;  ;  let g = 180;  ;  let f = 190;  ;  let e = 200;  ;  let d = 210;  ;  let c = 220;  ;  let b = 230;"}
+{"id": "s7n14", "style": "program", "source": "let x = 64\nlet y = 64\nprint y\nrepeat x { print x }\n"}
+{"id": "s7n15", "style": "program", "source": "let x = 42;   ;  // introduce variable x\nprint x;     ;  // print value of x\nrepeat x { x++; }  ;  // repeat loop with up-front count 1\n"}
+{"id": "s7n16", "style": "program", "source": "let a = 42;\nlet b = 1_000;\nlet c = 0xff;\nlet d = true;\nlet e = false;\n\nprint(\"a: \", a);\nprint(\"b: \", b);\nprint(\"c: \", c);\nprint(\"d: \", d);\nprint(\"e: \", e);\n"}
+{"id": "s7n17", "style": "program", "source": "let x = 42\nlet y = 1_000\nlet z = 0xff\nlet w = true\nrepeat if x < 1000 { print x; print y; print z } else if z == 0xff { print w }\n"}
+{"id": "s7n18", "style": "program", "source": "let x = 42;  ;  // value\nrepeat if x == 1 { print x } else { print 1_000 }  ;  // loop\n"}
+{"id": "s7n19", "style": "program", "source": "let a = 42;\nlet b = 1000;\nlet c = 0xff;\nlet d = true;\nlet e = false;\n\nrepeat if (a + b) { \n  print a;\n  print b;\n} else if (a > b) {\n  print a;\n} else {\n  print c;\n  print d;\n}\n"}
+{"id": "s7n20", "style": "program", "source": "let x = 42;      ;  -- introduce variable x\nlet y = 1_000;   ;  -- introduce variable y\nlet z = 0xff;   ;  -- introduce variable z\nlet a = true;   ;  -- introduce variable a\nlet b = false;  ;  -- introduce variable b\n\nrepeat if (a && b) { print x; print y; print z; }\n"}
+{"id": "s7n21", "style": "program", "source": "let x = 42\nprint x\nrepeat if x > 10 { x = x + 5; } else { x = x + 2; }\n"}
+{"id": "s7n22", "style": "program", "source": "let x = 42\nlet y = 1_000\nlet z = 0xff\nlet a = true\nlet b = false\n\nrepeat if (a) { print x; print y; print z; }\nelse if (b) { print a; print b; }\nelse { print a; print b; print c; }\n"}
+{"id": "s7n23", "style": "program", "source": "```stratlite\nlet x = 42;  -- introduce variable x\nprint x;     -- output 42\nrepeat 1 { \n  let y = 1000;  -- introduce variable y\n  print y;     -- output 1000\n} ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;"}
+{"id": "s7n24", "style": "program", "source": "let x = 64;\nrepeat 3 { print x; x = !x; };\n"}
+{"id": "s7n25", "style": "program", "source": "let x = 1_000;\nrepeat x { print x; }\n"}
+{"id": "s7n26", "style": "program", "source": "let x = 42;\nprint x;\nlet y = 1_000;\nprint y;\nlet z = 0xff;\nprint z;\nrepeat if x > y { x, y; } else if x < y { x, y, z; } else { x, y, z, z; }\n"}
+{"id": "s7n27", "style": "program", "source": "let x = 64\nlet y = 1_000\nlet z = 0xff\nlet a = true\nlet b = false\n\nprint x; print y; print z;\n\nif a {\n  print b;\n} else if b {\n  print a;\n} else {\n  print a;\n}\n"}
+{"id": "s7n28", "style": "program", "source": "let x = 42;\nrepeat x { print x; }\n"}
+{"id": "s7n29", "style": "program", "source": "let a = 42;\nlet b = 1_000;\nlet c = 0xff;\nlet d = true;\nlet e = false;\n\nrepeat a { print c; print d; }\nif e { repeat b { print c; print d; } }\nelse { repeat c { print a; print b; } }\n"}
+{"id": "s7n30", "style": "program", "source": "let x = 42;\nlet y = 1_000;\nlet z = 0xff;\nlet w = true;\nprint(w);\nrepeat w { print(x); print(y); print(z); }\n"}
+{"id": "s7n31", "style": "program", "source": "let a = 42;       -- introduce variable a\nprint a;         -- print value of variable a\nrepeat a {        -- repeat loop\n  print 100;     -- print value of a\n} else if false {  -- else if condition\n  print 500;     -- print value of a\n} else {         -- else\n  print 300;     -- print value of a\n}\n"}

@@ -1,0 +1,37 @@
+# prooflite N=2 benchmark — base vs checkpoints across the C6 diversity peak
+# 256 samples/pool (32 per style), identical prompts + sampling; scored by p6.
+# (c5, the rising-limb pool, was lost to a cleanup slip and is regenerable; the
+#  floor->peak->decline result stands on base/c6/c7/c8.)
+
+########## base ##########
+=== prooflite validity eval ===
+pool: 256 programs | 244 distinct source keys
+parse rate 23.4% | of parsers, run-clean 90.0% | of all, RICH (ok) 3.5%
+ladder: compile 196 | run 6 | gate 45 | ok 9
+=== prooflite novelty (rich programs vs the 174-program cold-start corpus) ===
+ok 9 | novel ok 9 (100.0%) | distinct ok keys 9 | distinct novel keys 9
+
+########## c6 ##########
+=== prooflite validity eval ===
+pool: 256 programs | 230 distinct source keys
+parse rate 99.2% | of parsers, run-clean 99.6% | of all, RICH (ok) 94.5%
+ladder: compile 2 | run 1 | gate 11 | ok 242
+=== prooflite novelty (rich programs vs the 174-program cold-start corpus) ===
+ok 242 | novel ok 242 (100.0%) | distinct ok keys 216 | distinct novel keys 216
+
+########## c7 ##########
+=== prooflite validity eval ===
+pool: 256 programs | 208 distinct source keys
+parse rate 100.0% | of parsers, run-clean 100.0% | of all, RICH (ok) 96.1%
+ladder: compile 0 | run 0 | gate 10 | ok 246
+=== prooflite novelty (rich programs vs the 174-program cold-start corpus) ===
+ok 246 | novel ok 245 (99.6%) | distinct ok keys 199 | distinct novel keys 198
+
+########## c8 ##########
+=== prooflite validity eval ===
+pool: 256 programs | 215 distinct source keys
+parse rate 98.8% | of parsers, run-clean 99.6% | of all, RICH (ok) 96.1%
+ladder: compile 3 | run 1 | gate 6 | ok 246
+=== prooflite novelty (rich programs vs the 174-program cold-start corpus) ===
+ok 246 | novel ok 245 (99.6%) | distinct ok keys 205 | distinct novel keys 204
+

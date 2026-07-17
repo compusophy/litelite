@@ -20,6 +20,7 @@ card write valid, non-trivial prooflite almost perfectly. The one gate program
 distinct source-canonical keys, are the committed cold-start set.
 
 Contrast with the base model this bootstraps: base Qwen3-0.6B writes prooflite
-that PARSES 25.8% of the time but is RICH only 2.3% of the time (see
-`../../results` once the run lands). Surface familiarity transfers from
-pretraining; competence does not — that gap is what the fine-tune closes.
+that PARSES 23.4% of the time but is RICH only 3.5% of the time (9 of 256
+attempts; see `../results/`, the landed benchmark). Surface familiarity
+transfers from pretraining; competence does not — the fine-tune closes that gap
+to ~95% rich, ~100% of it novel against this corpus.

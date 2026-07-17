@@ -13,6 +13,7 @@ baseline the fine-tune must beat.
 from __future__ import annotations
 
 import json
+import os
 import sys
 
 from train import Config, Policy, card, styles
@@ -24,7 +25,12 @@ def main() -> None:
         raise SystemExit(__doc__)
     model, out = sys.argv[1], sys.argv[2]
     k = int(sys.argv[3]) if len(sys.argv) > 3 else 32
-    cfg = Config(base_model=model)
+    # BENCH_BIN points the card/styles source at a different language's binary
+    # (p6 for the N=2 prooflite arm); unset keeps the default stratlite oracle,
+    # so the committed stratlite pools reproduce unchanged. Generation never
+    # scores, so no candles are needed here regardless of language.
+    bin_override = os.environ.get("BENCH_BIN")
+    cfg = Config(base_model=model, **({"s5_bin": bin_override} if bin_override else {}))
     policy = Policy(cfg, card(cfg))
     with open(out, "w", encoding="utf-8", newline="\n") as f:
         for si, style in enumerate(styles(cfg)):

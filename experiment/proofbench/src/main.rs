@@ -162,10 +162,11 @@ fn read_pool(path: &str) -> Result<Vec<(String, String)>, String> {
 const USAGE: &str = "\
 p6 — the prooflite reward tool (N=2)
 
-  p6 card                  print the prooflite prompt card
-  p6 styles                print the diversity styles, one per line
-  p6 reward <pool.jsonl>   per-rollout validity reward (JSONL in, records out; - = stdin)
-  p6 eval   <pool.jsonl>   the validity-ladder distribution over a pool
+  p6 card                        print the prooflite prompt card
+  p6 styles                      print the diversity styles, one per line
+  p6 reward   <pool.jsonl>       per-rollout validity reward (JSONL in, records out; - = stdin)
+  p6 eval     <pool.jsonl>       the validity-ladder distribution over a pool
+  p6 novelty  <pool> <corpus>    of a pool's RICH programs, the fraction absent from a corpus
 ";
 
 fn cmd_reward(path: &str) -> Result<(), String> {
@@ -218,6 +219,44 @@ fn cmd_eval(path: &str) -> Result<(), String> {
     Ok(())
 }
 
+/// Anti-memorization control. prooflite has no held-out DATA axis (it reads no
+/// market data), so the generalization question is instead: are the model's
+/// rich programs LEARNED or MEMORIZED? This reports, among a pool's ok-rung
+/// programs, how many have a source-canonical key absent from `corpus` — the
+/// human-authored cold-start set is the only external data the model saw, so
+/// novelty against it is the honest "did it learn to write prooflite" signal.
+fn cmd_novelty(pool_path: &str, corpus_path: &str) -> Result<(), String> {
+    let corpus = read_pool(corpus_path)?;
+    let corpus_keys: std::collections::BTreeSet<u64> =
+        corpus.iter().map(|(_, s)| novelty_key(s)).collect();
+    let rows = read_pool(pool_path)?;
+    let (mut ok, mut novel_ok) = (0u32, 0u32);
+    let mut ok_keys = std::collections::BTreeSet::new();
+    let mut novel_keys = std::collections::BTreeSet::new();
+    for (_, src) in &rows {
+        if reward(src).class == "ok" {
+            ok += 1;
+            let k = novelty_key(src);
+            ok_keys.insert(k);
+            if !corpus_keys.contains(&k) {
+                novel_ok += 1;
+                novel_keys.insert(k);
+            }
+        }
+    }
+    println!(
+        "=== prooflite novelty (rich programs vs the {}-program cold-start corpus) ===",
+        corpus.len()
+    );
+    println!(
+        "ok {ok} | novel ok {novel_ok} ({:.1}%) | distinct ok keys {} | distinct novel keys {}",
+        100.0 * novel_ok as f64 / ok.max(1) as f64,
+        ok_keys.len(),
+        novel_keys.len()
+    );
+    Ok(())
+}
+
 fn main() -> ExitCode {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let r = match args.first().map(String::as_str) {
@@ -238,6 +277,10 @@ fn main() -> ExitCode {
         Some("eval") => match args.get(1) {
             Some(p) => cmd_eval(p),
             None => Err("usage: p6 eval <pool.jsonl>".into()),
+        },
+        Some("novelty") => match (args.get(1), args.get(2)) {
+            (Some(p), Some(c)) => cmd_novelty(p, c),
+            _ => Err("usage: p6 novelty <pool.jsonl> <corpus.jsonl>".into()),
         },
         _ => {
             eprint!("{USAGE}");
@@ -293,5 +336,19 @@ mod tests {
             novelty_key("let x = 1;   print x;  // note")
         );
         assert_ne!(novelty_key(a), novelty_key("let x = 2; print x;"));
+    }
+
+    #[test]
+    fn novelty_counts_only_programs_absent_from_the_corpus() {
+        // The exact membership decision cmd_novelty makes, at the key level.
+        let corpus = "let a = 0; repeat 5 { a = a + a + 1; print a; }";
+        let corpus_keys: std::collections::BTreeSet<u64> =
+            [novelty_key(corpus)].into_iter().collect();
+        // A reformatted/commented clone of a corpus program is NOT novel.
+        assert!(corpus_keys.contains(&novelty_key(
+            "let a = 0;  repeat 5 {  a = a + a + 1;  print a;  } // x"
+        )));
+        // A genuinely different rich program IS novel.
+        assert!(!corpus_keys.contains(&novelty_key("let b = 1; repeat 4 { b = b * 3; print b; }")));
     }
 }
