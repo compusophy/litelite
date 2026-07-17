@@ -95,7 +95,8 @@ def styles(cfg: Config) -> list[str]:
 def score(cfg: Config, rollouts: list[Rollout]) -> dict:
     """The whole Rust boundary: JSONL {id, source} in, reward records out, by id."""
     pool = "\n".join(json.dumps({"id": r.id, "source": r.source}) for r in rollouts)
-    out = _run(cfg, "reward", "/dev/stdin", *cfg.candles, stdin=pool)
+    # "-" = stdin: portable ("/dev/stdin" does not exist on Windows, the training box).
+    out = _run(cfg, "reward", "-", *cfg.candles, stdin=pool)
     return parse_rewards(out)
 
 

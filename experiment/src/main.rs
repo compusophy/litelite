@@ -114,8 +114,14 @@ fn context(all: &[Candle]) -> (Split, Costs, Limits, Gate) {
 /// A rollout pool line: `{id, source, style}`, each field optional. A missing
 /// source is not an error — it is an empty rollout, a compile-class zero,
 /// exactly like the model emitting junk. Used by `reward` and `eval`.
+/// `-` reads stdin — the trainer pipes rollouts (portable; `/dev/stdin` does
+/// not exist on Windows, which is the training box).
 fn read_pool(path: &str) -> Result<Vec<(String, String, String)>, String> {
-    let text = std::fs::read_to_string(path).map_err(|e| format!("{path}: {e}"))?;
+    let text = if path == "-" {
+        std::io::read_to_string(std::io::stdin()).map_err(|e| format!("stdin: {e}"))?
+    } else {
+        std::fs::read_to_string(path).map_err(|e| format!("{path}: {e}"))?
+    };
     let mut rows = Vec::new();
     for (n, line) in text.lines().filter(|l| !l.trim().is_empty()).enumerate() {
         let v: serde_json::Value =
