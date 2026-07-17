@@ -38,9 +38,12 @@ runs clean AND prints ≥3 distinct lines burning ≥30 fuel).
 Two facts carry the result. First, the LIFT: rich-generation goes from 3.5% to
 ~95% — a small model taken from near-zero to competent by its verifier alone.
 Second, NOVELTY: ~100% of the rich programs are source-canonically absent from
-the cold-start corpus. The model did not memorize the 174 examples; it learned
-to WRITE prooflite. (The novelty key is FNV over comment-stripped,
-whitespace-collapsed source — it sees through format/comment clones.)
+the cold-start corpus — so the competence is not recall of the 174 human
+examples, the only external text the model saw. (The novelty key is FNV over
+comment-stripped, whitespace-collapsed source — it sees through format/comment
+clones. Note the scope: novelty is measured against the human seed only, not the
+model's own self-play programs, so it rules out memorizing the human corpus, not
+reproduction from the larger self-generated training set.)
 
 ## Why the baseline is a true floor, not a weak one
 
@@ -62,13 +65,15 @@ per round (ok of 1024 sampled):
     -> R5 90.7% -> R6 91.2% -> R7 95.0% -> R8 96.2%
 
 Raw validity climbs monotonically. But DIVERSITY does not: admitted distinct
-keys peak at round 6 (823), then fall (750, 686) as the policy concentrates on
-a narrower band of high-reward programs — mild mode-narrowing that the
-anti-collapse guards bound but do not abolish. The held-out benchmark confirms
-the peak on FRESH samples: C6 emits **216** distinct rich programs, more than
-C7 (199) or C8 (205), even though C7/C8 edge it on raw rich-rate. So C6 is the
-selected checkpoint — validity is saturated across C6–C8, and C6 is where the
-generator is most diverse.
+keys peak at round 6 (823), then fall monotonically (750, 686) as the policy
+concentrates on a narrower band of high-reward programs — mild mode-narrowing
+that the anti-collapse guards bound but do not abolish. C6 also holds the most
+distinct rich programs on the fresh benchmark (**216**, vs C7's 199 and C8's
+205), so it is the selected checkpoint on both measures. Read the benchmark with
+care, though: it is a single 256-sample draw per checkpoint, and its C7-vs-C8
+order (205 > 199) inverts the training curve's (750 > 686) — past the peak the
+two disagree within sampling noise, so the load-bearing evidence for the
+narrowing is the training-curve decline, not the benchmark.
 
 ## What this establishes — and what it does not
 

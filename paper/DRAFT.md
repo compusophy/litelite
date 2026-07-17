@@ -47,10 +47,10 @@ result off `rustc` onto a purpose-built language and from a stronger,
 measured-zero floor; the near-zero train-vs-held-out gap marks the lift honestly
 as grammar competence, not out-of-sample edge, which stays the selector's job.
 Run a second time on `prooflite` — a data-free compute language, only the reward
-binary changed — the identical method repeats the lift, from 3.5% to ~95% rich
-generation with ~100% of it novel against the cold-start corpus, establishing
-verifier-only fine-tuning as a method on two structurally different languages
-rather than a one-grammar artifact.
+binary changed — the identical recipe repeats the lift, from 3.5% to ~95% rich
+generation with ~100% of it novel against the cold-start corpus, so the result
+is not a one-grammar artifact (generality past the shared base model and kit
+stays untested).
 One experiment remains unrun — a frozen-model A/B arm for which there is no API
 key — and ships as an instrument with pre-registered commands, marked PENDING.
 The deterministic verifier plus committed artifacts reproduce every number in
@@ -487,11 +487,12 @@ deterministic, third-party-checkable predicate — and the results are reported
 with an equally narrow honesty about what the single-month benchmark can and
 cannot show.
 
-The instrument shipped complete. One experiment on it — the verifier-only GPU
-fine-tune — has now been run, and §5.6 reports it; the other, a frozen-model A/B
-arm for which there is no API key, has not, and §5.7 marks it as a PENDING
-protocol slot with its exact commands, per the house rule that pending results
-are named, not promised.
+The instrument shipped complete. The verifier-only GPU fine-tune has now been
+run twice — §5.6 reports it on `stratlite` and §5.7 its N = 2 replication on
+`prooflite`; the remaining experiment, a frozen-model A/B arm for which there is
+no API key, has not been run, and §5.8 marks it as a PENDING protocol slot with
+its exact commands, per the house rule that pending results are named, not
+promised.
 
 ### 5.1 The instrument: `verify()`, `equity_hash`, and the `Reject` histogram
 
@@ -571,7 +572,7 @@ non-survivors are gate failures, not faults: they parsed and ran cleanly but did
 not trade enough to count as strategies. Strong agents, asked for valid programs
 and given the language card, can produce valid active `stratlite` almost every
 time; this measures conditioned generation, not an unconditioned base rate — the
-calibrating comparison is the PENDING, permanently-keyless A/B arm (§5.7), so we
+calibrating comparison is the PENDING, permanently-keyless A/B arm (§5.8), so we
 do not read a base rate off this number. It is also the setup for the limitation
 in §5.4. The same run reports 134 distinct source-canonical novelty keys over
 the 134 programs, so no two are template clones under the dedup key of §5.5.
@@ -772,9 +773,11 @@ was swapped (`s5` → the parallel `p6`, `experiment/proofbench/src/main.rs`),
 which serves the prooflite prompt card, eight computation-family styles, and the
 same validity ladder — `compile → run → gate → ok`, where the `ok`/RICH rung
 requires a clean run that prints ≥ 3 distinct lines over ≥ 30 fuel. Cold start on
-the 174 committed corpus survivors (`experiment/proofbench/corpus/seed.jsonl` —
-100% parse, 99.4% RICH when scored by `p6`), then eight rounds of the identical
-rejection-sampling self-play. Rich-rate climbed monotonically — cold-start → R0
+the 174 committed corpus survivors — the `ok`-rung keepers of 175 key-free agent
+drafts (99.4% RICH raw; the survivor file
+`experiment/proofbench/corpus/seed.jsonl` is 100% RICH under `p6` by
+construction) — then nine rounds of the identical rejection-sampling self-play.
+Rich-rate climbed monotonically — cold-start → R0
 43.8% → R1 63.5% → R2 72.4% → R3 83.1% → R4 85.7% → R5 90.7% → R6 91.2% → R7
 95.0% → R8 96.2% (of 1,024 sampled per round).
 
@@ -787,7 +790,7 @@ key (FNV-1a-64 over comment-stripped, whitespace-collapsed source,
 Benchmarking the selected checkpoint against the base model, identical
 non-thinking prompts, 256 samples each (32 per style):
 
-| model | parse | RICH (ok) | distinct rich / 256 | novel rich (∉ corpus) |
+| model | parse | RICH (ok) | distinct rich keys | novel ok / ok (∉ corpus) |
 |---|---|---|---|---|
 | base `Qwen3-0.6B` | 23.4% | 3.5% | 9 | 9 / 9 (100%) |
 | **C6 (selected)** | 99.2% | 94.5% | **216** | 242 / 242 (100%) |
@@ -801,21 +804,33 @@ prooflite is in no pretraining corpus, so base `Qwen3-0.6B` — which recognizes
 the C-like surface enough to parse 23.4% of its attempts, more than stratlite's
 0% — still writes a RICH program only 3.5% of the time (9 of 256). The lift from
 3.5% to ~95% is the fine-tune, and ~100% of the rich programs are novel against
-the corpus: the model learned to WRITE prooflite, not to recall the examples.
+the corpus — so the competence is not recall of the 174 human examples, the only
+external text the model saw. (Novelty is measured against that human seed only,
+not against the model's own admitted self-play programs, so it rules out
+memorizing the human corpus, not reproduction from the larger self-generated
+training set.)
 
-The selected checkpoint is C6, and the reason is itself a finding. Raw validity
+The selected checkpoint is C6, and why is itself a finding. Raw validity
 saturates across C6–C8 (94.5% / 96.1% / 96.1% RICH), but DIVERSITY does not:
-admitted distinct keys peak at round 6 (823) then fall (750, 686), and the
-held-out benchmark confirms the peak on FRESH samples — C6 emits 216 distinct
-rich programs, against C7's 199 and C8's 205. Past the peak the policy trades
-breadth for reward — mild mode-narrowing that the anti-collapse guards of §5.5
-bound but do not abolish — so the method has an OBSERVABLE optimal stop, visible
-in the distinct-key curve rather than the rich-rate. What N = 2 establishes is
-that verifier-only fine-tuning is a METHOD, not a one-grammar artifact: run
-unchanged on a language with no data, no market, and no trades — only checked
-arithmetic and bounded loops — it takes the same small model from 3.5% to ~95%
-rich generation with ~100% novelty. What it does not establish is that every
-rich program is INTERESTING; the RICH rung certifies well-formed, terminating,
+admitted distinct keys peak at round 6 (823) then fall monotonically (750, 686).
+C6 also holds the most distinct rich programs on the held-out benchmark (216,
+against C7's 199 and C8's 205), so selecting it is defensible on both measures —
+but the benchmark is a single 256-sample draw per checkpoint with no variance
+estimate, and its C7-vs-C8 order (205 > 199) inverts the training curve's
+(750 > 686), so past the peak the two disagree within sampling noise. The
+load-bearing evidence is therefore the training-curve decline, not the
+benchmark: past round 6 the policy trades breadth for reward — mild
+mode-narrowing that the anti-collapse guards of §5.5 bound but do not abolish —
+so the method has an optimal stop visible in the distinct-key curve rather than
+the rich-rate. What N = 2 establishes is bounded: verifier-only fine-tuning is
+not a ONE-grammar artifact — run unchanged on a language with no data, no
+market, and no trades, only checked arithmetic and bounded loops, it takes a
+small model from 3.5% to ~95% rich generation with ~100% corpus-novelty. It does
+not establish generality past the confounds both arms share (the §4.5 list: same
+kit, same author, and the same base `Qwen3-0.6B`, trainer, and validity-ladder
+reward shape); generality across models in particular is untested. What it also
+does not establish is that every rich program is INTERESTING; the RICH rung
+certifies well-formed, terminating,
 and varied output, and selecting genuinely useful programs from this competent
 generator stays a downstream concern, exactly as edge does for stratlite. As in
 §5.6 the MODEL does not reproduce, but the SCORING does, from the committed
