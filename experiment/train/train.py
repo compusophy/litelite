@@ -70,6 +70,11 @@ class Config:
     # Anti-collapse (passed to admission.py)
     per_key_cap: int = 2
     per_style_frac: float = 0.5
+    # Cold start: SFT on the committed corpus survivors first. Mandatory in
+    # practice — the base model's yield on the card is ~0%, so round 1 of
+    # rejection sampling would admit nothing (measured: 8/8 compile-fails).
+    corpus: str = ""
+    cold_epochs: int = 3
     # Hardware
     device: str = "cuda"
     dtype: str = "bfloat16"  # Ampere (3090) supports bf16
@@ -116,7 +121,7 @@ class Policy:
         if self.tok.pad_token is None:
             self.tok.pad_token = self.tok.eos_token
         self.model = AutoModelForCausalLM.from_pretrained(
-            cfg.base_model, torch_dtype=getattr(torch, cfg.dtype)
+            cfg.base_model, dtype=getattr(torch, cfg.dtype)
         ).to(cfg.device)
         self.opt = torch.optim.AdamW(self.model.parameters(), lr=cfg.lr)
 
@@ -203,11 +208,31 @@ class Policy:
         self.tok.save_pretrained(path)
 
 
+def cold_start(cfg: Config, policy: Policy, style_list: list[str]) -> None:
+    """SFT on the committed corpus survivors, mapped to the full style
+    sentences so training prompts match sampling prompts exactly."""
+    fam = {"trend": 0, "meanrev": 1, "breakout": 2, "momentum": 3, "stateful": 4, "combo": 6}
+    rows = [json.loads(l) for l in open(cfg.corpus, encoding="utf-8") if l.strip()]
+    rollouts = [Rollout(r["id"], style_list[fam.get(r["style"], 6)], r["source"]) for r in rows]
+    rewards = score(cfg, rollouts)
+    admitted, stats = build_admission_set(
+        rollouts, rewards, per_key_cap=cfg.per_key_cap, per_style_frac=cfg.per_style_frac
+    )
+    print(f"cold start: {len(admitted)}/{len(rollouts)} corpus programs admitted "
+          f"(histogram={dict(stats.histogram)})", flush=True)
+    pairs = [(ro.style, ro.source) for ro in admitted]
+    for _ in range(cfg.cold_epochs):
+        policy.sft(list(pairs))
+
+
 def run(cfg: Config) -> None:
     if not cfg.candles:
         raise SystemExit("wire pinned candle CSVs into Config.candles before running")
     system, style_list = card(cfg), styles(cfg)
     policy = Policy(cfg, system)
+    if cfg.corpus:
+        cold_start(cfg, policy, style_list)
+        policy.save(f"{cfg.out_dir}/Cinit")
     for r in range(cfg.rounds):
         rollouts: list[Rollout] = []
         for si, style in enumerate(style_list):
@@ -222,7 +247,8 @@ def run(cfg: Config) -> None:
         fuel = (stats.fuel_spectrum[0], stats.fuel_spectrum[-1]) if stats.fuel_spectrum else None
         print(
             f"round {r}: histogram={dict(stats.histogram)} admitted={len(admitted)} "
-            f"distinct_nkeys={stats.distinct_nkeys} fuel[min,max]={fuel}"
+            f"distinct_nkeys={stats.distinct_nkeys} fuel[min,max]={fuel}",
+            flush=True,
         )
         policy.sft([(ro.style, ro.source) for ro in admitted])
         policy.save(f"{cfg.out_dir}/C{r}")
@@ -231,5 +257,5 @@ def run(cfg: Config) -> None:
 if __name__ == "__main__":
     import sys
 
-    # Candle CSVs as args: python3 train.py data/BTCUSDT-1h-2024-01.csv ...
-    run(Config(candles=tuple(sys.argv[1:])))
+    # python3 train.py <candles.csv>... — reward window(s); corpus cold start on.
+    run(Config(candles=tuple(sys.argv[1:]), corpus="../corpus/seed.jsonl"))

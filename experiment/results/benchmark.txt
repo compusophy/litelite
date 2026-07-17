@@ -1,0 +1,84 @@
+# M6 benchmark — base Qwen3-0.6B vs C7 (8-round verifier self-play)
+
+Reproduce: cd experiment && ./target/release/s5 eval results/{base,c7}.jsonl data/<window>.csv
+Pools: 256 samples each (32/style x 8 styles), identical non-thinking prompts.
+Base model exists in no world where stratlite was pretrained: its floor is a measured 0%.
+
+## base @ BTCUSDT-1h-2024-01
+=== conditional held-out eval ===
+pool: 256 programs | compile rate 0.0%
+among compilers: gate-clear TRAIN 0.0% | HELD-OUT 0.0%
+GAP (train - heldout) = 0.0 points — NEAR ZERO: held-out is no harder than train, the benchmark has no out-of-sample teeth
+per-style held-out gate-clear (among that style's compilers):
+  breakout   0% (0/0 compilers)
+  conservative 0% (0/0 compilers)
+  mean-reversion 0% (0/0 compilers)
+  momentum   0% (0/0 compilers)
+  strategy   0% (0/0 compilers)
+  trend-following 0% (0/0 compilers)
+
+## base @ BTCUSDT-1h-2024-06
+=== conditional held-out eval ===
+pool: 256 programs | compile rate 0.0%
+among compilers: gate-clear TRAIN 0.0% | HELD-OUT 0.0%
+GAP (train - heldout) = 0.0 points — NEAR ZERO: held-out is no harder than train, the benchmark has no out-of-sample teeth
+per-style held-out gate-clear (among that style's compilers):
+  breakout   0% (0/0 compilers)
+  conservative 0% (0/0 compilers)
+  mean-reversion 0% (0/0 compilers)
+  momentum   0% (0/0 compilers)
+  strategy   0% (0/0 compilers)
+  trend-following 0% (0/0 compilers)
+
+## base @ ETHUSDT-1h-2024-06
+=== conditional held-out eval ===
+pool: 256 programs | compile rate 0.0%
+among compilers: gate-clear TRAIN 0.0% | HELD-OUT 0.0%
+GAP (train - heldout) = 0.0 points — NEAR ZERO: held-out is no harder than train, the benchmark has no out-of-sample teeth
+per-style held-out gate-clear (among that style's compilers):
+  breakout   0% (0/0 compilers)
+  conservative 0% (0/0 compilers)
+  mean-reversion 0% (0/0 compilers)
+  momentum   0% (0/0 compilers)
+  strategy   0% (0/0 compilers)
+  trend-following 0% (0/0 compilers)
+
+## c7 @ BTCUSDT-1h-2024-01
+=== conditional held-out eval ===
+pool: 256 programs | compile rate 100.0%
+among compilers: gate-clear TRAIN 98.0% | HELD-OUT 95.7%
+GAP (train - heldout) = 2.3 points — NEAR ZERO: held-out is no harder than train, the benchmark has no out-of-sample teeth
+per-style held-out gate-clear (among that style's compilers):
+  breakout   84% (27/32 compilers)
+  conservative 100% (32/32 compilers)
+  mean-reversion 97% (31/32 compilers)
+  momentum   97% (31/32 compilers)
+  strategy   96% (92/96 compilers)
+  trend-following 100% (32/32 compilers)
+
+## c7 @ BTCUSDT-1h-2024-06
+=== conditional held-out eval ===
+pool: 256 programs | compile rate 100.0%
+among compilers: gate-clear TRAIN 97.7% | HELD-OUT 96.5%
+GAP (train - heldout) = 1.2 points — NEAR ZERO: held-out is no harder than train, the benchmark has no out-of-sample teeth
+per-style held-out gate-clear (among that style's compilers):
+  breakout   88% (28/32 compilers)
+  conservative 100% (32/32 compilers)
+  mean-reversion 100% (32/32 compilers)
+  momentum   97% (31/32 compilers)
+  strategy   96% (92/96 compilers)
+  trend-following 100% (32/32 compilers)
+
+## c7 @ ETHUSDT-1h-2024-06
+=== conditional held-out eval ===
+pool: 256 programs | compile rate 100.0%
+among compilers: gate-clear TRAIN 97.7% | HELD-OUT 96.1%
+GAP (train - heldout) = 1.6 points — NEAR ZERO: held-out is no harder than train, the benchmark has no out-of-sample teeth
+per-style held-out gate-clear (among that style's compilers):
+  breakout   88% (28/32 compilers)
+  conservative 100% (32/32 compilers)
+  mean-reversion 100% (32/32 compilers)
+  momentum   97% (31/32 compilers)
+  strategy   95% (91/96 compilers)
+  trend-following 100% (32/32 compilers)
+
