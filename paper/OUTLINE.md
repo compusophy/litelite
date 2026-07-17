@@ -71,14 +71,17 @@ conversation context is required. Heavy drafting runs as multi-agent workflows
 - **§4: data exists in git history.** One-session-per-language claims trace to
   commit timestamps (`git log`); parents' baselines are in GENESIS. Caveats to
   keep: same developer + model era, N=2, LOC is a proxy.
-- **§5: instrument + pilot landed; two runs pending.** The key-free corpus run
-  is committed with its numbers (`experiment/corpus/README.md`; reproduce via
-  `cd experiment && cargo run -q -- reward|eval corpus/seed.jsonl
-  data/BTCUSDT-1h-2024-01.csv`). The M6 verifier-as-reward protocol, guards and
-  benchmark are in `experiment/M6.md` + `experiment/train/`. PENDING: the GPU
-  fine-tune run (user's 3090; `python3 train.py <candles>`) and the
-  frozen-big-model A/B arm — there is NO Anthropic API key and there will not
-  be one; that arm stays a protocol slot unless a keyless generator fills it.
+- **§5: instrument landed; the FINE-TUNE RAN; one arm still pending.** The
+  key-free corpus run is committed (`experiment/corpus/README.md`). The M6 GPU
+  fine-tune has been RUN on the 3090 and its result committed
+  (`experiment/results/README.md`): verifier-only fine-tuning took Qwen3-0.6B
+  from a measured 0.0% valid-program rate to 100% compile / ~96% held-out
+  gate-clear across a train month, a 5-month-distant month, and a cross-asset
+  window — reproduce the SCORING via `cd experiment && ./target/release/s5 eval
+  results/{base,c7}.jsonl data/<window>.csv` (the model is not reproducible; the
+  pools + candles are committed). Design in `experiment/M6.md`. STILL PENDING:
+  the frozen-big-model A/B arm — there is NO Anthropic API key and there will
+  not be one; that arm stays a protocol slot unless a keyless generator fills it.
 - **§6: real findings on hand.** Fuel bound free on this task (max 186 of
   25,000 = 0.74%); the single-month benchmark has no out-of-sample teeth
   (conditional gate-clear gap 1.5 points — `s5 eval`); reward hacks found in
