@@ -59,6 +59,32 @@ inter-agent commerce need.
    checked properties); Goodhart risks (caps pushing complexity into seams);
    when a general-purpose language + tests beats a purpose-sized language.
 
+## State of the evidence (updated 2026-07-16 — the handoff block)
+
+Any session can resume paper work from THIS file plus the cited artifacts; no
+conversation context is required. Heavy drafting runs as multi-agent workflows
+(section writers + a hostile referee), workers on Opus-class models.
+
+- **§1–§3: fully evidenced.** GENESIS.md (lineage, dedup findings, the two
+  crash-grade prooflite lessons); numbers from `bash scripts/caps.sh` and
+  `cargo test -p prooflite`.
+- **§4: data exists in git history.** One-session-per-language claims trace to
+  commit timestamps (`git log`); parents' baselines are in GENESIS. Caveats to
+  keep: same developer + model era, N=2, LOC is a proxy.
+- **§5: instrument + pilot landed; two runs pending.** The key-free corpus run
+  is committed with its numbers (`experiment/corpus/README.md`; reproduce via
+  `cd experiment && cargo run -q -- reward|eval corpus/seed.jsonl
+  data/BTCUSDT-1h-2024-01.csv`). The M6 verifier-as-reward protocol, guards and
+  benchmark are in `experiment/M6.md` + `experiment/train/`. PENDING: the GPU
+  fine-tune run (user's 3090; `python3 train.py <candles>`) and the
+  frozen-big-model A/B arm — there is NO Anthropic API key and there will not
+  be one; that arm stays a protocol slot unless a keyless generator fills it.
+- **§6: real findings on hand.** Fuel bound free on this task (max 186 of
+  25,000 = 0.74%); the single-month benchmark has no out-of-sample teeth
+  (conditional gate-clear gap 1.5 points — `s5 eval`); reward hacks found in
+  our own reward and closed (empty rollout, gate-rung farming, dedup-key
+  blindness). The seam-tax question stays open until M5.
+
 ## Rules
 
 - Every number in the paper is reproducible by a command in this repo.
