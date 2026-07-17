@@ -1,3 +1,7 @@
 /target
 base_pilot.jsonl
 pools/
+raw_corpus.jsonl
+raw_src.jsonl
+raw_reward.jsonl
+m6_prooflite.log

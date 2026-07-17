@@ -4,3 +4,4 @@
 train/checkpoints/
 train/.venv/
 train/pools/
+train/checkpoints_prooflite/
