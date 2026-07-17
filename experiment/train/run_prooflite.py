@@ -13,6 +13,21 @@ from __future__ import annotations
 
 import os
 
+# 24GB is the binding constraint on this hardware. The failure mode is
+# fragmentation, not true exhaustion: after a round of SFT the allocator holds
+# many small free blocks, and the next round's generation can't find a
+# contiguous ~2.6GB block ("free: 0 but 2.6GB requested"). `expandable_segments`
+# is the ideal cure but is UNSUPPORTED on Windows (torch warns and ignores it),
+# so use the levers that DO work here: cap block-splitting so large free blocks
+# stay whole for large requests, and let the allocator GC before it OOMs. The
+# auto-restart loop (run_loop.sh) is the backstop — a fresh process resets the
+# allocator entirely. Must be set before torch initializes CUDA; train.py
+# imports torch lazily, so setting it here — before `from train import` runs,
+# which touches no torch — is early enough.
+os.environ.setdefault(
+    "PYTORCH_CUDA_ALLOC_CONF", "max_split_size_mb:256,garbage_collection_threshold:0.8"
+)
+
 from train import Config, run
 
 HERE = os.path.dirname(os.path.abspath(__file__))
