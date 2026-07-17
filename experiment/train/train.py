@@ -75,6 +75,10 @@ class Config:
     # rejection sampling would admit nothing (measured: 8/8 compile-fails).
     corpus: str = ""
     cold_epochs: int = 3
+    # Resume: set base_model to a saved checkpoint dir and corpus="" to skip
+    # cold start; round_offset keeps checkpoint numbering continuous (C2, C3…)
+    # so a resumed run does not clobber the checkpoints it started from.
+    round_offset: int = 0
     # Stratlite needs a candle window for its reward; prooflite (p6) does not —
     # its reward is intrinsic to a program's execution.
     needs_candles: bool = True
@@ -243,7 +247,8 @@ def run(cfg: Config) -> None:
     if cfg.corpus:
         cold_start(cfg, policy, style_list)
         policy.save(f"{cfg.out_dir}/Cinit")
-    for r in range(cfg.rounds):
+    for step in range(cfg.rounds):
+        r = step + cfg.round_offset
         rollouts: list[Rollout] = []
         for si, style in enumerate(style_list):
             for j, completion in enumerate(policy.sample(style, cfg.samples_per_style)):
