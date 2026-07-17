@@ -176,12 +176,20 @@ class Policy:
     def sft(self, pairs: list[tuple[str, str]]) -> None:
         """One or more passes over admitted (user_style, source) pairs. Loss is
         masked to the COMPLETION only (prompt tokens are -100), so the model
-        learns to produce the program, not to re-emit the card."""
+        learns to produce the program, not to re-emit the card.
+
+        Memory: generation leaves a large KV cache the caching allocator holds;
+        free it before SFT allocates gradients. Gradient checkpointing then cuts
+        activation memory (recompute in backward) so long programs — prooflite's
+        loops run to hundreds of tokens — fit a 24GB card without OOM."""
         import torch
 
         if not pairs:
             return
+        torch.cuda.empty_cache()
         self.model.train()
+        self.model.gradient_checkpointing_enable()
+        self.model.config.use_cache = False  # incompatible with checkpointing
         for _ in range(self.cfg.sft_epochs):
             random.shuffle(pairs)
             for i in range(0, len(pairs), self.cfg.sft_batch):
@@ -191,6 +199,8 @@ class Policy:
                 loss.backward()
                 self.opt.step()
                 self.opt.zero_grad()
+        self.model.gradient_checkpointing_disable()
+        self.model.config.use_cache = True  # restore for fast generation
 
     def _collate(self, batch: list[tuple[str, str]]):
         import torch

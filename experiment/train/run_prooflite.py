@@ -31,7 +31,15 @@ def latest_checkpoint() -> tuple[str, int] | None:
 
 if __name__ == "__main__":
     base = Config(
-        s5_bin=P6, candles=(), needs_candles=False, out_dir=OUT, base_model=Config().base_model
+        s5_bin=P6,
+        candles=(),
+        needs_candles=False,
+        out_dir=OUT,
+        base_model=Config().base_model,
+        # prooflite programs (loops) are far longer than stratlite's fixed-grammar
+        # strategies, so SFT sequences are longer — a smaller batch keeps a full
+        # fine-tune inside 24GB alongside gradient checkpointing.
+        sft_batch=4,
     )
     ckpt = latest_checkpoint()
     if ckpt is not None:
