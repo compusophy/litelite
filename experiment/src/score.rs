@@ -149,6 +149,75 @@ pub fn score_heldout(
     }
 }
 
+/// One program's outcome on both windows — the raw material of the CONDITIONAL
+/// held-out metric. The red-team's sharpest catch: raw "held-out survivor rate"
+/// is not a generalization signal, because the compile rung is
+/// DATA-INDEPENDENT — a program that parses on train parses identically on
+/// held-out. So the honest metric conditions on compiling and measures the
+/// GATE-clear rate (which genuinely depends on the candles) on each window, and
+/// the GAP between them proves whether the benchmark has out-of-sample teeth.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct EvalRow {
+    pub compiles: bool,
+    /// Among compilers only: cleared the gate on TRAIN.
+    pub train_clear: bool,
+    /// Among compilers only: cleared the gate on HELD-OUT (with warmup).
+    pub heldout_clear: bool,
+}
+
+/// Evaluate a pool on both windows. Held-out carries `lookback` bars of warmup
+/// so a survivor is not killed by E0303 rather than by anything meaningful.
+pub fn eval_pool(
+    sources: &[String],
+    all: &[Candle],
+    split: &Split,
+    limits: Limits,
+    costs: Costs,
+    gate: Gate,
+) -> Vec<EvalRow> {
+    sources
+        .iter()
+        .map(|src| match stratlite::compile(src) {
+            Err(_) => EvalRow {
+                compiles: false,
+                train_clear: false,
+                heldout_clear: false,
+            },
+            Ok(strategy) => {
+                let train = split.train(all);
+                let held = split.heldout(all, strategy.lookback() as usize);
+                EvalRow {
+                    compiles: true,
+                    train_clear: verify(src, train, limits, costs, gate).is_ok(),
+                    heldout_clear: verify(src, held, limits, costs, gate).is_ok(),
+                }
+            }
+        })
+        .collect()
+}
+
+/// The conditional metric as three rates in [0,1]: compile rate over the whole
+/// pool, then — among compilers — the train and held-out gate-clear rates. The
+/// GAP (train_clear − heldout_clear) is the headline: near zero means held-out
+/// is no harder than train, so the benchmark has NO out-of-sample teeth and a
+/// "lift" on it would be grammar-learning, not generalization; a positive gap
+/// means held-out discriminates, and a fine-tune that RAISES heldout_clear
+/// (shrinking the gap from below) is the real win.
+pub fn conditional_rates(rows: &[EvalRow]) -> (f64, f64, f64) {
+    if rows.is_empty() {
+        return (0.0, 0.0, 0.0);
+    }
+    let compilers: Vec<&EvalRow> = rows.iter().filter(|r| r.compiles).collect();
+    let compile_rate = compilers.len() as f64 / rows.len() as f64;
+    if compilers.is_empty() {
+        return (compile_rate, 0.0, 0.0);
+    }
+    let n = compilers.len() as f64;
+    let train = compilers.iter().filter(|r| r.train_clear).count() as f64 / n;
+    let held = compilers.iter().filter(|r| r.heldout_clear).count() as f64 / n;
+    (compile_rate, train, held)
+}
+
 /// The fuel distribution over survivors — the kit's central thesis, measured
 /// instead of counted. `Limits::default()` is 25,000/bar. If every strategy
 /// burns ~200 of it, the termination guarantee never bound on this task and
@@ -199,6 +268,45 @@ mod tests {
     }
 
     const CROSS: &str = "lookback 16; if sma(4) > sma(16) { signal long; } else { signal flat; }";
+
+    #[test]
+    fn eval_conditions_on_compiling_and_measures_the_gap() {
+        let all = candles(256);
+        let sp = Split::at_fraction(all.len(), 0.6);
+        let pool = vec![
+            CROSS.to_string(),                 // compiles, trades on both windows
+            "not stratlite at all".into(),     // does not compile
+            "lookback 4; signal long;".into(), // compiles, never trades -> gate-fail
+        ];
+        let rows = eval_pool(
+            &pool,
+            &all,
+            &sp,
+            Limits::default(),
+            Costs::default(),
+            Gate::default(),
+        );
+        assert!(!rows[1].compiles, "garbage must not compile");
+        assert!(rows[0].compiles && rows[2].compiles);
+        let (compile_rate, train, held) = conditional_rates(&rows);
+        // 2 of 3 compile; the rates are computed AMONG those 2 only, never over
+        // the whole pool — that is the whole point of the conditional metric.
+        assert!((compile_rate - 2.0 / 3.0).abs() < 1e-9);
+        assert!((0.0..=1.0).contains(&train) && (0.0..=1.0).contains(&held));
+    }
+
+    #[test]
+    fn conditional_rates_are_empty_safe_and_all_fail_safe() {
+        assert_eq!(conditional_rates(&[]), (0.0, 0.0, 0.0));
+        let none = [EvalRow {
+            compiles: false,
+            train_clear: false,
+            heldout_clear: false,
+        }];
+        // Nothing compiled -> compile rate 0, and the conditional rates are 0
+        // (undefined over an empty denominator) rather than a divide-by-zero.
+        assert_eq!(conditional_rates(&none), (0.0, 0.0, 0.0));
+    }
 
     #[test]
     fn heldout_carries_warmup_so_survivors_are_not_killed_by_short_data() {

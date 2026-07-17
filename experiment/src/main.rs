@@ -32,6 +32,7 @@ s5 — the §5 experiment harness + M6 reward oracle
   s5 poll   <batch_id> <out>      poll until ended, write results verbatim
   s5 score  <raw.jsonl> <csv>...  re-derive §5's numbers (pure; no network)
   s5 reward <pool.jsonl> <csv>... M6: verifier reward per rollout (pure; no network)
+  s5 eval   <pool.jsonl> <csv>... the CONDITIONAL held-out metric + the gap
   s5 card                         print stratlite::REFERENCE — the ONE prompt card
   s5 styles                       print the diversity styles, one per line
 ";
@@ -68,6 +69,7 @@ fn main() -> ExitCode {
         Some("poll") => cmd_poll(&args[1..]),
         Some("score") => cmd_score(&args[1..]),
         Some("reward") => cmd_reward(&args[1..]),
+        Some("eval") => cmd_eval(&args[1..]),
         // The trainer reads the card and styles from HERE rather than copying
         // them, so the prompt the model learns and the language the verifier
         // enforces stay ONE artifact across the Rust/Python boundary.
@@ -357,5 +359,86 @@ fn cmd_reward(args: &[String]) -> Result<(), String> {
         ));
     }
     print!("{out}");
+    Ok(())
+}
+
+/// The CONDITIONAL held-out metric — the honest answer to the trap that raw
+/// survivor rate hides (the compile rung is data-independent, so a raw lift can
+/// be grammar-learning). Input is JSONL {source, optional style}; stratifies by
+/// style when present, because aggregate rate can rise by collapsing to the
+/// single easiest style.
+fn cmd_eval(args: &[String]) -> Result<(), String> {
+    let pool_path = args.first().ok_or("usage: s5 eval <pool.jsonl> <csv>...")?;
+    let all = load(&args[1..])?;
+    let pool = std::fs::read_to_string(pool_path).map_err(|e| format!("{pool_path}: {e}"))?;
+
+    let split = Split::at_fraction(all.len(), TRAIN_FRACTION);
+    let costs = score::costs_from_train(split.train(&all), FEE_BPS, SLIP_BPS);
+    let limits = stratlite::Limits::default();
+    let gate = backtestlite::Gate::default();
+
+    let mut sources: Vec<String> = Vec::new();
+    let mut styles: Vec<String> = Vec::new();
+    for (n, line) in pool.lines().filter(|l| !l.trim().is_empty()).enumerate() {
+        let v: serde_json::Value =
+            serde_json::from_str(line).map_err(|e| format!("line {}: {e}", n + 1))?;
+        sources.push(v["source"].as_str().unwrap_or("").to_string());
+        styles.push(v["style"].as_str().unwrap_or("").to_string());
+    }
+
+    let rows = score::eval_pool(&sources, &all, &split, limits, costs, gate);
+    let (compile_rate, train, held) = score::conditional_rates(&rows);
+    let gap = train - held;
+
+    println!("=== conditional held-out eval ===");
+    println!(
+        "pool: {} programs | compile rate {:.1}%",
+        rows.len(),
+        100.0 * compile_rate
+    );
+    println!(
+        "among compilers: gate-clear TRAIN {:.1}% | HELD-OUT {:.1}%",
+        100.0 * train,
+        100.0 * held
+    );
+    println!(
+        "GAP (train - heldout) = {:.1} points — {}",
+        100.0 * gap,
+        if gap.abs() < 0.05 {
+            "NEAR ZERO: held-out is no harder than train, the benchmark has no out-of-sample teeth"
+        } else {
+            "positive: held-out discriminates, so raising held-out clear is a real lift"
+        }
+    );
+
+    // Per-style, when labelled — collapse to the easiest style would raise the
+    // aggregate while a stratified view exposes it.
+    if styles.iter().any(|s| !s.is_empty()) {
+        println!("per-style held-out gate-clear (among that style's compilers):");
+        let mut seen: Vec<&str> = styles
+            .iter()
+            .map(String::as_str)
+            .filter(|s| !s.is_empty())
+            .collect();
+        seen.sort_unstable();
+        seen.dedup();
+        for st in seen {
+            let comp: Vec<usize> = (0..rows.len())
+                .filter(|&i| styles[i] == st && rows[i].compiles)
+                .collect();
+            let clear = comp.iter().filter(|&&i| rows[i].heldout_clear).count();
+            let rate = if comp.is_empty() {
+                0.0
+            } else {
+                clear as f64 / comp.len() as f64
+            };
+            println!(
+                "  {st:10} {:.0}% ({}/{} compilers)",
+                100.0 * rate,
+                clear,
+                comp.len()
+            );
+        }
+    }
     Ok(())
 }
