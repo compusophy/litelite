@@ -14,3 +14,4 @@ Cargo.lock
 
 # The M6 trainer byte-compiles in CI; keep its cache out of the tree.
 __pycache__/
+!experiment/proofbench/Cargo.lock

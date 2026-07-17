@@ -43,6 +43,15 @@ if [ -d experiment/src ]; then
   fi
 fi
 
+if [ -d experiment/proofbench/src ]; then
+  n=$(find experiment/proofbench/src -name '*.rs' -print0 | xargs -0 cat | wc -l)
+  printf '%-22s %6d LOC (cap %d)\n' "experiment/proofbench/" "$n" "$EXP_CAP"
+  if [ "$n" -gt "$EXP_CAP" ]; then
+    echo "FAIL: experiment/proofbench/ exceeds its cap"
+    fail=1
+  fi
+fi
+
 if [ -d experiment/train ]; then
   # -maxdepth 1: the gitignored .venv/ holds 100K+ lines of site-packages —
   # the caps measure the repo, never the toolchain.
@@ -62,7 +71,7 @@ if [ "$chars" -gt "$CLAUDE_CAP" ]; then
   fail=1
 fi
 
-if grep -rn -- '[-]lite' crates src scripts paper .github experiment/src experiment/train/*.py experiment/train/*.md experiment/train/*.txt experiment/corpus experiment/results/*.md experiment/results/*.txt experiment/*.toml experiment/*.md ./*.md ./*.toml; then
+if grep -rn -- '[-]lite' crates src scripts paper .github experiment/src experiment/proofbench/src experiment/train/*.py experiment/train/*.md experiment/train/*.txt experiment/corpus experiment/results/*.md experiment/results/*.txt experiment/*.toml experiment/*.md ./*.md ./*.toml; then
   echo "FAIL: dashed lite reference found (constitution rule 7)"
   fail=1
 fi

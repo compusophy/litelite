@@ -1,0 +1,16 @@
+# N=2: the prooflite reward tool. Speaks the SAME CLI protocol as s5
+# (card/styles/reward/eval) so the language-parametric trainer runs unchanged —
+# point it at this binary and it fine-tunes prooflite instead of stratlite.
+# Outside the kit workspace (own [workspace]); its own cap counter in caps.sh.
+[workspace]
+
+[package]
+name = "p6"
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.85"
+publish = false
+
+[dependencies]
+serde_json = "1"
+prooflite = { path = "../../crates/prooflite" }
