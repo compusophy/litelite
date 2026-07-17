@@ -29,28 +29,19 @@ impl Split {
     pub fn train<'a>(&self, all: &'a [Candle]) -> &'a [Candle] {
         &all[..self.train_end]
     }
-    /// Held-out, prefixed with `lookback` bars of warmup — otherwise the
-    /// strategy has no history to evaluate against and every candidate dies
-    /// of E0303 (SHORT_DATA) rather than of anything interesting.
-    ///
-    /// The warmup bars are read-only history: stratlite has no way to name a
-    /// future bar (that is a GRAMMAR fact, not a backtester courtesy), so
-    /// prefixing them cannot leak held-out information backwards.
+    /// Held-out, prefixed with `lookback` warmup bars — else every candidate
+    /// dies of E0303 (SHORT_DATA), not of anything interesting. No leak: no
+    /// stratlite program can name a future bar (a GRAMMAR fact).
     pub fn heldout<'a>(&self, all: &'a [Candle], lookback: usize) -> &'a [Candle] {
         &all[self.train_end.saturating_sub(lookback)..]
     }
 }
 
-/// Costs from the TRAIN window only. Deriving them from the full dataset
-/// would make the constant that drives train selection a function of held-out
-/// prices — a small but real leak.
-///
-/// KNOWN BIAS, recorded rather than hidden: `fee_ticks` is ABSOLUTE. If price
-/// drifts between train and held-out, the same tick fee is a different
-/// relative cost, and the ranking arm is the only one that consumes a train
-/// pnl number — so it alone is optimized against a mis-scaled turnover
-/// penalty. `price_drift` below quantifies it; §5 reports it, and the
-/// direction (it handicaps the verified arm) is stated, not dismissed.
+/// Costs from the TRAIN window only — from the full dataset would leak held-out
+/// prices into the constant that drives train selection. Known bias (recorded,
+/// not hidden): `fee_ticks` is ABSOLUTE, so price drift mis-scales it for the
+/// held-out regime, and only the ranking arm consumes train pnl — so it alone
+/// eats the bias. `price_drift` quantifies it.
 pub fn costs_from_train(train: &[Candle], fee_bps: i64, slip_bps: i64) -> Costs {
     let mean = mean_close(train).max(1);
     Costs {
@@ -128,10 +119,8 @@ pub fn pick_verified(results: &[Verdict]) -> Option<usize> {
         .map(|(i, _)| i)
 }
 
-/// Held-out score, the SAME rule for every arm. A pick that will not compile,
-/// or that faults, earns ZERO — that is the honest deployment semantics: it
-/// traded nothing. How often this fires is reported per arm; if it fires a lot
-/// for the unverified arm, that IS the result.
+/// Held-out score, the SAME rule for every arm: a pick that will not compile or
+/// that faults earns ZERO — honest deployment semantics (it traded nothing).
 pub fn score_heldout(
     src: &str,
     all: &[Candle],
@@ -149,13 +138,11 @@ pub fn score_heldout(
     }
 }
 
-/// One program's outcome on both windows — the raw material of the CONDITIONAL
-/// held-out metric. The red-team's sharpest catch: raw "held-out survivor rate"
-/// is not a generalization signal, because the compile rung is
-/// DATA-INDEPENDENT — a program that parses on train parses identically on
-/// held-out. So the honest metric conditions on compiling and measures the
-/// GATE-clear rate (which genuinely depends on the candles) on each window, and
-/// the GAP between them proves whether the benchmark has out-of-sample teeth.
+/// One program on both windows — raw material of the CONDITIONAL metric. Raw
+/// survivor rate is not a generalization signal: the compile rung is DATA-
+/// INDEPENDENT (parses on train => parses on held-out), so the honest metric
+/// conditions on compiling and measures the GATE-clear rate (data-dependent) on
+/// each window; the GAP proves whether held-out has out-of-sample teeth.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct EvalRow {
     pub compiles: bool,
@@ -196,13 +183,11 @@ pub fn eval_pool(
         .collect()
 }
 
-/// The conditional metric as three rates in [0,1]: compile rate over the whole
-/// pool, then — among compilers — the train and held-out gate-clear rates. The
-/// GAP (train_clear − heldout_clear) is the headline: near zero means held-out
-/// is no harder than train, so the benchmark has NO out-of-sample teeth and a
-/// "lift" on it would be grammar-learning, not generalization; a positive gap
-/// means held-out discriminates, and a fine-tune that RAISES heldout_clear
-/// (shrinking the gap from below) is the real win.
+/// Three rates in [0,1]: compile rate over the pool, then — among compilers —
+/// the train and held-out gate-clear rates. The GAP (train − heldout) is the
+/// headline: near zero => held-out is no harder than train (no out-of-sample
+/// teeth, a "lift" would be grammar-learning); positive => held-out
+/// discriminates, and raising heldout_clear is the real win.
 pub fn conditional_rates(rows: &[EvalRow]) -> (f64, f64, f64) {
     if rows.is_empty() {
         return (0.0, 0.0, 0.0);
@@ -218,11 +203,9 @@ pub fn conditional_rates(rows: &[EvalRow]) -> (f64, f64, f64) {
     (compile_rate, train, held)
 }
 
-/// The fuel distribution over survivors — the kit's central thesis, measured
-/// instead of counted. `Limits::default()` is 25,000/bar. If every strategy
-/// burns ~200 of it, the termination guarantee never bound on this task and
-/// §6 says so honestly. If the tail presses the cap, the bound is
-/// load-bearing and THIS is the evidence smallness bought something.
+/// Fuel over survivors, MEASURED not counted (cap 25,000/bar). A distribution
+/// hugging the low end => the termination bound never bound on this task (§6
+/// says so); a tail at the cap => the bound is load-bearing evidence.
 pub fn fuel_distribution(results: &[Verdict]) -> Vec<u64> {
     let mut v: Vec<u64> = results
         .iter()
@@ -232,10 +215,9 @@ pub fn fuel_distribution(results: &[Verdict]) -> Vec<u64> {
     v
 }
 
-/// How often physics and testimony pick the same program. Free, and the
-/// repo's central metaphor as a number. It also has to be reported for the
-/// statistics to be honest: an exact sign test DROPS ties, so an unreported
-/// agreement rate silently inflates the power calculation.
+/// How often physics and testimony pick the same program — free, and required
+/// for honest stats: an exact sign test DROPS ties, so an unreported agreement
+/// rate silently inflates the power calculation.
 pub fn agreement(a: &[Option<usize>], b: &[Option<usize>]) -> (u32, u32) {
     let pairs = a.iter().zip(b);
     let n = pairs
@@ -289,8 +271,7 @@ mod tests {
         assert!(!rows[1].compiles, "garbage must not compile");
         assert!(rows[0].compiles && rows[2].compiles);
         let (compile_rate, train, held) = conditional_rates(&rows);
-        // 2 of 3 compile; the rates are computed AMONG those 2 only, never over
-        // the whole pool — that is the whole point of the conditional metric.
+        // Rates are among the 2 compilers only, never over the whole pool.
         assert!((compile_rate - 2.0 / 3.0).abs() < 1e-9);
         assert!((0.0..=1.0).contains(&train) && (0.0..=1.0).contains(&held));
     }
@@ -303,8 +284,7 @@ mod tests {
             train_clear: false,
             heldout_clear: false,
         }];
-        // Nothing compiled -> compile rate 0, and the conditional rates are 0
-        // (undefined over an empty denominator) rather than a divide-by-zero.
+        // Empty denominator -> 0, not a divide-by-zero.
         assert_eq!(conditional_rates(&none), (0.0, 0.0, 0.0));
     }
 
@@ -312,8 +292,7 @@ mod tests {
     fn heldout_carries_warmup_so_survivors_are_not_killed_by_short_data() {
         let all = candles(256);
         let split = Split::at_fraction(all.len(), 0.5);
-        // Without the warmup prefix this slice starts at the split and the
-        // strategy has no history: E0303 for everyone, and a meaningless table.
+        // Without warmup the slice starts at the split: E0303 for everyone.
         assert_eq!(split.heldout(&all, 16).len(), all.len() - 128 + 16);
         let (pnl, rep) = score_heldout(CROSS, &all, &split, Limits::default(), Costs::default());
         assert!(
@@ -329,8 +308,7 @@ mod tests {
         let split = Split::at_fraction(all.len(), 0.5);
         let from_train = costs_from_train(split.train(&all), 5, 1);
         let from_all = costs_from_train(&all, 5, 1);
-        // The series drifts upward, so a full-dataset fee would be larger —
-        // which is exactly the held-out leak this function exists to refuse.
+        // A full-dataset fee would be larger — the held-out leak we refuse.
         assert!(from_train.fee_ticks < from_all.fee_ticks);
         assert!(price_drift(&all, &split) > 1.0);
     }

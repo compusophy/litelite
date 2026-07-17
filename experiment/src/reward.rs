@@ -1,31 +1,11 @@
-//! The verifier AS a training reward — M6's core, and the boundary a trainer
-//! shells out to.
-//!
-//! M6's whole thesis is one function: a purpose-sized language hands you a
-//! dense, deterministic, un-gameable reward for free. Two properties the kit
-//! guarantees make it a reward oracle a general language cannot be:
-//!
-//!   * `verify()` is FUEL-BOUNDED, so computing a rollout's reward is itself
-//!     guaranteed to terminate. The oracle can never hang the training loop,
-//!     however hostile the program. (Reward a model against rustc-plus-run and
-//!     a generated infinite loop stalls the loop; here it cannot exist.)
-//!   * TOTALITY closes a reward-hacking door: you cannot farm reward by
-//!     emitting a program that loops forever, because nothing loops forever.
-//!
-//! The shape is the `Reject` histogram read as a CURRICULUM — parsing at all
-//! is worth something, running clean within fuel more, behaving like a
-//! strategy most. Crucially, TRAIN PNL is deliberately NOT in `value`:
-//! rewarding it would teach curve-fitting and make the held-out generalization
-//! result circular (you would optimize the very quantity you then measure).
-//! The facts (pnl, fuel, hash) are still EMITTED, so a trainer that wants a
-//! different shaping can compute it from the record and own that choice; the
-//! default rewards VALIDITY and leaves generalization for the experiment to
-//! measure.
-//!
-//! The source is verified AS GIVEN — no fence-stripping, no leniency. A model
-//! that emits ```prose fences``` gets a compile-class zero, which is the
-//! correct training signal: extraction is the trainer's job, and rewarding
-//! fenced junk as valid would train the model to keep emitting it.
+//! The verifier AS a training reward — M6's core (rationale: `../M6.md`). A
+//! fuel-bounded verifier is a reward oracle rustc cannot be: computing a
+//! reward always terminates (no generated loop can hang training), and
+//! totality removes reward-hacking-by-nontermination. The shape is the
+//! `Reject` histogram as a curriculum; TRAIN PNL is NOT in `value` (rewarding
+//! it teaches curve-fitting and makes the held-out result circular) but IS
+//! emitted so a trainer can reshape and own that choice. Source is verified AS
+//! GIVEN — a ```fenced``` program is a compile-zero, the correct signal.
 
 use crate::score::Split;
 use backtestlite::{Costs, Gate, Reject, verify};
@@ -60,17 +40,15 @@ impl Class {
 /// re-run of the oracle.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Reward {
-    /// In [0, 1]. The default validity ladder — see the module docs for why
-    /// pnl is not in it.
+    /// In [0, 1]. The validity ladder — no pnl (see module docs).
     pub value: f64,
     pub class: Class,
-    /// `max_fuel_per_bar`; 0 if it never ran. The evidence for whether the
-    /// termination bound is load-bearing on this task.
+    /// `max_fuel_per_bar`; 0 if it never ran. Evidence for the fuel bound.
     pub fuel: u64,
     pub trades: u32,
     /// TRAIN net pnl — emitted, never in `value`.
     pub train_pnl: i64,
-    /// `equity_hash`; 0 if it never ran. Determinism as one number.
+    /// `equity_hash`; 0 if it never ran.
     pub hash: u64,
 }
 
@@ -85,50 +63,35 @@ fn ladder(class: Class) -> f64 {
     }
 }
 
+impl Reward {
+    /// A candidate that never became a strategy — every fact is zero, only the
+    /// rung differs.
+    fn miss(class: Class) -> Reward {
+        Reward {
+            value: ladder(class),
+            class,
+            fuel: 0,
+            trades: 0,
+            train_pnl: 0,
+            hash: 0,
+        }
+    }
+}
+
 /// Reward one candidate against the TRAIN window. Deterministic and total:
 /// the same source and candles always yield the same reward, and it always
 /// returns.
 pub fn reward(src: &str, train: &[Candle], limits: Limits, costs: Costs, gate: Gate) -> Reward {
-    // The empty-rollout hack, closed. stratlite compiles an empty or
-    // whitespace-only source to a lookback-0 no-op, which runs clean and then
-    // gate-fails — worth 2/3 on the ladder. Left unguarded, "emit nothing" is
-    // a positive-reward action the model would learn immediately. An empty
-    // rollout is the ABSENCE of a program, so it scores a compile-class zero.
+    // Empty-rollout hack closed: an empty source compiles to a lookback-0 no-op
+    // that gate-fails at 2/3, so unguarded "emit nothing" pays. It is the
+    // ABSENCE of a program — a compile-class zero.
     if src.trim().is_empty() {
-        return Reward {
-            value: 0.0,
-            class: Class::Compile,
-            fuel: 0,
-            trades: 0,
-            train_pnl: 0,
-            hash: 0,
-        };
+        return Reward::miss(Class::Compile);
     }
     match verify(src, train, limits, costs, gate) {
-        Err(Reject::Compile(_)) => Reward {
-            value: ladder(Class::Compile),
-            class: Class::Compile,
-            fuel: 0,
-            trades: 0,
-            train_pnl: 0,
-            hash: 0,
-        },
-        Err(Reject::Run(_)) => Reward {
-            value: ladder(Class::Run),
-            class: Class::Run,
-            fuel: 0,
-            trades: 0,
-            train_pnl: 0,
-            hash: 0,
-        },
-        Err(Reject::Gate(_)) => Reward {
-            value: ladder(Class::Gate),
-            class: Class::Gate,
-            fuel: 0,
-            trades: 0,
-            train_pnl: 0,
-            hash: 0,
-        },
+        Err(Reject::Compile(_)) => Reward::miss(Class::Compile),
+        Err(Reject::Run(_)) => Reward::miss(Class::Run),
+        Err(Reject::Gate(_)) => Reward::miss(Class::Gate),
         Ok((_, r)) => Reward {
             value: ladder(Class::Ok),
             class: Class::Ok,
@@ -158,21 +121,12 @@ pub fn reward_pool(
         .collect()
 }
 
-/// A SOURCE-canonical dedup key: FNV-1a-64 over the source with comments
-/// removed and whitespace collapsed. The trainer dedups its SFT admission set
-/// by this to resist mode collapse onto one template.
-///
-/// Why source-canonical and not `equity_hash`: `equity_hash` is 0 for every
-/// non-survivor, so early in training — when the whole population sits at the
-/// compile/run/gate rungs — a behavioral key cannot see collapse at all. And
-/// above the survivor rung it is gameable: perturb one constant by a tick and
-/// the equity curve, hence the hash, changes, so a one-template family reads as
-/// diverse. A textual key works at every rung and cannot be dodged by comment
-/// or whitespace noise.
-///
-/// Honest limit: this catches comment/formatting clones, NOT
-/// constant-perturbation or semantically-equivalent clones (`lookback 4` vs
-/// `lookback 5`). Structural/AST canonicalization is the future refinement.
+/// A SOURCE-canonical dedup key (FNV-1a-64 over comment-stripped, whitespace-
+/// collapsed source) for the trainer's anti-collapse filter. Source-canonical,
+/// not `equity_hash`: the hash is 0 for every non-survivor (blind exactly where
+/// training starts) and gameable above it (a one-tick constant change is a new
+/// curve). Honest limit: catches comment/format clones, not constant-
+/// perturbation or semantic ones — AST canonicalization is the refinement.
 pub fn novelty_key(src: &str) -> u64 {
     let canon = strip_and_collapse(src);
     let mut hash = 0xcbf2_9ce4_8422_2325u64;
@@ -183,10 +137,9 @@ pub fn novelty_key(src: &str) -> u64 {
     hash
 }
 
-/// Remove `//` line and `/* */` block comments (non-nested — a dedup key does
-/// not need a real lexer) and collapse every whitespace run to one space.
-/// stratlite has no string literals, so there is nothing a comment strip could
-/// wrongly eat.
+/// Strip `//` and `/* */` comments (non-nested) and collapse whitespace runs.
+/// stratlite has no string literals, so nothing a comment strip could wrongly
+/// eat.
 fn strip_and_collapse(src: &str) -> String {
     let b = src.as_bytes();
     let mut out = String::with_capacity(src.len());
@@ -233,8 +186,7 @@ mod tests {
 
     #[test]
     fn the_ladder_orders_the_curriculum() {
-        // A valid strategy scores strictly above a degenerate one, above a
-        // faulting one, above garbage. That ordering IS the training signal.
+        // The strict ordering IS the training signal.
         assert!(ladder(Class::Ok) > ladder(Class::Gate));
         assert!(ladder(Class::Gate) > ladder(Class::Run));
         assert!(ladder(Class::Run) > ladder(Class::Compile));
@@ -255,8 +207,7 @@ mod tests {
         );
         assert_eq!(r.class, Class::Ok);
         assert_eq!(r.value, 1.0);
-        // The facts a trainer might reshape on are present, and the fuel is
-        // real (nonzero, under the cap) — the evidence for the fuel claim.
+        // The reshape facts are present, and fuel is real (nonzero, under cap).
         assert!(r.trades > 0);
         assert!(0 < r.fuel && r.fuel <= Limits::default().fuel_per_bar);
         assert_ne!(r.hash, 0);
@@ -273,8 +224,7 @@ mod tests {
             Costs::default(),
             Gate::default(),
         );
-        // Whatever the train pnl is, the reward value depends ONLY on class —
-        // this is the guard against rewarding curve-fitting.
+        // Value depends ONLY on class — the guard against curve-fitting.
         assert_eq!(r.value, ladder(r.class));
         // The pnl is still there for a trainer that wants to reshape and own it.
         let _ = r.train_pnl;
@@ -284,8 +234,7 @@ mod tests {
     fn garbage_is_a_compile_zero_not_a_leniency() {
         let all = candles(64);
         let sp = Split::at_fraction(all.len(), 0.5);
-        // Fenced prose is EXACTLY what a raw model emits — and it must score
-        // zero, or the model never learns to stop.
+        // Fenced prose is what a raw model emits — it must score zero.
         let r = reward(
             "```\nlookback 4;\n```",
             sp.train(&all),
@@ -300,9 +249,7 @@ mod tests {
     fn the_empty_rollout_hack_is_closed() {
         let all = candles(64);
         let sp = Split::at_fraction(all.len(), 0.5);
-        // stratlite compiles all of these to a lookback-0 no-op that gate-fails
-        // at 2/3 — so without the guard, emitting nothing pays. Each must be a
-        // compile-class zero instead.
+        // All compile to a lookback-0 no-op that gate-fails at 2/3 unguarded.
         for empty in ["", "   ", "\n\t\n", "  \r\n  "] {
             let r = reward(
                 empty,
@@ -334,8 +281,7 @@ mod tests {
 
     #[test]
     fn novelty_key_works_below_the_survivor_rung() {
-        // The whole point: it keys a program that never even runs, where
-        // equity_hash is 0 for everything and cannot tell templates apart.
+        // Keys a program that never runs, where equity_hash is 0 for all.
         let x = novelty_key("garbage one");
         let y = novelty_key("garbage two");
         let x2 = novelty_key("garbage    one   // note");
@@ -368,8 +314,7 @@ mod tests {
             Costs::default(),
             Gate::default(),
         );
-        // Same inputs, same rewards — every time. This is what "the verifier
-        // reward is reproducible even though the model is not" means.
+        // Same inputs, same rewards — the reward reproduces though the model can't.
         assert_eq!(a, b);
         assert_eq!(a.len(), 3);
         assert_eq!(a[1].class, Class::Compile);

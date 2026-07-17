@@ -1,19 +1,10 @@
-//! §5's harness: generate strategies with a model, verify them mechanically,
-//! select, and score the picks on held-out candles.
-//!
-//! Scope, so the seams stay honest:
-//!   * This tests verified SELECTION. The language-size claim is §4's.
-//!   * The model is NOT reproducible — the Anthropic API has no seed, and
-//!     temperature/top_p/top_k are REMOVED on Opus 4.8 (they 400). So the run
-//!     RECORDS its generations rather than pretending to regenerate them, and
-//!     reproducibility lives where it actually holds: `s5 score` is a pure
-//!     function of committed artifacts + pinned candles, and every backtest
-//!     collapses to one `Report::equity_hash`.
-//!
-//! Intended order: `data` (no key) -> `pilot` (cents) -> `submit` -> `poll`
-//! -> `score` (no key). The pilot exists because the step after it is the one
-//! that costs money: it surfaces a rejected schema, an unexpected stop_reason,
-//! or a refusal rate in seconds instead of after a paid batch.
+//! s5: the §5 selection harness + the M6 reward/eval tooling (design:
+//! `../M6.md`). Verified SELECTION, not the language-size claim (that is §4's).
+//! The generator is NOT reproducible (no seed; temperature/top_p/top_k 400 on
+//! Opus 4.8) so the run RECORDS generations; reproducibility lives in the
+//! deterministic verifier — `score`/`reward`/`eval` are pure functions of
+//! committed artifacts + pinned candles. §5 order: data -> pilot -> submit ->
+//! poll -> score. M6: reward (per-rollout) and eval (the conditional metric).
 
 mod api;
 mod data;
@@ -109,6 +100,24 @@ fn load(paths: &[String]) -> Result<Vec<stratlite::Candle>, String> {
     Ok(all)
 }
 
+/// A rollout pool line: `{id, source, style}`, each field optional. A missing
+/// source is not an error — it is an empty rollout, a compile-class zero,
+/// exactly like the model emitting junk. Used by `reward` and `eval`.
+fn read_pool(path: &str) -> Result<Vec<(String, String, String)>, String> {
+    let text = std::fs::read_to_string(path).map_err(|e| format!("{path}: {e}"))?;
+    let mut rows = Vec::new();
+    for (n, line) in text.lines().filter(|l| !l.trim().is_empty()).enumerate() {
+        let v: serde_json::Value =
+            serde_json::from_str(line).map_err(|e| format!("line {}: {e}", n + 1))?;
+        rows.push((
+            v["id"].as_str().unwrap_or("?").to_string(),
+            v["source"].as_str().unwrap_or("").to_string(),
+            v["style"].as_str().unwrap_or("").to_string(),
+        ));
+    }
+    Ok(rows)
+}
+
 fn cmd_data(paths: &[String]) -> Result<(), String> {
     let all = load(paths)?;
     for (i, c) in all.iter().enumerate() {
@@ -189,8 +198,7 @@ fn cmd_submit(args: &[String]) -> Result<(), String> {
         })
         .collect();
     let id = api::submit(&reqs)?;
-    // Record the id BEFORE anything interprets the batch: if this process dies
-    // now, the batch is still findable and the spend is not orphaned.
+    // Record the id BEFORE interpreting the batch — else a crash orphans spend.
     std::fs::write(
         out,
         format!(
@@ -213,8 +221,7 @@ fn cmd_poll(args: &[String]) -> Result<(), String> {
         std::thread::sleep(std::time::Duration::from_secs(60));
     }
     let raw = api::results(id)?;
-    // Verbatim, before interpretation. This file IS the run's evidence: the
-    // generation can never be repeated, so unrecorded is gone.
+    // Verbatim, before interpretation — the generation cannot be repeated.
     std::fs::write(out, &raw).map_err(|e| format!("{out}: {e}"))?;
     println!("{id}: ended | {} bytes -> {out}", raw.len());
     Ok(())
@@ -262,10 +269,7 @@ fn cmd_score(args: &[String]) -> Result<(), String> {
         hist.survived, hist.compile, hist.run, hist.gate
     );
 
-    // The kit's central thesis, MEASURED rather than counted. A distribution
-    // hugging the low end means the termination bound never bound on this task
-    // and §6 must say so; a tail pressing the cap is the evidence that
-    // smallness bought something real.
+    // Fuel MEASURED not counted — the fuel-bound evidence (see score.rs).
     if let (Some(&lo), Some(&hi)) = (fuel.first(), fuel.last()) {
         println!(
             "fuel/bar over survivors: min {lo} | median {} | max {hi} | cap {} ({:.1}% of cap at max)",
@@ -296,10 +300,7 @@ fn cmd_score(args: &[String]) -> Result<(), String> {
         .unwrap_or((0, None));
     println!("arm U1 (candidate 0, unverified): held-out net {u1} ticks");
 
-    // How often physics and testimony land on the same program. Free, and the
-    // repo's central metaphor as a number — and it has to be reported, because
-    // an exact sign test drops ties and an unreported tie rate silently
-    // inflates the power calculation over replicates.
+    // Physics-vs-testimony agreement — reported because a sign test drops ties.
     let (same, n) = score::agreement(&[score::pick_verified(&results)], &[u1_pick]);
     println!("arm agreement V vs U1: {same}/{n} comparable pairs");
     println!(
@@ -321,31 +322,18 @@ fn cmd_reward(args: &[String]) -> Result<(), String> {
         .first()
         .ok_or("usage: s5 reward <pool.jsonl> <csv>...")?;
     let all = load(&args[1..])?;
-    let pool = std::fs::read_to_string(pool_path).map_err(|e| format!("{pool_path}: {e}"))?;
+    let rows = read_pool(pool_path)?;
 
     let split = Split::at_fraction(all.len(), TRAIN_FRACTION);
     let costs = score::costs_from_train(split.train(&all), FEE_BPS, SLIP_BPS);
     let limits = stratlite::Limits::default();
     let gate = backtestlite::Gate::default();
 
-    // Parse rollouts, preserving id and order. A missing/non-string source is
-    // not an error — it is an empty rollout, a compile-class zero, exactly like
-    // the model emitting junk.
-    let mut ids: Vec<String> = Vec::new();
-    let mut sources: Vec<String> = Vec::new();
-    for (n, line) in pool.lines().filter(|l| !l.trim().is_empty()).enumerate() {
-        let v: serde_json::Value =
-            serde_json::from_str(line).map_err(|e| format!("line {}: {e}", n + 1))?;
-        ids.push(v["id"].as_str().unwrap_or("?").to_string());
-        sources.push(v["source"].as_str().unwrap_or("").to_string());
-    }
-
+    let sources: Vec<String> = rows.iter().map(|(_, s, _)| s.clone()).collect();
     let rewards = reward::reward_pool(&sources, &all, &split, limits, costs, gate);
     let mut out = String::new();
-    for ((id, src), r) in ids.iter().zip(&sources).zip(&rewards) {
-        // `nkey` is the source-canonical dedup key — emitted so the trainer can
-        // resist mode collapse at every rung, including below survivor where
-        // `hash` is 0 for everything.
+    for ((id, src, _), r) in rows.iter().zip(&rewards) {
+        // `nkey` is the source-canonical dedup key for the trainer (see reward.rs).
         out.push_str(&format!(
             "{{\"id\":{},\"value\":{:.6},\"class\":\"{}\",\"fuel\":{},\"trades\":{},\"train_pnl\":{},\"hash\":\"0x{:016x}\",\"nkey\":\"0x{:016x}\"}}\n",
             serde_json::to_string(id).unwrap(),
@@ -370,22 +358,15 @@ fn cmd_reward(args: &[String]) -> Result<(), String> {
 fn cmd_eval(args: &[String]) -> Result<(), String> {
     let pool_path = args.first().ok_or("usage: s5 eval <pool.jsonl> <csv>...")?;
     let all = load(&args[1..])?;
-    let pool = std::fs::read_to_string(pool_path).map_err(|e| format!("{pool_path}: {e}"))?;
+    let pool = read_pool(pool_path)?;
 
     let split = Split::at_fraction(all.len(), TRAIN_FRACTION);
     let costs = score::costs_from_train(split.train(&all), FEE_BPS, SLIP_BPS);
     let limits = stratlite::Limits::default();
     let gate = backtestlite::Gate::default();
 
-    let mut sources: Vec<String> = Vec::new();
-    let mut styles: Vec<String> = Vec::new();
-    for (n, line) in pool.lines().filter(|l| !l.trim().is_empty()).enumerate() {
-        let v: serde_json::Value =
-            serde_json::from_str(line).map_err(|e| format!("line {}: {e}", n + 1))?;
-        sources.push(v["source"].as_str().unwrap_or("").to_string());
-        styles.push(v["style"].as_str().unwrap_or("").to_string());
-    }
-
+    let sources: Vec<String> = pool.iter().map(|(_, s, _)| s.clone()).collect();
+    let styles: Vec<String> = pool.iter().map(|(_, _, st)| st.clone()).collect();
     let rows = score::eval_pool(&sources, &all, &split, limits, costs, gate);
     let (compile_rate, train, held) = score::conditional_rates(&rows);
     let gap = train - held;
@@ -411,8 +392,7 @@ fn cmd_eval(args: &[String]) -> Result<(), String> {
         }
     );
 
-    // Per-style, when labelled — collapse to the easiest style would raise the
-    // aggregate while a stratified view exposes it.
+    // Per-style — an aggregate rate can rise by collapsing to the easiest style.
     if styles.iter().any(|s| !s.is_empty()) {
         println!("per-style held-out gate-clear (among that style's compilers):");
         let mut seen: Vec<&str> = styles
