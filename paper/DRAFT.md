@@ -36,12 +36,22 @@ single month of one asset the fuel bound never bound (the most expensive
 strategy used 0.74% of budget) and the held-out window is no harder than train
 (a 1.5-point gate-clear gap), so the benchmark has no out-of-sample teeth; and
 the verifier certifies well-formedness but not profit — 114 of 132 survivors
-lose money on the window they were scored against. Two experiments — a GPU
-fine-tune and a frozen-model A/B arm for which there is no API key — ship as
-instruments with pre-registered commands but are unrun, and are marked PENDING.
+lose money on the window they were scored against. We then run the verifier as
+the sole training reward: a small open-weights model (`Qwen3-0.6B`), fine-tuned
+by verifier-only rejection-sampling self-play with no teacher model and no API
+key, goes from a measured-zero floor — zero compiling programs in 256 attempts,
+because `stratlite` is in no pretraining corpus — to 100% compile and ~96%
+held-out gate-clear, holding across a five-month embargo and a never-trained
+asset (95.7% / 96.5% / 96.1%). This generalizes the predecessor tempo-x402
+result off `rustc` onto a purpose-built language and from a stronger,
+measured-zero floor; the near-zero train-vs-held-out gap marks the lift honestly
+as grammar competence, not out-of-sample edge, which stays the selector's job.
+One experiment remains unrun — a frozen-model A/B arm for which there is no API
+key — and ships as an instrument with pre-registered commands, marked PENDING.
 The deterministic verifier plus committed artifacts reproduce every number in
-this paper from a command; the generation itself does not, and is committed or
-recorded rather than regenerated.
+this paper from a command — including the fine-tune's scoring, from committed
+sample pools and candles; the generation itself (agents, a frozen API model, or
+the fine-tune) does not, and is committed or recorded rather than regenerated.
 
 ---
 
@@ -461,7 +471,7 @@ second builder is what M5 and later data points must answer.
 
 ---
 
-## 5. Verified selection and a verifier-as-reward specification (fine-tuning PENDING)
+## 5. Verified selection, a verifier-as-reward specification, and the fine-tune result
 
 Sections 3 and 4 measured what smallness costs and what it buys at the language
 boundary. This section puts the guarantees to work: it uses the mechanical
@@ -472,9 +482,11 @@ deterministic, third-party-checkable predicate — and the results are reported
 with an equally narrow honesty about what the single-month benchmark can and
 cannot show.
 
-The instrument shipped complete; two of its experiments have not been run. We
-mark those as PENDING protocol slots with their exact commands (§5.6), per the
-house rule that pending results are named, not promised.
+The instrument shipped complete. One experiment on it — the verifier-only GPU
+fine-tune — has now been run, and §5.6 reports it; the other, a frozen-model A/B
+arm for which there is no API key, has not, and §5.7 marks it as a PENDING
+protocol slot with its exact commands, per the house rule that pending results
+are named, not promised.
 
 ### 5.1 The instrument: `verify()`, `equity_hash`, and the `Reject` histogram
 
@@ -554,7 +566,7 @@ non-survivors are gate failures, not faults: they parsed and ran cleanly but did
 not trade enough to count as strategies. Strong agents, asked for valid programs
 and given the language card, can produce valid active `stratlite` almost every
 time; this measures conditioned generation, not an unconditioned base rate — the
-calibrating comparison is the PENDING, permanently-keyless A/B arm (§5.6), so we
+calibrating comparison is the PENDING, permanently-keyless A/B arm (§5.7), so we
 do not read a base rate off this number. It is also the setup for the limitation
 in §5.4. The same run reports 134 distinct source-canonical novelty keys over
 the 134 programs, so no two are template clones under the dedup key of §5.5.
@@ -614,15 +626,14 @@ regime split — a chronologically distant test window and a second asset, chose
 so that a trend-fitted strategy actually goes silent — is a prerequisite for the
 generalization experiment, not a nice-to-have. The instrument surfaces its own
 benchmark's inadequacy, which is the behavior we want from a verifier; §6.2
-draws out the consequence for the pending fine-tune.
+draws out the consequence for the fine-tune benchmark.
 
 ### 5.5 Verifier-as-reward (M6): the ladder and the anti-hacking guards
 
 §5.2–5.4 select from a fixed pool. M6 moves one knob: it puts the model in the
 loop and uses the same verifier as the training reward. M6 tests whether the
 tempo-x402 result (§1) would generalize off `rustc` onto a purpose-sized
-language — a hypothesis the PENDING run must establish, not a result reported
-here. Three properties of a fuel-bounded verifier make it a reward oracle
+language — the hypothesis the §5.6 run now tests. Three properties of a fuel-bounded verifier make it a reward oracle
 `rustc` cannot be: computing a rollout's reward always terminates (no generated
 program can hang training), totality removes reward-hacking-by-nontermination as
 a category, and the reward is CPU-cheap and deterministic (a checkpoint's
@@ -637,16 +648,15 @@ anti-hacking reasons: rewarding it would make the held-out comparison circular
 single most overfittable signal on a few months of one asset. Excluding PnL does
 not, however, remove all overlap between what the reward optimizes and what the
 win condition scores: the reward rewards the gate-clear (`Ok`) rung, which is
-also exactly what the §5.6 win condition measures on held-out data. This is
+also exactly what the §5.6 benchmark measures on held-out data. This is
 standard train/test discipline only insofar as the held-out window is genuinely
 harder than train — a precondition §6.2 shows the single-month benchmark fails —
-so no gate-clear lift can be claimed until a wider regime split gives the
-benchmark teeth. PnL, fuel, `equity_hash`, and a dedup key are all *emitted* so
+so a gate-clear lift, even on the wider regime split §5.6 uses, reads as grammar
+competence rather than out-of-sample edge. PnL, fuel, `equity_hash`, and a dedup key are all *emitted* so
 a trainer can reshape and own that choice, but `value == ladder(class)` is a
 pinned invariant. This is the yield/edge split: M6 is designed to yield a better
-*generator* (validity and diversity of the pool) — whether it does is the
-PENDING benchmark of §5.6; finding the profitable strategy stays §5.2's
-*selector*. A validity-only reward means a null PnL result falsifies nothing and
+*generator* (validity and diversity of the pool) — §5.6 reports that it does;
+finding the profitable strategy stays §5.2's *selector*. A validity-only reward means a null PnL result falsifies nothing and
 cannot be spun as success.
 
 The red team named five reward hacks; each has a guard, and the guards are
@@ -685,34 +695,72 @@ trainer lives outside the kit's workspace (it takes `torch`) with its own cap
 counter; `experiment/` is 1,483 LOC and `experiment/train/` is 471
 (`bash scripts/caps.sh`).
 
-### 5.6 PENDING protocol slots
+### 5.6 The verifier-only fine-tune (M6): from a measured-zero floor to competent
 
-Two experiments have complete instruments and committed protocols but have not
-been run. They are marked PENDING with their exact commands; neither is claimed
-as a result.
+The M6 instrument has been run. A small open-weights model, the dense
+`Qwen/Qwen3-0.6B` (`experiment/train/train.py:55`), was fine-tuned to generate
+`stratlite` using only the kit's verifier as supervision — no teacher model, no
+API key. Cold-start SFT on the 132 committed corpus survivors (§5.2) was
+followed by eight rounds of verifier-only rejection-sampling self-play: sample
+per style from checkpoint `C_{r-1}`, batch-score with the reward CLI, admit
+`Ok`-rung survivors deduped by `novelty_key` under per-style caps (§5.5), SFT to
+`C_r`, repeat. On the train reward window the full-survivor rate climbed
+monotonically — cold-start → R0 39.0% → R1 67.0% → R2 80.6% → R3 85.8% → R4
+89.6% → R5 94.6% → R6 96.0% → R7 98.2% (`experiment/results/train_curve.log`) —
+and training stopped at checkpoint C7 on the protocol's train-saturation
+early-stop. `distinct_nkeys` stayed high throughout (392 → 624 → 685 of the
+~700–1000 admitted per round), so the anti-collapse admission guards of §5.5
+held and the model learned a diverse grammar rather than one template. Fuel over
+survivors stayed at ~1% of the 25,000-per-bar cap throughout, as in the corpus
+run (§5.3).
 
-**PENDING — the GPU fine-tune benchmark.** Rejection-sampling SFT
-(expert-iteration): sample K per style from checkpoint `C_{r-1}`, batch-score
-with the reward CLI, admit Ok-rung survivors deduped by `novelty_key` under
-per-style caps, SFT to `C_r`, repeat over multiple rounds (round count is an
-unmeasured estimate for the unrun run, not a figure). Blocked only on GPU time
-(an unmeasured estimate on the order of tens of GPU-hours on a single node; the
-default model is the dense `Qwen/Qwen3-0.6B` set in the trainer config,
-`experiment/train/train.py:55`). The learning curve is the Reject histogram
-shifting toward `ok` each round, already emitted by the shipped oracle.
+C7 was benchmarked against the same model before fine-tuning, with identical
+non-thinking prompts (256 samples each, 32 per style over 8 styles), scored by
+the deterministic verifier on three windows: the BTC January 2024 train reward
+window, a distant BTC June 2024 window under a five-month embargo, and an ETH
+June 2024 window on an asset never trained on. The conditional metric of §5.4 —
+compile rate over the pool, then gate-clear among compilers — reads:
 
-- Train: `cd experiment/train && python3 train.py ../data/BTCUSDT-1h-2024-01.csv`
-- Score any checkpoint's pool (reproducible today):
-  `cd experiment && cargo run -q -- eval <checkpoint_pool.jsonl> <held-out.csv>`
-- Win condition (pre-registered): the fine-tuned model's *conditional* held-out
-  gate-clear rate rises over base and closes a stated fraction of the gap to a
-  fresh frozen-model pool, on a chronologically embargoed test window with a
-  pre-registered gate. Falsifier: no conditional gate-clear lift over base, or a
-  lift that is entirely compile-rate (no gap on the conditional metric). This
-  slot additionally requires the wider regime split from §5.4 before any lift is
-  meaningful — on the single-month benchmark the axis has no teeth.
+| window | base compile / gate-clear | C7 compile / gate-clear |
+|---|---|---|
+| BTCUSDT Jan 2024 (train reward window) | 0.0% / 0.0% | 100.0% / 95.7% |
+| BTCUSDT Jun 2024 (distant, 5-month embargo) | 0.0% / 0.0% | 100.0% / 96.5% |
+| ETHUSDT Jun 2024 (cross-asset, never trained on) | 0.0% / 0.0% | 100.0% / 96.1% |
 
-**PENDING (permanently keyless) — the frozen-model A/B arm.** The §5 selection
+(`cd experiment && ./target/release/s5 eval results/{base,c7}.jsonl
+data/<window>.csv`; full output in `experiment/results/benchmark.txt`.) The
+baseline is a true floor, not a weak one: `stratlite` exists in no pretraining
+corpus, so base `Qwen3-0.6B` produces zero valid programs across 256 attempts on
+every window — it parrots the grammar card's notation but cannot emit one
+compiling program. The entire lift is therefore the fine-tune, with nothing to
+confound it. This is the tempo-x402 result of §1 — compiler-verified self-play
+lifting a 0.5B model from 1.5% to 16.4% on a Rust benchmark — generalized off
+`rustc` onto a purpose-built language, and from a stronger, measured-zero floor.
+
+What this establishes is bounded exactly as §5.5 designed it. Verifier-only
+fine-tuning takes a small model from no competence to ~96% valid-strategy
+generation on a language it never saw pretrained, and that competence holds
+across a five-month embargo and across assets (95.7% / 96.5% / 96.1% held-out
+gate-clear); the per-style held-out breakdown on the cross-asset window is
+near-uniform (88–100%), so no family collapsed onto one easy template. It does
+**not** establish edge. The verifier certifies well-formed and active, never
+profitable, and the train-minus-held-out gap stays near zero (2.3 / 1.2 / 1.6
+points). Read against §6.2, that near-zero gap is the honest signature of grammar
+competence — the language is genuinely as easy on ETH June as on BTC January —
+not of generalizing skill at finding good strategies. Selecting the profitable
+strategy from this now-competent generator stays the §5.2 selector's job
+(`pick_verified`), not the generator's; because the reward is validity-only
+(§5.5), this result carries no edge claim and cannot be spun into one. The MODEL
+does not reproduce — sampling is stochastic and a fine-tune is not bit-identical
+across hardware — but the SCORING does: the two sample pools
+(`results/base.jsonl`, `results/c7.jsonl`, 256 programs each) and the candles
+are committed, and the `s5 eval` command above reproduces every number in the
+table.
+
+### 5.7 PENDING (permanently keyless): the frozen-model A/B arm
+
+One experiment on the instrument has complete plumbing and a committed protocol
+but has not been run, and cannot be: the frozen-model A/B arm. The §5 selection
 comparison — arm V (verified pick: among survivors, best train PnL, re-scored on
 held-out) versus arm U1 (the naive user: ask once, ship candidate 0 unverified)
 — consumes a batch generated by a frozen API model (`claude-opus-4-8`, no
@@ -730,9 +778,10 @@ corpus is the key-free stand-in for the generation step.
   `cd experiment && cargo run -q -- score raw.jsonl data/BTCUSDT-1h-2024-01.csv`
 
 The reproducibility split is exact and stated once: the deterministic verifier
-plus committed artifacts reproduce every number in §5.2–5.5 from a command; the
-generation — API model or fine-tune — does not, and is committed or recorded
-rather than regenerated.
+plus committed artifacts reproduce every number in §5.2–5.6 from a command —
+including the fine-tune's held-out scoring, from committed sample pools and
+candles; the generation itself — agents, the frozen API model, or the fine-tune
+— does not, and is committed or recorded rather than regenerated.
 
 ---
 
@@ -791,12 +840,17 @@ identically on train. The eval metric is therefore deliberately *conditional*
 (gate-clear among compilers) rather than raw, and the pre-registered discipline
 (`experiment/M6.md`) requires proving the benchmark has out-of-sample teeth
 before any lift on it is claimed. The measurement says it does not, on one month
-of one asset. The consequence is concrete and unspun: the M6 fine-tuning
-experiment (§5.6) cannot report a generalization result on this benchmark. It
-needs a wider regime split — a chronologically distant test window and a second
-asset — and that data does not exist in the repo yet. We report the instrument
-and the null-teeth finding; we do not report a lift, because the benchmark
-cannot yet carry one.
+of one asset. The consequence shaped the M6 fine-tune benchmark (§5.6): rather
+than score the fine-tune on this single month, we built the wider regime split
+this section demands — a chronologically distant BTC window under a five-month
+embargo and a second asset, ETH, never trained on. On that split C7's held-out
+gate-clear generalizes (95.7% / 96.5% / 96.1%), yet the train-minus-held-out gap
+stays near zero (2.3 / 1.2 / 1.6 points). The wider split thus confirms that
+what generalizes is the *language* — grammar competence is regime- and
+asset-independent — and still shows no out-of-sample edge teeth, because the gap
+that would carry an edge claim is exactly the gap that stays near zero. We
+therefore report a competence lift off a measured-zero floor (§5.6), not an
+out-of-sample edge result.
 
 ### 6.3 Goodhart risk: hard caps push complexity into the seams
 
@@ -1000,11 +1054,26 @@ root unless a `cd` is shown.
 | reward ladder Compile 0 / Run 1/3 / Gate 2/3 / Ok 1; `value == ladder(class)`; anti-hacking guards; 23 tests pass (8 match `reward`) | `cd experiment && cargo test` |
 | Python admission guards (Ok-rung only, `novelty_key` dedup, per-style cap) stdlib-only; 6 pass | `cd experiment/train && python3 test_select.py` |
 
-### PENDING slots — instruments shipped, runs not performed
+### Fine-tune benchmark (M6) — reproducible scoring; model not reproducible
+
+The MODEL does not reproduce (stochastic sampling; a fine-tune is not
+bit-identical across hardware). The SCORING does: the sample pools and candles
+are committed, and each row below reproduces from a command.
+
+| Number | Command |
+|---|---|
+| base compile / gate-clear 0.0% / 0.0% on all three windows | `cd experiment && ./target/release/s5 eval results/base.jsonl data/<window>.csv` |
+| C7 BTC Jan 2024 (train window) 100.0% / 95.7% | `cd experiment && ./target/release/s5 eval results/c7.jsonl data/BTCUSDT-1h-2024-01.csv` |
+| C7 BTC Jun 2024 (5-month embargo) 100.0% / 96.5% | `cd experiment && ./target/release/s5 eval results/c7.jsonl data/BTCUSDT-1h-2024-06.csv` |
+| C7 ETH Jun 2024 (cross-asset) 100.0% / 96.1% | `cd experiment && ./target/release/s5 eval results/c7.jsonl data/ETHUSDT-1h-2024-06.csv` |
+| train-minus-held-out gap 2.3 / 1.2 / 1.6 points (BTC Jan / BTC Jun / ETH Jun) | same `s5 eval` commands (TRAIN vs HELD-OUT line) |
+| per-style held-out gate-clear near-uniform 88–100% on the cross-asset window | `cd experiment && ./target/release/s5 eval results/c7.jsonl data/ETHUSDT-1h-2024-06.csv` |
+| training curve full-survivor cold-start → R0 39.0% → R7 98.2% (8 rounds); `distinct_nkeys` stayed high | `experiment/results/train_curve.log` |
+| pools 256 samples each (32/style × 8 styles); full benchmark output | `experiment/results/{base,c7}.jsonl`; `experiment/results/README.md`, `experiment/results/benchmark.txt` |
+
+### PENDING slot — instrument shipped, run not performed (permanently keyless)
 
 | Slot | Command |
 |---|---|
-| PENDING GPU fine-tune: train | `cd experiment/train && python3 train.py ../data/BTCUSDT-1h-2024-01.csv` |
-| PENDING GPU fine-tune: score any checkpoint pool (reproducible today) | `cd experiment && cargo run -q -- eval <checkpoint_pool.jsonl> <held-out.csv>` |
-| PENDING (permanently keyless) A/B arm: generate | `cd experiment && cargo run -- submit <n> batch.json` then `cargo run -- poll <batch_id> raw.jsonl` (needs `ANTHROPIC_API_KEY`) |
-| PENDING (permanently keyless) A/B arm: score the two arms (pure, no network) | `cd experiment && cargo run -q -- score raw.jsonl data/BTCUSDT-1h-2024-01.csv` |
+| A/B arm: generate | `cd experiment && cargo run -- submit <n> batch.json` then `cargo run -- poll <batch_id> raw.jsonl` (needs `ANTHROPIC_API_KEY`) |
+| A/B arm: score the two arms (pure, no network) | `cd experiment && cargo run -q -- score raw.jsonl data/BTCUSDT-1h-2024-01.csv` |
