@@ -815,6 +815,7 @@ non-thinking prompts, 256 samples each (32 per style):
 | model | parse | RICH (ok) | distinct rich keys | novel ok / ok (∉ corpus) |
 |---|---|---|---|---|
 | base `Qwen3-0.6B` | 23.4% | 3.5% | 9 | 9 / 9 (100%) |
+| C5 | 96.9% | 90.6% | 213 | 232 / 232 (100%) |
 | **C6 (selected)** | 99.2% | 94.5% | **216** | 242 / 242 (100%) |
 | C7 | 100.0% | 96.1% | 199 | 245 / 246 (99.6%) |
 | C8 | 98.8% | 96.1% | 205 | 245 / 246 (99.6%) |
@@ -836,10 +837,11 @@ The selected checkpoint is C6, and why is itself a finding. Raw validity
 saturates across C6–C8 (94.5% / 96.1% / 96.1% RICH), but DIVERSITY does not:
 admitted distinct keys peak at round 6 (823) then fall monotonically (750, 686).
 C6 also holds the most distinct rich programs on the held-out benchmark (216,
-against C7's 199 and C8's 205), so selecting it is defensible on both measures —
-but the benchmark is a single 256-sample draw per checkpoint with no variance
-estimate, and its C7-vs-C8 order (205 > 199) inverts the training curve's
-(750 > 686), so past the peak the two disagree within sampling noise. The
+against C5's 213, C7's 199, and C8's 205), so selecting it is defensible on both
+measures — but the benchmark is a single 256-sample draw per checkpoint with no
+variance estimate: C5's 213 sits within a hair of C6's 216, and the C7-vs-C8
+order (205 > 199) inverts the training curve's (750 > 686), so around the peak
+the draws disagree within sampling noise. The
 load-bearing evidence is therefore the training-curve decline, not the
 benchmark: past round 6 the policy trades breadth for reward — mild
 mode-narrowing that the anti-collapse guards of §5.5 bound but do not abolish —

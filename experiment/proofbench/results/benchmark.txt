@@ -1,7 +1,5 @@
 # prooflite N=2 benchmark — base vs checkpoints across the C6 diversity peak
 # 256 samples/pool (32 per style), identical prompts + sampling; scored by p6.
-# (c5, the rising-limb pool, was lost to a cleanup slip and is regenerable; the
-#  floor->peak->decline result stands on base/c6/c7/c8.)
 
 ########## base ##########
 === prooflite validity eval ===
@@ -10,6 +8,14 @@ parse rate 23.4% | of parsers, run-clean 90.0% | of all, RICH (ok) 3.5%
 ladder: compile 196 | run 6 | gate 45 | ok 9
 === prooflite novelty (rich programs vs the 174-program cold-start corpus) ===
 ok 9 | novel ok 9 (100.0%) | distinct ok keys 9 | distinct novel keys 9
+
+########## c5 ##########
+=== prooflite validity eval ===
+pool: 256 programs | 237 distinct source keys
+parse rate 96.9% | of parsers, run-clean 98.8% | of all, RICH (ok) 90.6%
+ladder: compile 8 | run 3 | gate 13 | ok 232
+=== prooflite novelty (rich programs vs the 174-program cold-start corpus) ===
+ok 232 | novel ok 232 (100.0%) | distinct ok keys 213 | distinct novel keys 213
 
 ########## c6 ##########
 === prooflite validity eval ===

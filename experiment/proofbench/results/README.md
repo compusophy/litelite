@@ -11,7 +11,7 @@ That is what turns an anecdote into a method.
 
 As with N=1, the MODEL is not reproducible (stochastic sampling; a fine-tune
 is not bit-identical across hardware). The SCORING is: the pools
-(`base.jsonl`, `c6.jsonl`, `c7.jsonl`, `c8.jsonl` — 256 samples each, 32 per
+(`base.jsonl`, `c5.jsonl`, `c6.jsonl`, `c7.jsonl`, `c8.jsonl` — 256 samples each, 32 per
 style) are committed, and
 
     cd experiment/proofbench && ./target/release/p6 eval    results/c6.jsonl
@@ -31,6 +31,7 @@ runs clean AND prints ≥3 distinct lines burning ≥30 fuel).
 | model | parse | RICH (ok) | distinct rich / 256 | novel rich (∉ corpus) |
 |---|---|---|---|---|
 | base Qwen3-0.6B | 23.4% | **3.5%** | 9 | 9 / 9 (100%) |
+| C5 | 96.9% | 90.6% | 213 | 232 / 232 (100%) |
 | **C6 (selected)** | 99.2% | **94.5%** | **216** | 242 / 242 (**100%**) |
 | C7 | 100.0% | 96.1% | 199 | 245 / 246 (99.6%) |
 | C8 | 98.8% | 96.1% | 205 | 245 / 246 (99.6%) |
@@ -94,5 +95,7 @@ diversity peak is a real caveat: past round 6 the generator trades breadth for
 reward, so "train longer" is not free — the method has an optimal stop, and it
 is observable in the distinct-key curve, not the rich-rate.
 
-The rising-limb pool (c5) was lost to a cleanup slip and is regenerable in
-~90s; the floor → peak → decline result stands on base/c6/c7/c8.
+The full curve is committed — base → C5 → C6 (peak) → C7 → C8. C6 holds the
+diversity peak (216 distinct rich), with C5 (213) just below it on the rising
+limb and C7/C8 past it (199, 205), an inverted-U consistent with the training
+histogram's distinct_nkeys peak at round 6.
