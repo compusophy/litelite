@@ -729,6 +729,11 @@ post-peak narrowing; because C7 was selected on rich-rate saturation, not the
 distinct-key peak, it sits past its diversity optimum (~R4). That does not touch
 the gate-clear result below — a validity claim, and validity is monotone — but
 it does mean C7's generator is less varied than an earlier checkpoint's would be.
+A held-out novelty check confirms the model learned the grammar, not the corpus:
+of C7's 251 gate-clearing programs, 250 (99.6%) carry a source-canonical key
+absent from the committed corpus's 134 keys (205 of them distinct; `s5 reward`
+emits the key per program), the same anti-memorization control §5.7 runs for
+prooflite — now symmetric across both arms.
 Fuel over survivors stayed at ~1% of the 25,000-per-bar cap throughout, as in the
 corpus run (§5.3) — a stratlite-specific figure §6.1 revisits against prooflite.
 
@@ -1202,6 +1207,7 @@ are committed, and each row below reproduces from a command.
 | per-style held-out gate-clear near-uniform 88–100% on the cross-asset window | `cd experiment && ./target/release/s5 eval results/c7.jsonl data/ETHUSDT-1h-2024-06.csv` |
 | training curve full-survivor cold-start → R0 39.0% → R7 98.2% (8 rounds); `distinct_nkeys` peaks R4 (694) then narrows to 534 (R7) | `experiment/results/train_curve.log` |
 | pools 256 samples each (32/style × 8 styles); full benchmark output | `experiment/results/{base,c7}.jsonl`; `experiment/results/README.md`, `experiment/results/benchmark.txt` |
+| C7 novelty 99.6% (250/251 gate-clearers ∉ corpus) | `cd experiment && ./target/release/s5 reward results/c7.jsonl data/BTCUSDT-1h-2024-01.csv` (compare `nkey` field vs `s5 reward corpus/seed.jsonl ...`) |
 | N=2 prooflite: base RICH 3.5% (9/256), C6 RICH 94.5% | `cd experiment/proofbench && ./target/release/p6 eval results/base.jsonl` then `... eval results/c6.jsonl` (one pool per run) |
 | N=2 prooflite: novel rich ~100% (∉ 174-program corpus); C6 216 distinct rich | `cd experiment/proofbench && ./target/release/p6 novelty results/c6.jsonl corpus/seed.jsonl` |
 | N=2 prooflite training curve rich-rate R0 43.8% → R8 96.2% (9 rounds); `distinct_nkeys` peaks R6 (823) then narrows to 686 (R8) | `experiment/proofbench/results/train_curve.log` |

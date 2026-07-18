@@ -1,5 +1,9 @@
 /target
-/data
+# Candles: ignore the directory by default, but COMMIT the three pinned kline
+# files + provenance — the paper's §5 reproducibility claim requires them.
+/data/*
+!/data/*.csv
+!/data/README.md
 # M6 trainer run artifacts — model checkpoints and the venv are big and local.
 train/checkpoints/
 train/.venv/
