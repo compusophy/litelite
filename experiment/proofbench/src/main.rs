@@ -144,12 +144,16 @@ fn novelty_key(src: &str) -> u64 {
     hash
 }
 
-fn read_pool(path: &str) -> Result<Vec<(String, String)>, String> {
-    let text = if path == "-" {
-        std::io::read_to_string(std::io::stdin()).map_err(|e| format!("stdin: {e}"))?
+fn read_text(path: &str) -> Result<String, String> {
+    if path == "-" {
+        std::io::read_to_string(std::io::stdin()).map_err(|e| format!("stdin: {e}"))
     } else {
-        std::fs::read_to_string(path).map_err(|e| format!("{path}: {e}"))?
-    };
+        std::fs::read_to_string(path).map_err(|e| format!("{path}: {e}"))
+    }
+}
+
+fn read_pool(path: &str) -> Result<Vec<(String, String)>, String> {
+    let text = read_text(path)?;
     let mut rows = Vec::new();
     for (n, line) in text
         .lines()
@@ -173,6 +177,7 @@ p6 — the prooflite reward tool (N=2)
   p6 reward   <pool.jsonl>       per-rollout validity reward (JSONL in, records out; - = stdin)
   p6 eval     <pool.jsonl>       the validity-ladder distribution over a pool
   p6 novelty  <pool> <corpus>    of a pool's RICH programs, the fraction absent from a corpus
+  p6 solve    <problems> <sols>  pass@k on held-out spec->program problems (the transfer test)
 ";
 
 fn cmd_reward(path: &str) -> Result<(), String> {
@@ -264,6 +269,83 @@ fn cmd_novelty(pool_path: &str, corpus_path: &str) -> Result<(), String> {
     Ok(())
 }
 
+/// Canonical stdout of a prooflite program (trailing whitespace normalized), or
+/// None if it does not run clean. Used to compare a candidate against a problem's
+/// reference solution.
+fn run_output(src: &str) -> Option<String> {
+    let o = run(src, Limits::default()).ok()?;
+    Some(
+        o.output
+            .lines()
+            .map(|l| l.trim_end())
+            .collect::<Vec<_>>()
+            .join("\n")
+            .trim_end()
+            .to_string(),
+    )
+}
+
+/// The TRANSFER / problem-solving benchmark. Each problem is a spec + a reference
+/// solution; a candidate SOLVES it iff its output equals the reference's output.
+/// `problems` is `{id, spec, ref}`, `solutions` is `{id, source}` (many per id).
+/// Reports pass@k: a problem is solved if ANY candidate for it matches. This is a
+/// stronger claim than `eval` (well-formed generation) — it is targeted competence.
+fn cmd_solve(problems_path: &str, solutions_path: &str) -> Result<(), String> {
+    use std::collections::BTreeMap;
+    let mut expected: Vec<(String, String)> = Vec::new();
+    for (n, line) in read_text(problems_path)?
+        .lines()
+        .enumerate()
+        .filter(|(_, l)| !l.trim().is_empty())
+    {
+        let v: Value =
+            serde_json::from_str(line).map_err(|e| format!("problem line {}: {e}", n + 1))?;
+        let id = v["id"].as_str().unwrap_or("?").to_string();
+        let canon = run_output(v["ref"].as_str().unwrap_or(""))
+            .ok_or_else(|| format!("problem {id}: reference solution does not run clean"))?;
+        expected.push((id, canon));
+    }
+    let mut sols: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    for (n, line) in read_text(solutions_path)?
+        .lines()
+        .enumerate()
+        .filter(|(_, l)| !l.trim().is_empty())
+    {
+        let v: Value =
+            serde_json::from_str(line).map_err(|e| format!("solution line {}: {e}", n + 1))?;
+        let id = v["id"].as_str().unwrap_or("?").to_string();
+        sols.entry(id)
+            .or_default()
+            .push(v["source"].as_str().unwrap_or("").to_string());
+    }
+    let mut solved = 0u32;
+    let mut lines = String::new();
+    for (id, canon) in &expected {
+        let attempts = sols.get(id).map(Vec::as_slice).unwrap_or(&[]);
+        let ok = attempts
+            .iter()
+            .any(|s| run_output(s).as_deref() == Some(canon.as_str()));
+        solved += ok as u32;
+        lines.push_str(&format!(
+            "  {} {id} ({} tries)\n",
+            if ok { "PASS" } else { "fail" },
+            attempts.len()
+        ));
+    }
+    let total = sols.values().map(Vec::len).sum::<usize>();
+    println!("=== prooflite solve (held-out problems) ===");
+    println!(
+        "problems {} | solutions {} | SOLVED (pass@k) {}/{} = {:.1}%",
+        expected.len(),
+        total,
+        solved,
+        expected.len(),
+        100.0 * solved as f64 / expected.len().max(1) as f64
+    );
+    print!("{lines}");
+    Ok(())
+}
+
 fn main() -> ExitCode {
     let args: Vec<String> = std::env::args().skip(1).collect();
     let r = match args.first().map(String::as_str) {
@@ -288,6 +370,10 @@ fn main() -> ExitCode {
         Some("novelty") => match (args.get(1), args.get(2)) {
             (Some(p), Some(c)) => cmd_novelty(p, c),
             _ => Err("usage: p6 novelty <pool.jsonl> <corpus.jsonl>".into()),
+        },
+        Some("solve") => match (args.get(1), args.get(2)) {
+            (Some(p), Some(s)) => cmd_solve(p, s),
+            _ => Err("usage: p6 solve <problems.jsonl> <solutions.jsonl>".into()),
         },
         _ => {
             eprint!("{USAGE}");
@@ -343,6 +429,18 @@ mod tests {
             novelty_key("let x = 1;   print x;  // note")
         );
         assert_ne!(novelty_key(a), novelty_key("let x = 2; print x;"));
+    }
+
+    #[test]
+    fn solve_matches_reference_output_not_wrong_answers() {
+        let reference = "let i = 0; repeat 3 { i = i + 1; print i; }"; // 1,2,3
+        let want = run_output(reference);
+        assert_eq!(want.as_deref(), Some("1\n2\n3"));
+        // A DIFFERENT program with the same output solves it (output, not source).
+        assert_eq!(run_output("print 1; print 2; print 3;"), want);
+        // A wrong answer does not; nor does a program that faults.
+        assert_ne!(run_output("print 1; print 2; print 4;"), want);
+        assert_eq!(run_output("print nope;"), None);
     }
 
     #[test]
