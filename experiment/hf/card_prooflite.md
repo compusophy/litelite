@@ -51,18 +51,27 @@ breadth for reward. C6 is where the generator is most diverse.
 ## Usage
 
 ```python
+import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-tok = AutoTokenizer.from_pretrained("{NAMESPACE}/prooflite-qwen3-0.6b")
-model = AutoModelForCausalLM.from_pretrained("{NAMESPACE}/prooflite-qwen3-0.6b")
+REPO = "{NAMESPACE}/prooflite-qwen3-0.6b"
+tok = AutoTokenizer.from_pretrained(REPO)
+model = AutoModelForCausalLM.from_pretrained(REPO, dtype=torch.float16).to("cuda").eval()
 
-CARD = open("p6_card.txt").read()   # the prompt card: `p6 card` in the source repo
+CARD = open("p6_card.txt").read()   # bundled in this repo (also `p6 card` in the source)
 style = "a program that uses a repeat loop with a var accumulator to build up a total"
 msgs = [{"role": "user", "content": CARD + "\n\n" + style}]
-ids = tok.apply_chat_template(msgs, add_generation_prompt=True,
-                              return_tensors="pt", enable_thinking=False)
-out = model.generate(ids, max_new_tokens=256, do_sample=True, temperature=0.9)
-print(tok.decode(out[0][ids.shape[1]:], skip_special_tokens=True))
+# Qwen3 emits a <think> block by default; suppress it (older tokenizers reject
+# the kwarg, so fall back). tokenize=False then a separate tokenizer call is the
+# trainer's exact, tested generation path.
+try:
+    prompt = tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True, enable_thinking=False)
+except TypeError:
+    prompt = tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True)
+ids = tok(prompt, return_tensors="pt").to(model.device)
+out = model.generate(**ids, do_sample=True, temperature=0.9, top_p=0.95,
+                     max_new_tokens=256, pad_token_id=tok.pad_token_id)
+print(tok.decode(out[0][ids["input_ids"].shape[1]:], skip_special_tokens=True))
 ```
 
 Verify a generated program with the kit's engine: `p6 eval <pool.jsonl>` scores
