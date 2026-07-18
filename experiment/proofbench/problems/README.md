@@ -4,16 +4,20 @@
 This measures something stronger and less expected: can it **solve a specified
 problem** — produce a program whose OUTPUT is correct, not merely valid?
 
-`heldout.jsonl` is 18 held-out problems, each `{id, spec, ref}`:
+`heldout.jsonl` is 30 held-out problems, each `{id, tier, spec, ref}`:
+- `tier` — `easy` (9) / `medium` (9) / `hard` (12); `p6 solve` reports pass@k per
+  tier, so the result shows a competence gradient, not one blended number.
 - `spec` — a task, phrased to complete "a program that {spec}" (the trainer's
   prompt shape), so the generation prompt is in-distribution.
 - `ref` — a verified reference solution. Its output is the ground truth; a
   candidate SOLVES the problem iff its output equals the reference's (exact match,
-  trailing whitespace normalized). Every ref self-solves at 100%.
+  trailing whitespace normalized). Every ref self-solves at 100%, and each ref's
+  output was checked with `p6 run <program>` to equal the intended answer.
 
-The problems are deliberately **not** in the training styles or corpus: specific
-sequences, accumulations, branching, integer arithmetic, and nested loops with one
-correct answer each.
+The problems are deliberately **not** in the training styles or corpus, and the
+`hard` tier needs real algorithms with a single correct answer: primality
+(`is_prime`), popcount, digit-sum, Collatz length, alternating sums, powers — the
+discriminators where a base model fails and only genuine competence succeeds.
 
 ## Run it
 

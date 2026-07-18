@@ -1,18 +1,30 @@
-{"id": "count_1_10", "spec": "prints the integers from 1 to 10, one per line", "ref": "let i = 0; repeat 10 { i = i + 1; print i; }"}
-{"id": "countdown_5", "spec": "prints a countdown from 5 down to 1, one number per line", "ref": "let i = 6; repeat 5 { i = i - 1; print i; }"}
-{"id": "evens_to_20", "spec": "prints the even numbers from 2 to 20, one per line", "ref": "let i = 0; repeat 10 { i = i + 2; print i; }"}
-{"id": "multiples_of_3", "spec": "prints the first 6 positive multiples of 3, one per line", "ref": "let i = 0; repeat 6 { i = i + 3; print i; }"}
-{"id": "powers_of_2", "spec": "prints the first 8 powers of two (2, 4, 8, up to 256), one per line", "ref": "let n = 1; repeat 8 { n = n * 2; print n; }"}
-{"id": "squares_1_5", "spec": "prints the squares of the integers 1 through 5 (1, 4, 9, 16, 25), one per line", "ref": "let i = 0; repeat 5 { i = i + 1; print i * i; }"}
-{"id": "triangular_5", "spec": "prints the first 5 triangular numbers (1, 3, 6, 10, 15), one per line", "ref": "let t = 0; let i = 0; repeat 5 { i = i + 1; t = t + i; print t; }"}
-{"id": "factorial_6", "spec": "computes 6 factorial and prints the single result", "ref": "let f = 1; let i = 0; repeat 6 { i = i + 1; f = f * i; } print f;"}
-{"id": "sum_1_100", "spec": "prints the sum of all integers from 1 to 100 as a single number", "ref": "let s = 0; let i = 0; repeat 100 { i = i + 1; s = s + i; } print s;"}
-{"id": "sum_evens_20", "spec": "prints the sum of the even numbers from 2 to 20 as a single number", "ref": "let s = 0; let i = 0; repeat 10 { i = i + 2; s = s + i; } print s;"}
-{"id": "fib_8", "spec": "prints the first 8 Fibonacci numbers, starting 1, 1, 2, 3, one per line", "ref": "let a = 1; let b = 1; let c = 0; print a; print b; repeat 6 { c = a + b; print c; a = b; b = c; }"}
-{"id": "abs_neg7", "spec": "sets x to -7 and prints the absolute value of x as a single number", "ref": "let x = -7; if x < 0 { print -x; } else { print x; }"}
-{"id": "max_12_9", "spec": "sets a to 12 and b to 9 and prints the larger of the two", "ref": "let a = 12; let b = 9; if a > b { print a; } else { print b; }"}
-{"id": "div_rem_100_7", "spec": "prints 100 divided by 7 using integer division on the first line and the remainder on the second line", "ref": "print 100 / 7; print 100 % 7;"}
-{"id": "parity_1_6", "spec": "for each integer i from 1 to 6, prints 1 if i is even and 0 if i is odd, one per line", "ref": "let i = 0; repeat 6 { i = i + 1; if i % 2 == 0 { print 1; } else { print 0; } }"}
-{"id": "fizz0_1_15", "spec": "for each integer i from 1 to 15, prints 0 if i is divisible by 3 and otherwise prints i, one per line", "ref": "let i = 0; repeat 15 { i = i + 1; if i % 3 == 0 { print 0; } else { print i; } }"}
-{"id": "mult_table_3", "spec": "prints the 3 by 3 multiplication table: for r from 1 to 3 and c from 1 to 3, prints r times c, one per line (9 numbers)", "ref": "let r = 0; let c = 0; repeat 3 { r = r + 1; c = 0; repeat 3 { c = c + 1; print r * c; } }"}
-{"id": "collatz_step_6", "spec": "sets n to 6 and prints one Collatz step: if n is even prints n divided by 2, otherwise prints 3 times n plus 1", "ref": "let n = 6; if n % 2 == 0 { print n / 2; } else { print 3 * n + 1; }"}
+{"id": "count_1_10", "tier": "easy", "spec": "prints the integers from 1 to 10, one per line", "ref": "let i = 0; repeat 10 { i = i + 1; print i; }"}
+{"id": "countdown_5", "tier": "easy", "spec": "prints a countdown from 5 down to 1, one number per line", "ref": "let i = 6; repeat 5 { i = i - 1; print i; }"}
+{"id": "evens_to_20", "tier": "easy", "spec": "prints the even numbers from 2 to 20, one per line", "ref": "let i = 0; repeat 10 { i = i + 2; print i; }"}
+{"id": "multiples_of_3", "tier": "easy", "spec": "prints the first 6 positive multiples of 3, one per line", "ref": "let i = 0; repeat 6 { i = i + 3; print i; }"}
+{"id": "powers_of_2", "tier": "easy", "spec": "prints the first 8 powers of two (2, 4, 8, up to 256), one per line", "ref": "let n = 1; repeat 8 { n = n * 2; print n; }"}
+{"id": "squares_1_5", "tier": "easy", "spec": "prints the squares of the integers 1 through 5 (1, 4, 9, 16, 25), one per line", "ref": "let i = 0; repeat 5 { i = i + 1; print i * i; }"}
+{"id": "abs_neg7", "tier": "easy", "spec": "sets x to -7 and prints the absolute value of x as a single number", "ref": "let x = -7; if x < 0 { print -x; } else { print x; }"}
+{"id": "max_12_9", "tier": "easy", "spec": "sets a to 12 and b to 9 and prints the larger of the two", "ref": "let a = 12; let b = 9; if a > b { print a; } else { print b; }"}
+{"id": "div_rem_100_7", "tier": "easy", "spec": "prints 100 divided by 7 using integer division on the first line and the remainder on the second line", "ref": "print 100 / 7; print 100 % 7;"}
+{"id": "triangular_5", "tier": "medium", "spec": "prints the first 5 triangular numbers (1, 3, 6, 10, 15), one per line", "ref": "let t = 0; let i = 0; repeat 5 { i = i + 1; t = t + i; print t; }"}
+{"id": "factorial_6", "tier": "medium", "spec": "computes 6 factorial and prints the single result", "ref": "let f = 1; let i = 0; repeat 6 { i = i + 1; f = f * i; } print f;"}
+{"id": "sum_1_100", "tier": "medium", "spec": "prints the sum of all integers from 1 to 100 as a single number", "ref": "let s = 0; let i = 0; repeat 100 { i = i + 1; s = s + i; } print s;"}
+{"id": "sum_evens_20", "tier": "medium", "spec": "prints the sum of the even numbers from 2 to 20 as a single number", "ref": "let s = 0; let i = 0; repeat 10 { i = i + 2; s = s + i; } print s;"}
+{"id": "fib_8", "tier": "medium", "spec": "prints the first 8 Fibonacci numbers, starting 1, 1, 2, 3, one per line", "ref": "let a = 1; let b = 1; let c = 0; print a; print b; repeat 6 { c = a + b; print c; a = b; b = c; }"}
+{"id": "parity_1_6", "tier": "medium", "spec": "for each integer i from 1 to 6, prints 1 if i is even and 0 if i is odd, one per line", "ref": "let i = 0; repeat 6 { i = i + 1; if i % 2 == 0 { print 1; } else { print 0; } }"}
+{"id": "fizz0_1_15", "tier": "medium", "spec": "for each integer i from 1 to 15, prints 0 if i is divisible by 3 and otherwise prints i, one per line", "ref": "let i = 0; repeat 15 { i = i + 1; if i % 3 == 0 { print 0; } else { print i; } }"}
+{"id": "mult_table_3", "tier": "medium", "spec": "prints the 3 by 3 multiplication table: for r from 1 to 3 and c from 1 to 3, prints r times c, one per line (9 numbers)", "ref": "let r = 0; let c = 0; repeat 3 { r = r + 1; c = 0; repeat 3 { c = c + 1; print r * c; } }"}
+{"id": "collatz_step_6", "tier": "medium", "spec": "sets n to 6 and prints one Collatz step: if n is even prints n divided by 2, otherwise prints 3 times n plus 1", "ref": "let n = 6; if n % 2 == 0 { print n / 2; } else { print 3 * n + 1; }"}
+{"id": "sum_squares_10", "tier": "hard", "spec": "prints the sum of the squares of the integers 1 through 10 as a single number", "ref": "let s = 0; let i = 0; repeat 10 { i = i + 1; s = s + i * i; } print s;"}
+{"id": "power_2_10", "tier": "hard", "spec": "prints 2 raised to the 10th power as a single number", "ref": "let p = 1; repeat 10 { p = p * 2; } print p;"}
+{"id": "odd_sum_7", "tier": "hard", "spec": "prints the sum of the first 7 odd numbers as a single number", "ref": "let s = 0; let o = -1; repeat 7 { o = o + 2; s = s + o; } print s;"}
+{"id": "alt_sum_10", "tier": "hard", "spec": "prints the alternating sum 1 - 2 + 3 - 4 and so on through - 10 as a single number", "ref": "let s = 0; let i = 0; let sign = 1; repeat 10 { i = i + 1; s = s + sign * i; sign = -sign; } print s;"}
+{"id": "digit_sum_1234", "tier": "hard", "spec": "prints the sum of the decimal digits of 1234 as a single number", "ref": "let n = 1234; let s = 0; repeat 4 { s = s + n % 10; n = n / 10; } print s;"}
+{"id": "reverse_123", "tier": "hard", "spec": "prints the decimal digits of 123 in reverse order, one digit per line", "ref": "let n = 123; repeat 3 { print n % 10; n = n / 10; }"}
+{"id": "is_prime_7", "tier": "hard", "spec": "sets n to 7 and prints 1 if n is prime and 0 otherwise", "ref": "let n = 7; let d = 1; let isp = 1; repeat 5 { d = d + 1; if n % d == 0 { isp = 0; } } print isp;"}
+{"id": "is_prime_9", "tier": "hard", "spec": "sets n to 9 and prints 1 if n is prime and 0 otherwise", "ref": "let n = 9; let d = 1; let isp = 1; repeat 7 { d = d + 1; if n % d == 0 { isp = 0; } } print isp;"}
+{"id": "cube_sum_5", "tier": "hard", "spec": "prints the sum of the cubes of the integers 1 through 5 as a single number", "ref": "let s = 0; let i = 0; repeat 5 { i = i + 1; s = s + i * i * i; } print s;"}
+{"id": "popcount_13", "tier": "hard", "spec": "prints the number of 1 bits in the binary representation of 13 as a single number", "ref": "let n = 13; let c = 0; repeat 4 { c = c + n % 2; n = n / 2; } print c;"}
+{"id": "collatz_len_6", "tier": "hard", "spec": "starting from 6, prints the number of Collatz steps needed to reach 1 as a single number", "ref": "let n = 6; let steps = 0; repeat 100 { if n != 1 { if n % 2 == 0 { n = n / 2; } else { n = 3 * n + 1; } steps = steps + 1; } } print steps;"}
+{"id": "fib_12", "tier": "hard", "spec": "prints the first 12 Fibonacci numbers, starting 1, 1, 2, 3, one per line", "ref": "let a = 1; let b = 1; let c = 0; print a; print b; repeat 10 { c = a + b; print c; a = b; b = c; }"}

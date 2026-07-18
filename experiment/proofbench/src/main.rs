@@ -178,6 +178,7 @@ p6 — the prooflite reward tool (N=2)
   p6 eval     <pool.jsonl>       the validity-ladder distribution over a pool
   p6 novelty  <pool> <corpus>    of a pool's RICH programs, the fraction absent from a corpus
   p6 solve    <problems> <sols>  pass@k on held-out spec->program problems (the transfer test)
+  p6 run      <program.txt | ->  run a prooflite program, print its output
 ";
 
 fn cmd_reward(path: &str) -> Result<(), String> {
@@ -292,7 +293,7 @@ fn run_output(src: &str) -> Option<String> {
 /// stronger claim than `eval` (well-formed generation) — it is targeted competence.
 fn cmd_solve(problems_path: &str, solutions_path: &str) -> Result<(), String> {
     use std::collections::BTreeMap;
-    let mut expected: Vec<(String, String)> = Vec::new();
+    let mut expected: Vec<(String, String, String)> = Vec::new(); // (id, tier, canonical)
     for (n, line) in read_text(problems_path)?
         .lines()
         .enumerate()
@@ -301,9 +302,10 @@ fn cmd_solve(problems_path: &str, solutions_path: &str) -> Result<(), String> {
         let v: Value =
             serde_json::from_str(line).map_err(|e| format!("problem line {}: {e}", n + 1))?;
         let id = v["id"].as_str().unwrap_or("?").to_string();
+        let tier = v["tier"].as_str().unwrap_or("all").to_string();
         let canon = run_output(v["ref"].as_str().unwrap_or(""))
             .ok_or_else(|| format!("problem {id}: reference solution does not run clean"))?;
-        expected.push((id, canon));
+        expected.push((id, tier, canon));
     }
     let mut sols: BTreeMap<String, Vec<String>> = BTreeMap::new();
     for (n, line) in read_text(solutions_path)?
@@ -319,20 +321,25 @@ fn cmd_solve(problems_path: &str, solutions_path: &str) -> Result<(), String> {
             .push(v["source"].as_str().unwrap_or("").to_string());
     }
     let mut solved = 0u32;
+    let mut per_tier: BTreeMap<String, (u32, u32)> = BTreeMap::new(); // tier -> (solved, total)
     let mut lines = String::new();
-    for (id, canon) in &expected {
+    for (id, tier, canon) in &expected {
         let attempts = sols.get(id).map(Vec::as_slice).unwrap_or(&[]);
         let ok = attempts
             .iter()
             .any(|s| run_output(s).as_deref() == Some(canon.as_str()));
         solved += ok as u32;
+        let e = per_tier.entry(tier.clone()).or_insert((0, 0));
+        e.0 += ok as u32;
+        e.1 += 1;
         lines.push_str(&format!(
-            "  {} {id} ({} tries)\n",
+            "  {} {id} [{tier}] ({} tries)\n",
             if ok { "PASS" } else { "fail" },
             attempts.len()
         ));
     }
     let total = sols.values().map(Vec::len).sum::<usize>();
+    let pct = |s: u32, t: u32| 100.0 * s as f64 / t.max(1) as f64;
     println!("=== prooflite solve (held-out problems) ===");
     println!(
         "problems {} | solutions {} | SOLVED (pass@k) {}/{} = {:.1}%",
@@ -340,10 +347,25 @@ fn cmd_solve(problems_path: &str, solutions_path: &str) -> Result<(), String> {
         total,
         solved,
         expected.len(),
-        100.0 * solved as f64 / expected.len().max(1) as f64
+        pct(solved, expected.len() as u32)
     );
+    for (tier, (s, t)) in &per_tier {
+        println!("  {tier}: {s}/{t} = {:.1}%", pct(*s, *t));
+    }
     print!("{lines}");
     Ok(())
+}
+
+/// Run a raw prooflite program and print its output — a utility for checking
+/// that a reference solution computes the intended answer.
+fn cmd_run(path: &str) -> Result<(), String> {
+    match run(&read_text(path)?, Limits::default()) {
+        Ok(o) => {
+            print!("{}", o.output);
+            Ok(())
+        }
+        Err(d) => Err(format!("run fault: {d}")),
+    }
 }
 
 fn main() -> ExitCode {
@@ -374,6 +396,10 @@ fn main() -> ExitCode {
         Some("solve") => match (args.get(1), args.get(2)) {
             (Some(p), Some(s)) => cmd_solve(p, s),
             _ => Err("usage: p6 solve <problems.jsonl> <solutions.jsonl>".into()),
+        },
+        Some("run") => match args.get(1) {
+            Some(p) => cmd_run(p),
+            None => Err("usage: p6 run <program.txt | ->".into()),
         },
         _ => {
             eprint!("{USAGE}");
