@@ -37,7 +37,9 @@ def main() -> None:
             for j, completion in enumerate(policy.sample(style, k)):
                 row = {
                     "id": f"s{si}n{j}",
-                    "style": style.split()[1],  # one-word label for the table
+                    # The style INDEX, not the prompt's second word — every style
+                    # begins "a program/strategy ...", so word[1] is not unique.
+                    "style": f"s{si}",
                     "source": extract_source(completion),
                 }
                 f.write(json.dumps(row) + "\n")

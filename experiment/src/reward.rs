@@ -125,8 +125,9 @@ pub fn reward_pool(
 /// collapsed source) for the trainer's anti-collapse filter. Source-canonical,
 /// not `equity_hash`: the hash is 0 for every non-survivor (blind exactly where
 /// training starts) and gameable above it (a one-tick constant change is a new
-/// curve). Honest limit: catches comment/format clones, not constant-
-/// perturbation or semantic ones — AST canonicalization is the refinement.
+/// curve). Honest limit: catches comment and whitespace-RUN clones, not token-
+/// adjacency spacing (`sma(4)>sma(16)` vs `sma(4) > sma(16)`), constant-
+/// perturbation, or semantic ones — AST canonicalization is the refinement.
 pub fn novelty_key(src: &str) -> u64 {
     let canon = strip_and_collapse(src);
     let mut hash = 0xcbf2_9ce4_8422_2325u64;
@@ -261,6 +262,10 @@ mod tests {
         assert_eq!(novelty_key(a), novelty_key(c));
         // But a real logic change is a different program.
         assert_ne!(novelty_key(a), novelty_key("lookback 4; signal short;"));
+        // Pinned constant, shared with p6's identical test, so the two crates'
+        // strip-and-collapse cannot silently diverge (the N=2 "same method"
+        // claim needs byte-identical keys). The input is just bytes to the key.
+        assert_eq!(novelty_key("let a = 1; print a;"), 0x830a_f5b0_9ec6_541b);
     }
 
     #[test]

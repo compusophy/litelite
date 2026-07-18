@@ -81,25 +81,12 @@ SPECIALS = {
     "$": r"\$",
     "~": r"\textasciitilde{}",
     "^": r"\textasciicircum{}",
+    "|": r"\textbar{}",  # a literal pipe (from an escaped \| in a table cell)
 }
 
 
 def esc(s: str) -> str:
     """Escape LaTeX specials + map unicode, for REGULAR text (not code)."""
-    out = []
-    for ch in s:
-        if ch in SPECIALS:
-            out.append(SPECIALS[ch])
-        elif ch in UNICODE:
-            out.append(UNICODE[ch])
-        else:
-            out.append(ch)
-    return "".join(out)
-
-
-def esc_code(s: str) -> str:
-    """Escape for inside \\texttt{} — specials still bite, but map no unicode
-    to math (keep code literal); the few unicode glyphs in code are ASCII-safe."""
     out = []
     for ch in s:
         if ch in SPECIALS:
@@ -136,7 +123,9 @@ def inline(s: str) -> str:
     s = s.replace("\x01I\x01", r"\emph{").replace("\x01i\x01", "}")
 
     def restore(m: re.Match) -> str:
-        return r"\code{" + esc_code(codes[int(m.group(1))]) + "}"
+        # esc() maps the few unicode glyphs that appear in code spans (arrows in
+        # e.g. `Compile -> 0`) to math; acceptable and rare.
+        return r"\code{" + esc(codes[int(m.group(1))]) + "}"
 
     s = re.sub(r"\x00(\d+)\x00", restore, s)
     return s
@@ -204,13 +193,17 @@ def convert(md: str) -> str:
         lm = re.match(r"^(\s*)([-*]|\d+\.)\s+(.*)$", line)
         if lm:
             indent, marker, text = lm.group(1), lm.group(2), lm.group(3)
-            depth = 1 + (len(indent) >= 2)
+            depth = len(indent) // 2 + 1  # 2 spaces per nesting level
             kind = "enumerate" if marker[0].isdigit() else "itemize"
+            while len(list_stack) > depth:
+                out.append(f"\\end{{{list_stack.pop()}}}")
+            # Same depth but the list KIND changed (bullets -> numbers with no
+            # blank line): close and reopen so items land in the right env.
+            if len(list_stack) == depth and list_stack and list_stack[-1] != kind:
+                out.append(f"\\end{{{list_stack.pop()}}}")
             while len(list_stack) < depth:
                 out.append(f"\\begin{{{kind}}}[leftmargin=*]")
                 list_stack.append(kind)
-            while len(list_stack) > depth:
-                out.append(f"\\end{{{list_stack.pop()}}}")
             out.append(r"\item " + inline(text))
             i += 1
             continue
@@ -234,7 +227,11 @@ def convert(md: str) -> str:
 
 def render_table(rows: list[str]) -> str:
     def cells(r: str) -> list[str]:
-        return [c.strip() for c in r.strip().strip("|").split("|")]
+        # Split on UNESCAPED pipes only, then unescape `\|` back to a literal
+        # pipe (which esc() renders as \textbar). A naive split on every "|"
+        # would truncate cells that contain an escaped pipe in inline code.
+        r = r.strip().strip("|")
+        return [c.strip().replace(r"\|", "|") for c in re.split(r"(?<!\\)\|", r)]
 
     header = cells(rows[0])
     ncol = len(header)

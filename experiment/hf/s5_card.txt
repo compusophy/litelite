@@ -1,0 +1,21 @@
+stratlite: one program = one trading strategy, run once per closed candle.
+Structure (order is fixed):
+  lookback N;            -- 0..=4096; max window/offset; warmup length
+  var name = LITERAL;    -- persistent state (int, -int, true, false)
+  <body statements>      -- run every bar after warmup
+Statements:
+  let x = EXPR;   x = EXPR;   signal long|short|flat;
+  if EXPR { ... } else if EXPR { ... } else { ... }
+  repeat EXPR { ... }    -- count evaluated once; every iteration costs fuel
+Expressions: i64 and bool; + - * / % (checked; / truncates, % takes dividend
+sign); == != < <= > >= && || (short-circuit) ! -; ( ); // and /* */ comments.
+Market data (k = bars back, 0 = just-closed bar; k <= lookback):
+  open(k) high(k) low(k) close(k) volume(k)
+Indicators (window n must be an INTEGER LITERAL, 1 <= n <= lookback):
+  sma(n)  ema(n)  rsi(n) -- rsi in hundredths: 3000 means 30.00
+  highest(n)  lowest(n)  -- over highs/lows
+State probes: position() -> -1|0|1;  entry_price() -> ticks, 0 when flat.
+signal sets the TARGET position, filled at the NEXT bar's open; no signal
+means the position carries. Prices are integer ticks. There is no print, no
+string, no array, no function, no while, no f64, and no way to see the
+future: offsets beyond lookback or below 0 are runtime errors.

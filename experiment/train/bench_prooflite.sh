@@ -4,9 +4,10 @@
 # peak can be confirmed on FRESH samples (not just training-time histograms).
 # Each pool is 256 programs (32 per style). Scored afterward by `p6 eval`.
 set -eu
-cd "$(dirname "$0")"
+cd "$(dirname "$0")"   # -> experiment/train; paths below are relative to here
 
-export BENCH_BIN="C:/Users/kyle/Downloads/apply/litelite/experiment/proofbench/target/release/p6.exe"
+# Build first if needed: (cd ../proofbench && cargo build --release)
+export BENCH_BIN="../proofbench/target/release/p6.exe"
 export PYTORCH_CUDA_ALLOC_CONF="max_split_size_mb:256"
 PY=./.venv/Scripts/python.exe
 OUT=../proofbench/results

@@ -24,6 +24,7 @@ stratlite), and the pinned candles — everything needed to reproduce the number
 
 Nothing here uploads anything on its own. To push, from `experiment/hf/`:
 
+    pip install huggingface_hub
     export HF_TOKEN=hf_xxx        # a WRITE token: huggingface.co/settings/tokens
     python publish.py <your-hf-username>              # the two models
     python publish.py <your-hf-username> --datasets   # also the datasets

@@ -38,7 +38,7 @@ valid programs across 256 attempts on every window — a measured-zero floor.
 Verifier-only self-play lifts that to 100% compile and ~96% held-out gate-clear,
 holding across a five-month embargo and a never-trained asset. Of C7's 251
 gate-clearing programs, 250 (99.6%) are source-canonically absent from the
-training corpus — learned, not memorized.
+134-program cold-start (committed) corpus — learned, not memorized.
 
 ## How it was trained
 
@@ -63,14 +63,18 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 REPO = "{NAMESPACE}/stratlite-qwen3-0.6b"
 tok = AutoTokenizer.from_pretrained(REPO)
-model = AutoModelForCausalLM.from_pretrained(REPO, dtype=torch.float16).to("cuda").eval()
+model = AutoModelForCausalLM.from_pretrained(REPO, torch_dtype=torch.float16).to("cuda").eval()
 
 CARD = open("s5_card.txt").read()   # bundled in this repo (also `s5 card` in the source)
 style = "a momentum strategy that goes long on a fast/slow moving-average cross"
-msgs = [{"role": "user", "content": CARD + "\n\n" + style}]
-# Qwen3 emits a <think> block by default; suppress it (older tokenizers reject
-# the kwarg, so fall back). tokenize=False then a separate tokenizer call is the
-# trainer's exact, tested generation path.
+# Training-time format: the language card is the SYSTEM turn, the style a
+# one-line user instruction. Qwen3 emits a <think> block by default; suppress it
+# (older tokenizers reject the kwarg, so fall back). tokenize=False then a
+# separate tokenizer call mirrors the trainer's generation path.
+msgs = [
+    {"role": "system", "content": CARD},
+    {"role": "user", "content": f"Write {style}. Emit ONE stratlite program and nothing else."},
+]
 try:
     prompt = tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True, enable_thinking=False)
 except TypeError:
@@ -88,6 +92,9 @@ data/<window>.csv` scores compile + held-out gate-clear on pinned candles.
 
 - **No edge.** The reward is validity-only; a null-PnL result falsifies nothing.
 - **Generality across models is untested** — only Qwen3-0.6B was fine-tuned.
+- **Novelty scope**: the 99.6% is measured against the human cold-start corpus
+  only, not the model's own self-play programs — it rules out memorizing the 134
+  examples, not reproduction from the larger self-generated training set.
 - The single-month benchmark has no out-of-sample teeth (the held-out window is
   no harder than train); the competence generalizes because the *language* is
   regime- and asset-independent, not because the model found generalizing edge.

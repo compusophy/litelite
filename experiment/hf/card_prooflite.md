@@ -56,14 +56,18 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 REPO = "{NAMESPACE}/prooflite-qwen3-0.6b"
 tok = AutoTokenizer.from_pretrained(REPO)
-model = AutoModelForCausalLM.from_pretrained(REPO, dtype=torch.float16).to("cuda").eval()
+model = AutoModelForCausalLM.from_pretrained(REPO, torch_dtype=torch.float16).to("cuda").eval()
 
 CARD = open("p6_card.txt").read()   # bundled in this repo (also `p6 card` in the source)
 style = "a program that uses a repeat loop with a var accumulator to build up a total"
-msgs = [{"role": "user", "content": CARD + "\n\n" + style}]
-# Qwen3 emits a <think> block by default; suppress it (older tokenizers reject
-# the kwarg, so fall back). tokenize=False then a separate tokenizer call is the
-# trainer's exact, tested generation path.
+# Training-time format: the language card is the SYSTEM turn, the style a
+# one-line user instruction. Qwen3 emits a <think> block by default; suppress it
+# (older tokenizers reject the kwarg, so fall back). tokenize=False then a
+# separate tokenizer call mirrors the trainer's generation path.
+msgs = [
+    {"role": "system", "content": CARD},
+    {"role": "user", "content": f"Write {style}. Emit ONE prooflite program and nothing else."},
+]
 try:
     prompt = tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True, enable_thinking=False)
 except TypeError:
@@ -74,8 +78,9 @@ out = model.generate(**ids, do_sample=True, temperature=0.9, top_p=0.95,
 print(tok.decode(out[0][ids["input_ids"].shape[1]:], skip_special_tokens=True))
 ```
 
-Verify a generated program with the kit's engine: `p6 eval <pool.jsonl>` scores
-the validity ladder; `p6 novelty <pool> <corpus>` checks it against the corpus.
+Verify a generated program with the kit's engine (build it first in the source
+repo: `cd experiment/proofbench && cargo build --release`): `p6 eval <pool.jsonl>`
+scores the validity ladder; `p6 novelty <pool> <corpus>` checks it against the corpus.
 
 ## What this does NOT establish
 

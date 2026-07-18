@@ -13,7 +13,8 @@ bit-identical across hardware). What reproduces is the SCORING: the pools
 (`base.jsonl`, `c7.jsonl` — 256 samples each, 32 per style) and the candles
 are committed/pinned, and
 
-    cd experiment && ./target/release/s5 eval results/{base,c7}.jsonl data/<window>.csv
+    cd experiment && cargo build --release   # builds s5 (target/ is git-ignored)
+    ./target/release/s5 eval results/{base,c7}.jsonl data/<window>.csv
 
 reproduces every number below (full output in `benchmark.txt`).
 

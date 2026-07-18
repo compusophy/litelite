@@ -47,6 +47,7 @@ def latest_checkpoint() -> tuple[str, int] | None:
 if __name__ == "__main__":
     base = Config(
         s5_bin=P6,
+        lang="prooflite",  # the user-turn wording; the card still drives the language
         candles=(),
         needs_candles=False,
         out_dir=OUT,

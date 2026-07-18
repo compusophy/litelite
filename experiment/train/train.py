@@ -54,6 +54,7 @@ class Config:
     # HuggingFace id. Qwen3 THINKS by default, so `_prompt` disables it.
     base_model: str = "Qwen/Qwen3-0.6B"
     s5_bin: str = "../target/release/s5"  # the tested reward oracle + card source
+    lang: str = "stratlite"  # language name in the user turn; run_prooflite overrides
     candles: tuple[str, ...] = ()  # pinned klines CSVs (train+val windows)
     out_dir: str = "checkpoints"
     # Generation
@@ -140,7 +141,7 @@ class Policy:
         keeps a non-Qwen3 model (whose template lacks that kwarg) working."""
         msgs = [
             {"role": "system", "content": self.system},
-            {"role": "user", "content": f"Write {user}. Emit ONE stratlite program and nothing else."},
+            {"role": "user", "content": f"Write {user}. Emit ONE {self.cfg.lang} program and nothing else."},
         ]
         try:
             return self.tok.apply_chat_template(

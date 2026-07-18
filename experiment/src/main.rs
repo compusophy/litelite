@@ -123,7 +123,11 @@ fn read_pool(path: &str) -> Result<Vec<(String, String, String)>, String> {
         std::fs::read_to_string(path).map_err(|e| format!("{path}: {e}"))?
     };
     let mut rows = Vec::new();
-    for (n, line) in text.lines().filter(|l| !l.trim().is_empty()).enumerate() {
+    for (n, line) in text
+        .lines()
+        .enumerate()
+        .filter(|(_, l)| !l.trim().is_empty())
+    {
         let v: serde_json::Value =
             serde_json::from_str(line).map_err(|e| format!("line {}: {e}", n + 1))?;
         rows.push((
@@ -394,8 +398,10 @@ fn cmd_eval(args: &[String]) -> Result<(), String> {
         100.0 * gap,
         if gap.abs() < 0.05 {
             "NEAR ZERO: held-out is no harder than train, the benchmark has no out-of-sample teeth"
-        } else {
+        } else if gap >= 0.05 {
             "positive: held-out discriminates, so raising held-out clear is a real lift"
+        } else {
+            "negative: held-out is EASIER than train — a 'lift' here may be regime luck, not learning"
         }
     );
 

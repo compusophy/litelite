@@ -467,7 +467,7 @@ missing invariant nobody re-derived.
 \subsection*{4.3 Wall-clock: one recorded session per language}
 
 The one-session claim traces to commit timestamps (`git log
---format='\%h|\%ad|\%s' --date=format:'\%Y-\%m-\%d \%H:\%M:\%S' a557fef..1524eb3`, with
+--format='\%h\textbar{}\%ad\textbar{}\%s' --date=format:'\%Y-\%m-\%d \%H:\%M:\%S' a557fef..1524eb3`, with
 the genesis commit timestamp from \code{git show -s a557fef}). The entire kit plus
 both languages plus both emitters landed in a single overnight span:
 
@@ -774,9 +774,10 @@ tested with no GPU:
 \item \textbf{Template mode-collapse.} Guard: \code{novelty\_key}, a source-canonical
 \end{enumerate}
    FNV-1a-64 over comment-stripped, whitespace-collapsed source, caps any one
-   key's share of the SFT set. It sees through re-commenting and re-formatting
-   but --- stated as an honest limit --- not constant-perturbation or semantic
-   clones (\code{novelty\_key\_ignores\_comments\_and\_whitespace\_but\_not\_logic},
+   key's share of the SFT set. It sees through re-commenting and whitespace-run
+   reformatting but --- stated as an honest limit --- not token-adjacency spacing
+   (\code{x=1} vs \code{x = 1}), constant-perturbation, or semantic clones
+   (\code{novelty\_key\_ignores\_comments\_and\_whitespace\_but\_not\_logic},
    \code{test\_dedup\_caps\_a\_template\_family}).
 \begin{enumerate}[leftmargin=*]
 \item \textbf{\code{equity\_hash} diversity gaming.} A one-tick constant change yields a new
@@ -1279,7 +1280,7 @@ no-look-ahead prefix-invariance & \code{cargo test -p stratlite} (\code{no\_look
 \code{prooflite} default fuel 100,000 / output 64 KiB & \code{crates/prooflite/src/lib.rs:247-248} (\code{Limits::default}) \\
 \code{stratlite} \code{fuel\_per\_bar = 25\_000} & \code{crates/stratlite/src/lib.rs:137} \\
 \code{verify()} $\rightarrow$ \code{Result<(Strategy, Report), Reject>} & \code{crates/backtestlite/src/lib.rs:199} \\
-`enum Reject \{ Compile \textbackslash{} & Run \textbackslash{} \\
+\code{enum Reject \{ Compile \textbar{} Run \textbar{} Gate \}} & \code{crates/backtestlite/src/lib.rs:124} \\
 gate default \code{min\_trades = 4}, \code{min\_bars\_evaluated = 16} & \code{crates/backtestlite/src/lib.rs:89} \\
 \code{stratlite::REFERENCE} generation prompt (a \code{const}) & \code{crates/stratlite/src/lib.rs:78} \\
 M6 default model \code{Qwen/Qwen3-0.6B} (trainer config) & \code{experiment/train/train.py:55} \\
@@ -1296,7 +1297,7 @@ A/B arm requires \code{ANTHROPIC\_API\_KEY} (permanently keyless) & \code{experi
 \textbf{Number} & \textbf{Command} \\
 \midrule\endhead
 genesis \code{a557fef} 2026-07-14 22:10:31 & \code{git show -s --format='\%h \%ad' --date=format:'\%Y-\%m-\%d \%H:\%M:\%S' a557fef} \\
-\code{prooflite} land \code{07c2877} 00:12:30, review \code{9ac20b3} 00:40:37 (28 min); M3 done \code{3d5918e} 02:25:10; \code{stratlite}/\code{backtestlite} land \code{42667a6} 02:59:24, review \code{1524eb3} 03:34:19 (35 min); M4 span 1 h 09 m; end-to-end 5 h 24 m & `git log --format='\%h\textbackslash{} \\
+\code{prooflite} land \code{07c2877} 00:12:30, review \code{9ac20b3} 00:40:37 (28 min); M3 done \code{3d5918e} 02:25:10; \code{stratlite}/\code{backtestlite} land \code{42667a6} 02:59:24, review \code{1524eb3} 03:34:19 (35 min); M4 span 1 h 09 m; end-to-end 5 h 24 m & \code{git log --format='\%h\textbar{}\%ad\textbar{}\%s' --date=format:'\%Y-\%m-\%d \%H:\%M:\%S' a557fef..1524eb3} \\
 parents: \code{rustlite} 8.0K LOC/99 tests, \code{soliditylite} 7.6K/159, \code{bashlite} 3.1K/64 (external, not repo-reproducible) & \code{GENESIS.md}, "The lineage" \\
 \code{bashlite} shipped with no parser depth guard & \code{GENESIS.md}, "What was ported at genesis" \\
 \code{prooflite} review 16 raw / 13 confirmed / 2 crash-grade (M1); M2 16 confirmed; \code{stratlite}+\code{backtestlite} 14 confirmed (M4) & \code{GENESIS.md}, "Post-genesis lessons" \\
@@ -1329,7 +1330,10 @@ Python admission guards (Ok-rung only, \code{novelty\_key} dedup, per-style cap)
 
 The MODEL does not reproduce (stochastic sampling; a fine-tune is not
 bit-identical across hardware). The SCORING does: the sample pools and candles
-are committed, and each row below reproduces from a command.
+are committed, and each row below reproduces from a command. \code{target/} is
+git-ignored, so build the verifiers first on a clean clone: `cd experiment \&\&
+cargo build --release\code{ (s5) and }cd experiment/proofbench \&\& cargo build
+--release` (p6).
 
 \begingroup\small
 \begin{longtable}{p{0.450\linewidth} p{0.450\linewidth}}

@@ -1,0 +1,16 @@
+prooflite: a tiny TOTAL language. One program computes and prints; it always halts.
+Values: 64-bit signed integers and booleans. NO strings, floats, functions, or while.
+Statements (each ends with ;):
+  let x = EXPR;          -- introduce a variable
+  x = EXPR;              -- reassign a variable already introduced with let
+  print EXPR;            -- write one line of output
+  if EXPR { ... } else if EXPR { ... } else { ... }   -- else-if chains are flat
+  repeat EXPR { ... }    -- the count is evaluated ONCE, up front; then loops
+Expressions: literals (42, 1_000, 0xff, true, false); variables; unary - and !;
+  * / % (checked; / truncates toward zero, % takes the dividend's sign);
+  + -; < <= > >=; == !=; && ||  (both short-circuit); parentheses.
+Comments: // line  and  /* nested block */.
+Arithmetic is CHECKED: overflow, divide-by-zero, and remainder-by-zero are ERRORS,
+never wraparound. A variable must be introduced with let before it is read or assigned.
+There is no way to loop unboundedly and no way to recurse: repeat with an up-front
+count is the only loop. Reading an undefined variable is a runtime error.

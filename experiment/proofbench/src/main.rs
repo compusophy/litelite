@@ -112,7 +112,9 @@ fn reward(src: &str) -> Reward {
 
 /// Source-canonical dedup key — FNV-1a-64 over comment-stripped, whitespace-
 /// collapsed source. Same rationale as s5's nkey: it works at every rung and
-/// resists comment/format clones. (prooflite has no string literals either.)
+/// resists comment and whitespace-RUN clones — but NOT token-adjacency spacing
+/// (`x=1` and `x = 1` hash differently), constant-perturbation, or semantic
+/// clones. (prooflite has no string literals either.)
 fn novelty_key(src: &str) -> u64 {
     let b = src.as_bytes();
     let mut out = String::with_capacity(src.len());
@@ -149,7 +151,11 @@ fn read_pool(path: &str) -> Result<Vec<(String, String)>, String> {
         std::fs::read_to_string(path).map_err(|e| format!("{path}: {e}"))?
     };
     let mut rows = Vec::new();
-    for (n, line) in text.lines().filter(|l| !l.trim().is_empty()).enumerate() {
+    for (n, line) in text
+        .lines()
+        .enumerate()
+        .filter(|(_, l)| !l.trim().is_empty())
+    {
         let v: Value = serde_json::from_str(line).map_err(|e| format!("line {}: {e}", n + 1))?;
         rows.push((
             v["id"].as_str().unwrap_or("?").to_string(),
@@ -194,7 +200,8 @@ fn cmd_eval(path: &str) -> Result<(), String> {
             "compile" => compile += 1,
             "run" => run_f += 1,
             "gate" => gate += 1,
-            _ => ok += 1,
+            "ok" => ok += 1,
+            other => unreachable!("unknown rung class: {other}"),
         }
     }
     let n = rows.len().max(1) as f64;
@@ -336,6 +343,14 @@ mod tests {
             novelty_key("let x = 1;   print x;  // note")
         );
         assert_ne!(novelty_key(a), novelty_key("let x = 2; print x;"));
+    }
+
+    #[test]
+    fn novelty_key_agrees_with_the_s5_implementation() {
+        // Pinned so p6's and s5's strip-and-collapse cannot silently diverge —
+        // the N=2 "same method" claim requires byte-identical keys. s5 carries
+        // the same test, same input and constant (experiment/src/reward.rs).
+        assert_eq!(novelty_key("let a = 1; print a;"), 0x830a_f5b0_9ec6_541b);
     }
 
     #[test]

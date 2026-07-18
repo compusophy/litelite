@@ -685,9 +685,10 @@ tested with no GPU:
    `test_only_ok_rung_is_admitted`).
 3. **Template mode-collapse.** Guard: `novelty_key`, a source-canonical
    FNV-1a-64 over comment-stripped, whitespace-collapsed source, caps any one
-   key's share of the SFT set. It sees through re-commenting and re-formatting
-   but — stated as an honest limit — not constant-perturbation or semantic
-   clones (`novelty_key_ignores_comments_and_whitespace_but_not_logic`,
+   key's share of the SFT set. It sees through re-commenting and whitespace-run
+   reformatting but — stated as an honest limit — not token-adjacency spacing
+   (`x=1` vs `x = 1`), constant-perturbation, or semantic clones
+   (`novelty_key_ignores_comments_and_whitespace_but_not_logic`,
    `test_dedup_caps_a_template_family`).
 4. **`equity_hash` diversity gaming.** A one-tick constant change yields a new
    curve and a new hash. Guard: use `novelty_key`, which is defined below the
@@ -1197,7 +1198,10 @@ root unless a `cd` is shown.
 
 The MODEL does not reproduce (stochastic sampling; a fine-tune is not
 bit-identical across hardware). The SCORING does: the sample pools and candles
-are committed, and each row below reproduces from a command.
+are committed, and each row below reproduces from a command. `target/` is
+git-ignored, so build the verifiers first on a clean clone: `cd experiment &&
+cargo build --release` (s5) and `cd experiment/proofbench && cargo build
+--release` (p6).
 
 | Number | Command |
 |---|---|

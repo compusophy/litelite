@@ -14,8 +14,9 @@ is not bit-identical across hardware). The SCORING is: the pools
 (`base.jsonl`, `c5.jsonl`, `c6.jsonl`, `c7.jsonl`, `c8.jsonl` — 256 samples each, 32 per
 style) are committed, and
 
-    cd experiment/proofbench && ./target/release/p6 eval    results/c6.jsonl
-    cd experiment/proofbench && ./target/release/p6 novelty results/c6.jsonl corpus/seed.jsonl
+    cd experiment/proofbench && cargo build --release   # builds p6 (target/ is git-ignored)
+    ./target/release/p6 eval    results/c6.jsonl
+    ./target/release/p6 novelty results/c6.jsonl corpus/seed.jsonl
 
 reproduce every number below (full output in `benchmark.txt`).
 
