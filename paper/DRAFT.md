@@ -7,12 +7,15 @@ but trust: who checks what a model wrote, and whether a third party can
 re-check it. We argue that verification, not the harness around a generator, is
 the durable layer of the agent stack, and that its leverage grows with model
 capability rather than falling with it. We develop a concrete form of the
-thesis: verification completeness scales inversely with language size. A
+thesis: the smaller a language's sanctioned surface, the more of a program's
+behavior a checker can decide — a direction we demonstrate at two purpose-sized
+points, not a scaling law measured across a range of sizes. A
 general-purpose compiler checks types but cannot say whether a program halts,
 what it may touch, or how much it may emit; a language sized to a purpose can
 make those properties mechanical and complete.
 
-We present `litelite`, a kit of eleven zero-dependency crates (8,214 LOC, caps
+We present `litelite`, a kit of eight zero-dependency crates (the workspace
+totals 8,214 LOC across eleven crates with the three languages built on it; caps
 CI-enforced, native and `wasm32-unknown-unknown` both green) that pays the
 shared kernel of a family of purpose-sized languages once — a parser depth
 guard, a UTF-8-safe lexer, one fuel type, one capability table — each an
@@ -42,15 +45,17 @@ by verifier-only rejection-sampling self-play with no teacher model and no API
 key, goes from a measured-zero floor — zero compiling programs in 256 attempts,
 because `stratlite` is in no pretraining corpus — to 100% compile and ~96%
 held-out gate-clear, holding across a five-month embargo and a never-trained
-asset (95.7% / 96.5% / 96.1%). This generalizes the predecessor tempo-x402
-result off `rustc` onto a purpose-built language and from a stronger,
-measured-zero floor; the near-zero train-vs-held-out gap marks the lift honestly
-as grammar competence, not out-of-sample edge, which stays the selector's job.
-Run a second time on `prooflite` — a data-free compute language, only the reward
-binary changed — the identical recipe repeats the lift, from 3.5% to ~95% rich
-generation with ~100% of it novel against the cold-start corpus, so the result
-is not a one-grammar artifact (generality past the shared base model and kit
-stays untested).
+asset (95.7% / 96.5% / 96.1%). This carries the predecessor tempo-x402 recipe
+off `rustc` onto a purpose-built language — though it measures generation
+validity, not tempo-x402's task-solving pass@1, and the measured-zero floor
+reflects the language's absence from pretraining rather than a harder task; the
+near-zero train-vs-held-out gap marks the lift honestly as grammar competence,
+not out-of-sample edge, which stays the selector's job. Run a second time on
+`prooflite` — a data-free compute language, via the same trainer and ladder
+shape with a language-specific reward binary (different success rung and styles)
+— the lift repeats, from 3.5% to ~95% rich generation with ~100% of it novel
+against the cold-start corpus, so the result is not a one-grammar artifact
+(generality past the shared base model and kit stays untested).
 One experiment remains unrun — a frozen-model A/B arm for which there is no API
 key — and ships as an instrument with pre-registered commands, marked PENDING.
 The deterministic verifier plus committed artifacts reproduce every number in
@@ -109,8 +114,8 @@ emitters. The full workspace is eleven crates — the three languages of §3–�
 ride on top — and every one of them declares zero external dependencies: the
 only entries in any crate's `[dependencies]` are other crates in this
 workspace (verifiable by inspecting each `crates/*/Cargo.toml`; `std` only,
-native and `wasm32-unknown-unknown` both green). The whole kit is 8,214 lines
-against a 25,000-line ceiling (`bash scripts/caps.sh`).
+native and `wasm32-unknown-unknown` both green). The whole workspace is 8,214
+lines against a 25,000-line ceiling (`bash scripts/caps.sh`).
 
 | crate | role | LOC | tests |
 |---|---|---:|---:|
@@ -284,11 +289,11 @@ This is the honest trade the paper's claim rests on. A general-purpose language
 buys `while`, closures, and unbounded recursion, and pays for them by making
 termination undecidable. `prooflite` refuses those constructs and, in exchange,
 makes termination a property the evaluator enforces on every input without
-analysis. Verification completeness and language size trade against each other
-directly, and this section is one concrete measurement of the exchange rate: for
-a language whose target is agent-generated, mechanically selectable programs,
-the constructs given up are close to free and the guarantee bought is the one
-the selection loop needs.
+analysis. Verification completeness and language size trade against each other,
+and this section is one qualitative illustration of that trade-off — not a rate
+measured across sizes: for a language whose target is agent-generated,
+mechanically selectable programs, the constructs given up are close to free and
+the guarantee bought is the one the selection loop needs.
 
 ### 3.3 The two crash-grade lessons: adversarial review is load-bearing
 
@@ -639,7 +644,7 @@ draws out the consequence for the fine-tune benchmark.
 §5.2–5.4 select from a fixed pool. M6 moves one knob: it puts the model in the
 loop and uses the same verifier as the training reward. M6 tests whether the
 tempo-x402 result (§1) would generalize off `rustc` onto a purpose-sized
-language — the hypothesis the §5.6 run now tests. Three properties of a fuel-bounded verifier make it a reward oracle
+language — the hypothesis the §5.6 and §5.7 runs now test. Three properties of a fuel-bounded verifier make it a reward oracle
 `rustc` cannot be: computing a rollout's reward always terminates (no generated
 program can hang training), totality removes reward-hacking-by-nontermination as
 a category, and the reward is CPU-cheap and deterministic (a checkpoint's
@@ -661,8 +666,9 @@ so a gate-clear lift, even on the wider regime split §5.6 uses, reads as gramma
 competence rather than out-of-sample edge. PnL, fuel, `equity_hash`, and a dedup key are all *emitted* so
 a trainer can reshape and own that choice, but `value == ladder(class)` is a
 pinned invariant. This is the yield/edge split: M6 is designed to yield a better
-*generator* (validity and diversity of the pool) — §5.6 reports that it does;
-finding the profitable strategy stays §5.2's *selector*. A validity-only reward means a null PnL result falsifies nothing and
+*generator* (validity and diversity of the pool) — §5.6 reports that it does,
+and §5.7 replicates it on a second language; finding the profitable strategy
+stays §5.2's *selector*. A validity-only reward means a null PnL result falsifies nothing and
 cannot be spun as success.
 
 The red team named five reward hacks; each has a guard, and the guards are
@@ -698,8 +704,8 @@ reward records out) and the generation format. Rust owns verify, the reward
 scalar, the histogram, fuel, and the dedup key — all reproducible today; Python
 owns sampling and the weight update, which need a GPU and do not run in CI. The
 trainer lives outside the kit's workspace (it takes `torch`) with its own cap
-counter; `experiment/` is 1,483 LOC and `experiment/train/` is 471
-(`bash scripts/caps.sh`).
+counter; `experiment/` is 1,489 LOC, `experiment/train/` is 639, and the N=2 reward tool
+`experiment/proofbench/` is 354 (`bash scripts/caps.sh`).
 
 ### 5.6 The verifier-only fine-tune (M6): from a measured-zero floor to competent
 
@@ -714,11 +720,17 @@ per style from checkpoint `C_{r-1}`, batch-score with the reward CLI, admit
 monotonically — cold-start → R0 39.0% → R1 67.0% → R2 80.6% → R3 85.8% → R4
 89.6% → R5 94.6% → R6 96.0% → R7 98.2% (`experiment/results/train_curve.log`) —
 and training stopped at checkpoint C7 on the protocol's train-saturation
-early-stop. `distinct_nkeys` stayed high throughout (392 → 624 → 685 of the
-~700–1000 admitted per round), so the anti-collapse admission guards of §5.5
-held and the model learned a diverse grammar rather than one template. Fuel over
-survivors stayed at ~1% of the 25,000-per-bar cap throughout, as in the corpus
-run (§5.3).
+early-stop (rich-rate). `distinct_nkeys` rose then narrowed — 392 → 624 → 685 →
+654 → 694 (peak, R4) → 674 → 555 → 534, over 399–809 admitted per round — the
+same peak-then-narrow shape §5.7 later finds for prooflite and §6.6 treats as a
+general limit. The anti-collapse guards of §5.5 held the model to a diverse
+grammar rather than one template through the rising limb, but did not prevent the
+post-peak narrowing; because C7 was selected on rich-rate saturation, not the
+distinct-key peak, it sits past its diversity optimum (~R4). That does not touch
+the gate-clear result below — a validity claim, and validity is monotone — but
+it does mean C7's generator is less varied than an earlier checkpoint's would be.
+Fuel over survivors stayed at ~1% of the 25,000-per-bar cap throughout, as in the
+corpus run (§5.3) — a stratlite-specific figure §6.1 revisits against prooflite.
 
 C7 was benchmarked against the same model before fine-tuning, with identical
 non-thinking prompts (256 samples each, 32 per style over 8 styles), scored by
@@ -738,10 +750,15 @@ data/<window>.csv`; full output in `experiment/results/benchmark.txt`.) The
 baseline is a true floor, not a weak one: `stratlite` exists in no pretraining
 corpus, so base `Qwen3-0.6B` produces zero valid programs across 256 attempts on
 every window — it parrots the grammar card's notation but cannot emit one
-compiling program. The entire lift is therefore the fine-tune, with nothing to
-confound it. This is the tempo-x402 result of §1 — compiler-verified self-play
-lifting a 0.5B model from 1.5% to 16.4% on a Rust benchmark — generalized off
-`rustc` onto a purpose-built language, and from a stronger, measured-zero floor.
+compiling program. The entire base→C7 lift is therefore the fine-tune, with
+nothing to confound that gap. This shares the RECIPE of the tempo-x402 result of
+§1 — compiler-verified self-play, no teacher — but measures a different variable:
+tempo-x402's 1.5% → 16.4% is pass@1 at SOLVING 201 specified Rust problems, a
+language in pretraining, whereas this is the VALIDITY rate of open-ended
+generation of a language absent from it. The measured-zero floor reflects that
+absence — the grammar must be acquired from nothing — not a task harder than
+solving Rust; what carries across is the recipe, a fuel-bounded verifier standing
+in for `rustc` as the oracle on a language no compiler corpus ever saw.
 
 What this establishes is bounded exactly as §5.5 designed it. Verifier-only
 fine-tuning takes a small model from no competence to ~96% valid-strategy
@@ -822,13 +839,14 @@ load-bearing evidence is therefore the training-curve decline, not the
 benchmark: past round 6 the policy trades breadth for reward — mild
 mode-narrowing that the anti-collapse guards of §5.5 bound but do not abolish —
 so the method has an optimal stop visible in the distinct-key curve rather than
-the rich-rate. What N = 2 establishes is bounded: verifier-only fine-tuning is
-not a ONE-grammar artifact — run unchanged on a language with no data, no
-market, and no trades, only checked arithmetic and bounded loops, it takes a
-small model from 3.5% to ~95% rich generation with ~100% corpus-novelty. It does
-not establish generality past the confounds both arms share (the §4.5 list: same
-kit, same author, and the same base `Qwen3-0.6B`, trainer, and validity-ladder
-reward shape); generality across models in particular is untested. What it also
+the rich-rate. What this replication establishes is bounded: verifier-only
+fine-tuning is not a ONE-grammar artifact — run unchanged on a language with no
+data, no market, and no trades, only checked arithmetic and bounded loops, it
+takes a small model from 3.5% to ~95% rich generation with ~100% corpus-novelty.
+It does not establish generality past the confounds both arms share — same kit
+and author (as for the construction claim, §4.5) and, specific to the fine-tune,
+the same base `Qwen3-0.6B`, trainer, and validity-ladder reward shape; generality
+across models in particular is untested. What it also
 does not establish is that every rich program is INTERESTING; the RICH rung
 certifies well-formed, terminating,
 and varied output, and selecting genuinely useful programs from this competent
@@ -899,7 +917,12 @@ did its job" from "the bound was decoration." A regime that actually pressures
 the cap (deeper indicator windows, adversarial rather than cooperative
 generation) remains future work; until then the strongest claim the data
 supports is that fuel is cheap insurance whose premium, on cooperative inputs,
-is zero.
+is zero. That is task-specific, though: the N=2 `prooflite` fine-tune (§5.7)
+pushed measured fuel use, among its `ok`-rung programs, to a maximum of 55,756
+of the 100,000-fuel default — 55.8% of budget, against stratlite's 0.74%, an
+order of magnitude nearer the cap. On a compute language with real loops the
+bound came far closer to binding, so "the fuel bound was free" is a fact about
+the stratlite backtest, not about the kit.
 
 ### 6.2 The single-month benchmark has no out-of-sample teeth
 
@@ -945,9 +968,10 @@ number stayed green.
 
 The mitigation is to extend the counter across the seam rather than trust a
 boundary. `scripts/caps.sh` meters `experiment/src` at a 1,500-LOC cap
-(currently 1,483) and the Python trainer at an 800-LOC cap (currently 471),
+(currently 1,489), the Python trainer at an 800-LOC cap (currently 639), and the
+N=2 reward tool `experiment/proofbench/src` at a 1,500-LOC cap (currently 354),
 alongside the kit's per-crate 2,000 and repo 8,214 / 25,000
-(`bash scripts/caps.sh`). The harness cap sits 17 lines below its ceiling, which
+(`bash scripts/caps.sh`). The harness cap sits 11 lines below its ceiling, which
 is itself a signal: the counter is close enough to bite, so it is not
 decorative. This does not eliminate Goodhart pressure — a determined author could
 still relocate complexity into a text corpus, a data file, or prose the LOC
@@ -1004,7 +1028,34 @@ guards close the hacks we found. We do not claim to have enumerated the reward's
 attack surface, and AST-level canonicalization — the refinement that would close
 the semantic-clone class — is unbuilt.
 
-### 6.6 What smallness cannot buy
+### 6.6 The generator narrows past its diversity peak, and two untested edges
+
+The M6 fine-tune carries a negative result of its own, visible as a pattern
+rather than a fluke only because N=2 showed it twice. In both arms the admitted
+programs' distinct-key count rises, peaks, then declines while raw validity keeps
+climbing: `prooflite` peaks at round 6 (823 distinct keys) and falls to 686 by
+round 8 (§5.7); `stratlite` peaks at round 4 (694) and falls to 534 by round 7
+(§5.6), the steeper drop of the two. Past the peak the policy trades breadth for
+reward — concentrating on a narrower band of easy, high-scoring programs — a mild
+mode-narrowing the anti-collapse guards of §5.5 bound but do not abolish. So
+"train longer" is not free: the generator has an optimal stop, and it lives in
+the distinct-key curve, not the rich-rate the runs actually early-stopped on.
+`prooflite`'s C6 was selected at its diversity peak; `stratlite`'s C7 was
+selected on rich-rate saturation and therefore sits past its own — its headline
+validity numbers are unaffected (validity is monotone), but its generator is
+less varied than an R4 checkpoint's would be.
+
+Two further edges of the fine-tune stay untested, and belong here rather than
+only inline in §5.7. First, cross-model generality: both arms fine-tune the same
+base model (`Qwen3-0.6B`), so the lift could in principle reflect that model's
+inductive biases rather than the recipe — nothing here varies the model. Second,
+the novelty control (§5.7) is measured only against the human cold-start corpus,
+the model's sole external data; it rules out memorizing those 174 examples, not
+reproduction from the far larger set of the model's own self-play programs, which
+was not separately checked. Neither undoes the results, but a skeptic reading the
+limits section should find both stated, not buried.
+
+### 6.7 What smallness cannot buy
 
 Smallness buys decidable *form*: this program halts, touches only these
 capabilities, emits at most this many bytes, is active enough to be a strategy.
@@ -1063,8 +1114,9 @@ root unless a `cd` is shown.
 | kernel `diaglite`+`lexlite`+`parselite`+`fuellite` = 960 LOC | `bash scripts/caps.sh` (252+290+238+180) |
 | seven kit crates = 3,651 LOC | `bash scripts/caps.sh` (sum) |
 | emitters combined 2,170 LOC (built, unconsumed in repo) | `bash scripts/caps.sh` (1,400 + 770) |
-| `experiment/src` 1,483 LOC (cap 1,500); harness 17 lines below ceiling | `bash scripts/caps.sh` |
-| `experiment/train` 471 LOC (cap 800) | `bash scripts/caps.sh` |
+| `experiment/src` 1,489 LOC (cap 1,500); harness 11 lines below ceiling | `bash scripts/caps.sh` |
+| `experiment/train` 639 LOC (cap 800) | `bash scripts/caps.sh` |
+| `experiment/proofbench/src` 354 LOC (cap 1,500) — the N=2 reward tool | `bash scripts/caps.sh` |
 | `CLAUDE.md` 7,963 chars (cap 8,000) | `bash scripts/caps.sh` |
 | per-crate cap 2,000, repo cap 25,000, `CLAUDE.md` cap 8,000 | `scripts/caps.sh` (CRATE_CAP/REPO_CAP/CLAUDE_CAP) |
 | zero external dependencies, all 11 crates | inspect each `crates/*/Cargo.toml` `[dependencies]` (workspace-internal entries only) |
@@ -1148,10 +1200,11 @@ are committed, and each row below reproduces from a command.
 | C7 ETH Jun 2024 (cross-asset) 100.0% / 96.1% | `cd experiment && ./target/release/s5 eval results/c7.jsonl data/ETHUSDT-1h-2024-06.csv` |
 | train-minus-held-out gap 2.3 / 1.2 / 1.6 points (BTC Jan / BTC Jun / ETH Jun) | same `s5 eval` commands (TRAIN vs HELD-OUT line) |
 | per-style held-out gate-clear near-uniform 88–100% on the cross-asset window | `cd experiment && ./target/release/s5 eval results/c7.jsonl data/ETHUSDT-1h-2024-06.csv` |
-| training curve full-survivor cold-start → R0 39.0% → R7 98.2% (8 rounds); `distinct_nkeys` stayed high | `experiment/results/train_curve.log` |
+| training curve full-survivor cold-start → R0 39.0% → R7 98.2% (8 rounds); `distinct_nkeys` peaks R4 (694) then narrows to 534 (R7) | `experiment/results/train_curve.log` |
 | pools 256 samples each (32/style × 8 styles); full benchmark output | `experiment/results/{base,c7}.jsonl`; `experiment/results/README.md`, `experiment/results/benchmark.txt` |
-| N=2 prooflite: base RICH 3.5% (9/256), C6 RICH 94.5% | `cd experiment/proofbench && ./target/release/p6 eval results/{base,c6}.jsonl` |
+| N=2 prooflite: base RICH 3.5% (9/256), C6 RICH 94.5% | `cd experiment/proofbench && ./target/release/p6 eval results/base.jsonl` then `... eval results/c6.jsonl` (one pool per run) |
 | N=2 prooflite: novel rich ~100% (∉ 174-program corpus); C6 216 distinct rich | `cd experiment/proofbench && ./target/release/p6 novelty results/c6.jsonl corpus/seed.jsonl` |
+| N=2 prooflite training curve rich-rate R0 43.8% → R8 96.2% (9 rounds); `distinct_nkeys` peaks R6 (823) then narrows to 686 (R8) | `experiment/proofbench/results/train_curve.log` |
 | N=2 prooflite pools 256 each; full output | `experiment/proofbench/results/{base,c6,c7,c8}.jsonl`; `experiment/proofbench/results/README.md`, `.../benchmark.txt` |
 
 ### PENDING slot — instrument shipped, run not performed (permanently keyless)
