@@ -18,3 +18,10 @@ __pycache__/
 
 # The prooflite fine-tune driver log — transient, regenerated each run.
 experiment/train/*.log
+
+# LaTeX build byproducts (paper.tex + paper.pdf are committed; these regenerate)
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/compile*.log
