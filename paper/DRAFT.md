@@ -919,8 +919,8 @@ generation) remains future work; until then the strongest claim the data
 supports is that fuel is cheap insurance whose premium, on cooperative inputs,
 is zero. That is task-specific, though: the N=2 `prooflite` fine-tune (§5.7)
 pushed measured fuel use, among its `ok`-rung programs, to a maximum of 55,756
-of the 100,000-fuel default — 55.8% of budget, against stratlite's 0.74%, an
-order of magnitude nearer the cap. On a compute language with real loops the
+of the 100,000-fuel default — 55.8% of budget, against stratlite's 0.74%, some
+75× the budget fraction and far nearer the cap. On a compute language with real loops the
 bound came far closer to binding, so "the fuel bound was free" is a fact about
 the stratlite backtest, not about the kit.
 
