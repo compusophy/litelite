@@ -32,6 +32,7 @@ runs clean AND prints ≥3 distinct lines burning ≥30 fuel).
 | model | parse | RICH (ok) | distinct rich / 256 | novel rich (∉ corpus) |
 |---|---|---|---|---|
 | base Qwen3-0.6B | 23.4% | **3.5%** | 9 | 9 / 9 (100%) |
+| Cinit (cold-start SFT only) | 83.2% | 48.8% | 124 | 124 / 125 (99.2%) |
 | C5 | 96.9% | 90.6% | 213 | 232 / 232 (100%) |
 | **C6 (selected)** | 99.2% | **94.5%** | **216** | 242 / 242 (**100%**) |
 | C7 | 100.0% | 96.1% | 199 | 245 / 246 (99.6%) |
@@ -100,3 +101,57 @@ The full curve is committed — base → C5 → C6 (peak) → C7 → C8. C6 hold
 diversity peak (216 distinct rich), with C5 (213) just below it on the rising
 limb and C7/C8 past it (199, 205), an inverted-U consistent with the training
 histogram's distinct_nkeys peak at round 6.
+
+## Transfer: does generation competence become problem-SOLVING competence?
+
+The sharper question (`../problems/`): given a held-out SPEC, can the model
+produce a program whose *output is correct* — not merely valid? 30 tiered
+problems, 8 samples each (`solve_*.jsonl`, committed), scored by exact output
+match against a verified reference (`p6 solve problems/heldout.jsonl
+results/solve_<m>.jsonl`). Three arms: base, **Cinit** (cold-start on the 174
+human programs = plain SFT, no self-play), **C6** (Cinit + 6 rounds of
+verifier-only self-play — the selected generation checkpoint).
+
+| model | RICH generation | solve pass@8 | easy | medium | hard | `pad` (right answer + extra output) |
+|---|---|---|---|---|---|---|
+| base | 3.5% | 20.0% (6/30) | 3/9 | 2/9 | 1/12 | 1 |
+| **Cinit** | 48.8% | **80.0%** (24/30) | 9/9 | 8/9 | 7/12 | 1 |
+| C6 | 94.5% | 43.3% (13/30) | 6/9 | 5/9 | 2/12 | **8** |
+
+Two results, one expected and one not.
+
+**Transfer is real.** Fine-tuning on verifier-selected programs turns a 20%
+solver into an 80% solver — including 7 of the 12 `hard` discriminators
+(primality, popcount, digit-sum) that need real algorithms. The model was never
+trained to solve problems; it was trained to write valid programs. Solving
+competence came along.
+
+**Self-play optimizes the verifier, and the verifier is not the task.** C6 —
+the checkpoint that WINS the generation benchmark (94.5% rich vs Cinit's 48.8%) —
+LOSES half of Cinit's solving ability (43.3% vs 80%). The `pad` column says
+why: 8 of C6's 17 misses computed the exactly correct answer, then appended
+spurious prints. That is the RICH rung (≥3 distinct output lines, ≥30 fuel)
+speaking — self-play distilled the reward's shape into an unconditional output
+habit that overrides the spec. The localization is exact: on the 12 problems
+whose correct output is itself rich (≥3 distinct lines), C6 matches Cinit
+(9/12 vs 10/12); on the 18 problems whose correct output is SHORT — where the
+training reward actively disprefers the correct shape — Cinit solves 14/18
+while C6 solves 4/18 and pads 8 of the rest. Where reward and task agree,
+self-play costs nothing; where they conflict, the policy obeys its internalized
+reward, not the prompt.
+
+So the two capabilities MOVE OPPOSITE under self-play: generation validity
+3.5→48.8→94.5, spec-conditioned solving 20→80→43. The plain-SFT checkpoint is
+the better *solver*; the self-play checkpoint is the better *generator*. This
+is Goodhart at the policy level, measured: a verifier certifies validity, not
+intent, and optimizing against it long enough imprints its preferences as
+priors that persist even when the prompt asks for something else. The honest
+recipe that falls out: cold-start SFT buys the language; self-play buys the
+verifier's rungs — run it only as long as the rungs and the downstream task
+agree, and read the `pad` column as the early-warning signal.
+
+(Caveats: pass@8 on 30 problems is a coarse instrument — single-draw, one
+model family, one language; `pad` catches prefix-shaped padding only, so the
+"obeys reward over prompt" mass is a lower bound. The base row's 20% shows the
+problems are not unreachable from pretraining alone — surface familiarity
+solves a few easy ones.)

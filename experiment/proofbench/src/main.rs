@@ -321,20 +321,32 @@ fn cmd_solve(problems_path: &str, solutions_path: &str) -> Result<(), String> {
             .push(v["source"].as_str().unwrap_or("").to_string());
     }
     let mut solved = 0u32;
-    let mut per_tier: BTreeMap<String, (u32, u32)> = BTreeMap::new(); // tier -> (solved, total)
+    let mut padded = 0u32;
+    let mut per_tier: BTreeMap<String, (u32, u32, u32)> = BTreeMap::new(); // tier -> (solved, padded, total)
     let mut lines = String::new();
     for (id, tier, canon) in &expected {
         let attempts = sols.get(id).map(Vec::as_slice).unwrap_or(&[]);
-        let ok = attempts
-            .iter()
-            .any(|s| run_output(s).as_deref() == Some(canon.as_str()));
+        let outs: Vec<String> = attempts.iter().filter_map(|s| run_output(s)).collect();
+        let ok = outs.iter().any(|o| o == canon);
+        // Secondary diagnostic: the reference output is a strict PREFIX of the
+        // candidate's — the answer was computed, then followed by extra output.
+        // Separates "wrong algorithm" from "right algorithm, unwanted padding".
+        let pad = !ok && outs.iter().any(|o| o.starts_with(&format!("{canon}\n")));
         solved += ok as u32;
-        let e = per_tier.entry(tier.clone()).or_insert((0, 0));
+        padded += pad as u32;
+        let e = per_tier.entry(tier.clone()).or_insert((0, 0, 0));
         e.0 += ok as u32;
-        e.1 += 1;
+        e.1 += pad as u32;
+        e.2 += 1;
         lines.push_str(&format!(
             "  {} {id} [{tier}] ({} tries)\n",
-            if ok { "PASS" } else { "fail" },
+            if ok {
+                "PASS"
+            } else if pad {
+                "pad "
+            } else {
+                "fail"
+            },
             attempts.len()
         ));
     }
@@ -349,8 +361,13 @@ fn cmd_solve(problems_path: &str, solutions_path: &str) -> Result<(), String> {
         expected.len(),
         pct(solved, expected.len() as u32)
     );
-    for (tier, (s, t)) in &per_tier {
-        println!("  {tier}: {s}/{t} = {:.1}%", pct(*s, *t));
+    println!(
+        "answer-then-padding (correct prefix, not counted solved): {padded}/{} — solved-or-padded {:.1}%",
+        expected.len(),
+        pct(solved + padded, expected.len() as u32)
+    );
+    for (tier, (s, p, t)) in &per_tier {
+        println!("  {tier}: {s}/{t} = {:.1}% (+{p} padded)", pct(*s, *t));
     }
     print!("{lines}");
     Ok(())
@@ -467,6 +484,20 @@ mod tests {
         // A wrong answer does not; nor does a program that faults.
         assert_ne!(run_output("print 1; print 2; print 4;"), want);
         assert_eq!(run_output("print nope;"), None);
+    }
+
+    #[test]
+    fn padding_is_a_prefix_match_not_a_solve() {
+        // The reward's RICH rung trains models to append extra prints; the
+        // padded diagnostic must catch exactly that, on a line boundary.
+        let canon = run_output("print 1; print 2; print 3;").unwrap();
+        let padded = run_output("print 1; print 2; print 3; print 99;").unwrap();
+        assert_ne!(padded, canon);
+        assert!(padded.starts_with(&format!("{canon}\n")));
+        // Line-boundary check: "1\n23" must not prefix-match "1\n2".
+        let partial = run_output("print 1; print 23;").unwrap();
+        let two = run_output("print 1; print 2;").unwrap();
+        assert!(!partial.starts_with(&format!("{two}\n")) && partial != two);
     }
 
     #[test]

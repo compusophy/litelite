@@ -59,7 +59,7 @@ inter-agent commerce need.
    checked properties); Goodhart risks (caps pushing complexity into seams);
    when a general-purpose language + tests beats a purpose-sized language.
 
-## State of the evidence (updated 2026-07-16 — the handoff block)
+## State of the evidence (updated 2026-07-19 — the handoff block)
 
 Any session can resume paper work from THIS file plus the cited artifacts; no
 conversation context is required. Heavy drafting runs as multi-agent workflows
@@ -79,7 +79,17 @@ conversation context is required. Heavy drafting runs as multi-agent workflows
   gate-clear across a train month, a 5-month-distant month, and a cross-asset
   window — reproduce the SCORING via `cd experiment && ./target/release/s5 eval
   results/{base,c7}.jsonl data/<window>.csv` (the model is not reproducible; the
-  pools + candles are committed). Design in `experiment/M6.md`. STILL PENDING:
+  pools + candles are committed). Design in `experiment/M6.md`. The N=2 replication on
+  prooflite is committed (`experiment/proofbench/results/README.md`, paper
+  §5.7): 3.5% → ~95% RICH, ~100% corpus-novel. The TRANSFER benchmark ran
+  2026-07-19 (paper §5.8, same README): 30 held-out specs, exact-output
+  pass@8 — base 20% / Cinit (plain SFT) 80% / C6 (self-play) 43.3%. Transfer
+  is real, AND self-play overwrites spec-following with the reward's output
+  shape (8 of C6's 17 misses compute the right answer then pad; the loss
+  localizes to the problems whose correct output is short, where the RICH
+  rung disprefers the correct shape). Repro: `cd experiment/proofbench &&
+  ./target/release/p6 solve problems/heldout.jsonl results/solve_c6.jsonl`.
+  STILL PENDING:
   the frozen-big-model A/B arm — there is NO Anthropic API key and there will
   not be one; that arm stays a protocol slot unless a keyless generator fills it.
 - **§6: real findings on hand.** Fuel bound free on this task (max 186 of

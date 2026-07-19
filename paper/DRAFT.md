@@ -55,7 +55,16 @@ not out-of-sample edge, which stays the selector's job. Run a second time on
 shape with a language-specific reward binary (different success rung and styles)
 — the lift repeats, from 3.5% to ~95% rich generation with ~100% of it novel
 against the cold-start corpus, so the result is not a one-grammar artifact
-(generality past the shared base model and kit stays untested).
+(generality past the shared base model and kit stays untested). A held-out
+problem-solving benchmark (30 specs, exact-output match) then closes the
+pass@1 gap and returns a two-sided verdict: transfer is real — plain SFT on
+the 174 verifier-selected corpus programs lifts solving from 20% to 80%
+pass@8 — but the self-play that wins generation (94.5% vs 48.8% RICH) gives
+half of that back (43.3%), and the loss localizes exactly to problems whose
+correct output conflicts with the reward's shape, with the answer computed
+and then padded: the policy internalizes the verifier's preferences as
+unconditional habits that override the spec. A verifier certifies validity,
+not intent — measured here at the policy level.
 One experiment remains unrun — a frozen-model A/B arm for which there is no API
 key — and ships as an instrument with pre-registered commands, marked PENDING.
 The deterministic verifier plus committed artifacts reproduce every number in
@@ -495,7 +504,7 @@ cannot show.
 The instrument shipped complete. The verifier-only GPU fine-tune has now been
 run twice — §5.6 reports it on `stratlite` and §5.7 its N = 2 replication on
 `prooflite`; the remaining experiment, a frozen-model A/B arm for which there is
-no API key, has not been run, and §5.8 marks it as a PENDING protocol slot with
+no API key, has not been run, and §5.9 marks it as a PENDING protocol slot with
 its exact commands, per the house rule that pending results are named, not
 promised.
 
@@ -577,7 +586,7 @@ non-survivors are gate failures, not faults: they parsed and ran cleanly but did
 not trade enough to count as strategies. Strong agents, asked for valid programs
 and given the language card, can produce valid active `stratlite` almost every
 time; this measures conditioned generation, not an unconditioned base rate — the
-calibrating comparison is the PENDING, permanently-keyless A/B arm (§5.8), so we
+calibrating comparison is the PENDING, permanently-keyless A/B arm (§5.9), so we
 do not read a base rate off this number. It is also the setup for the limitation
 in §5.4. The same run reports 134 distinct source-canonical novelty keys over
 the 134 programs, so no two are template clones under the dedup key of §5.5.
@@ -862,7 +871,75 @@ generator stays a downstream concern, exactly as edge does for stratlite. As in
 §5.6 the MODEL does not reproduce, but the SCORING does, from the committed
 pools.
 
-### 5.8 PENDING (permanently keyless): the frozen-model A/B arm
+### 5.8 Transfer: solving held-out problems, and what self-play optimizes
+
+The abstract flags the gap honestly: §5.6–5.7 measure generation VALIDITY,
+where tempo-x402 measured task-solving pass@1. This section closes that gap
+with a held-out problem-solving benchmark on `prooflite`
+(`experiment/proofbench/problems/heldout.jsonl`): 30 specs in three tiers
+(9 easy / 9 medium / 12 hard — the hard tier needs real algorithms: primality,
+popcount, digit-sum, Collatz length), each with a verified reference solution.
+A candidate SOLVES a problem iff its output exactly equals the reference's;
+8 samples per problem per model, and the pools are committed
+(`results/solve_{base,cinit,c6}.jsonl`), so `p6 solve problems/heldout.jsonl
+results/solve_<m>.jsonl` reproduces every number. Three arms separate the
+recipe's ingredients: **base** `Qwen3-0.6B`; **Cinit**, the cold-start
+checkpoint — supervised fine-tuning on the 174 human corpus programs and
+nothing else, i.e. the plain-SFT baseline; and **C6**, Cinit plus six rounds of
+verifier-only self-play — the checkpoint §5.7 selects on the generation
+benchmark. (Cinit's own generation row, same 256-sample protocol: 83.2% parse,
+48.8% RICH, 124 distinct rich keys — between base and the self-play curve, as
+expected.)
+
+| model | RICH generation | solve pass@8 | easy | medium | hard | pad |
+|---|---|---|---|---|---|---|
+| base | 3.5% | 20.0% (6/30) | 3/9 | 2/9 | 1/12 | 1 |
+| Cinit (plain SFT) | 48.8% | **80.0%** (24/30) | 9/9 | 8/9 | 7/12 | 1 |
+| C6 (+ self-play) | **94.5%** | 43.3% (13/30) | 6/9 | 5/9 | 2/12 | 8 |
+
+Two findings, one expected and one not — and the second is the sharper.
+
+**Transfer is real.** Training on verifier-selected programs — never on
+problem/solution pairs — takes pass@8 from 20% to 80%, including 7 of the 12
+hard discriminators. Base solves a few easy problems from surface familiarity
+alone (the C-like syntax parses often enough for counting loops to land), so
+the floor is not zero here; the lift is what carries the tempo-x402 shape onto
+this instrument, now in its original task-solving units.
+
+**Self-play optimizes the verifier, and the verifier is not the task.** The
+checkpoint that wins generation (C6, 94.5% RICH against Cinit's 48.8%) loses
+nearly half of Cinit's solving (43.3% against 80.0%). The `pad` column is the
+mechanism: `p6 solve` separately reports candidates whose output has the
+reference answer as a strict prefix followed by extra output — the right
+algorithm, then spurious prints. Eight of C6's seventeen misses are exactly
+that (against one each for base and Cinit): a correct `sum_1_100` loop
+followed by a dozen filler `print` statements is the RICH rung (≥3 distinct
+output lines over ≥30 fuel) speaking, distilled by self-play into an
+unconditional output habit that overrides the spec. The localization is exact.
+On the 12 problems whose correct output is itself RICH-shaped (≥3 distinct
+lines), C6 matches Cinit — 9/12 versus 10/12; on the 18 problems whose correct
+output is short — where the training reward actively disprefers the correct
+shape — Cinit solves 14/18 while C6 solves 4/18 and pads 8 of the remaining
+14. Where reward and task agree, self-play costs nothing measurable; where
+they conflict, the policy obeys its internalized reward, not the prompt.
+
+The two capabilities therefore move in OPPOSITE directions under self-play —
+generation validity 3.5 → 48.8 → 94.5, spec-conditioned solving 20 → 80 → 43 —
+and the diversity narrowing of §6.6 has a sharper companion: the policy does
+not merely narrow, it carries the reward's preferences into contexts the
+reward never saw. This is the Goodhart argument of §6.3 measured at the policy
+level, and it revises the recipe's reading. Cold-start SFT buys the language
+AND the ability to use it on demand; self-play buys the verifier's rungs,
+specifically — run it only while its rungs and the downstream task agree, and
+read the pad diagnostic as the early warning. The caveats are the section's
+own: pass@8 over 30 problems is a coarse single-draw instrument; one base
+model, one language; and the prefix-shaped `pad` count is a lower bound on
+"right answer, wrong shape" (answer-inside-padding is not counted). Solving
+was also never in the training objective for EITHER checkpoint — the surprise
+is not that C6 solves worse than a solver would, but that plain SFT solves
+this well and self-play then gives half of it back.
+
+### 5.9 PENDING (permanently keyless): the frozen-model A/B arm
 
 One experiment on the instrument has complete plumbing and a committed protocol
 but has not been run, and cannot be: the frozen-model A/B arm. The §5 selection
@@ -883,9 +960,10 @@ corpus is the key-free stand-in for the generation step.
   `cd experiment && cargo run -q -- score raw.jsonl data/BTCUSDT-1h-2024-01.csv`
 
 The reproducibility split is exact and stated once: the deterministic verifier
-plus committed artifacts reproduce every number in §5.2–5.7 from a command —
+plus committed artifacts reproduce every number in §5.2–5.8 from a command —
 including both fine-tunes' scoring (stratlite's held-out gate-clear from committed
-candles, prooflite's RICH-rate and novelty from committed pools and corpus); the
+candles, prooflite's RICH-rate, novelty, and solve pass@8 from committed pools
+and corpus); the
 generation itself — agents, the frozen API model, or either fine-tune — does not,
 and is committed or recorded rather than regenerated.
 
@@ -1051,7 +1129,11 @@ the distinct-key curve, not the rich-rate the runs actually early-stopped on.
 `prooflite`'s C6 was selected at its diversity peak; `stratlite`'s C7 was
 selected on rich-rate saturation and therefore sits past its own — its headline
 validity numbers are unaffected (validity is monotone), but its generator is
-less varied than an R4 checkpoint's would be.
+less varied than an R4 checkpoint's would be. And narrowing is the milder half
+of what self-play does to the policy: §5.8 measures the sharper half — the
+reward's output shape persisting as an unconditional habit that overrides
+held-out specs, halving the plain-SFT checkpoint's problem-solving where spec
+and reward shape conflict.
 
 Two further edges of the fine-tune stay untested, and belong here rather than
 only inline in §5.7. First, cross-model generality: both arms fine-tune the same

@@ -36,3 +36,10 @@ and **C6** (verifier-only self-play). That single harness yields both:
   problem-SOLVING competence? base vs C6), and
 - the **Direction-2 baselines** (is the *self-play* what does it? Cinit vs C6; is
   the *verifier* what does it? add a no-verifier run).
+
+Besides PASS/fail, `p6 solve` reports a `pad` diagnostic: the reference output is
+a strict prefix of the candidate's — the answer was computed, then extra output
+followed. It is NOT counted as solved; it exists to separate "wrong algorithm"
+from "right algorithm, unwanted padding", the signature of a policy that
+internalized the reward's RICH rung (≥3 distinct lines) as an unconditional
+output habit. See `../results/README.md` for what this revealed.
