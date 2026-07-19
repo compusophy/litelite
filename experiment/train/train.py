@@ -83,6 +83,13 @@ class Config:
     # Stratlite needs a candle window for its reward; prooflite (p6) does not —
     # its reward is intrinsic to a program's execution.
     needs_candles: bool = True
+    # The reward binary's subcommands for prompts and scoring. The defaults are
+    # the unconditional arm (free-form styles, validity reward); the
+    # spec-conditioned arm swaps in ("trainstyles", problems) and
+    # ("solvereward", problems) so every prompt is a task and the top reward
+    # rung is CORRECTNESS against that task's reference.
+    styles_args: tuple[str, ...] = ("styles",)
+    reward_args: tuple[str, ...] = ("reward",)
     # Hardware
     device: str = "cuda"
     dtype: str = "bfloat16"  # Ampere (3090) supports bf16
@@ -102,14 +109,14 @@ def card(cfg: Config) -> str:
 
 
 def styles(cfg: Config) -> list[str]:
-    return [s for s in _run(cfg, "styles").splitlines() if s.strip()]
+    return [s for s in _run(cfg, *cfg.styles_args).splitlines() if s.strip()]
 
 
 def score(cfg: Config, rollouts: list[Rollout]) -> dict:
     """The whole Rust boundary: JSONL {id, source} in, reward records out, by id."""
     pool = "\n".join(json.dumps({"id": r.id, "source": r.source}) for r in rollouts)
     # "-" = stdin: portable ("/dev/stdin" does not exist on Windows, the training box).
-    out = _run(cfg, "reward", "-", *cfg.candles, stdin=pool)
+    out = _run(cfg, *cfg.reward_args, "-", *cfg.candles, stdin=pool)
     return parse_rewards(out)
 
 

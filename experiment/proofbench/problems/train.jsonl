@@ -1,0 +1,48 @@
+{"id": "t_double_17", "tier": "easy", "spec": "doubles 17 and prints the result", "ref": "print 17 * 2;"}
+{"id": "t_triple_13", "tier": "easy", "spec": "triples 13 and prints the result", "ref": "print 13 * 3;"}
+{"id": "t_min_23_19", "tier": "easy", "spec": "prints the smaller of 23 and 19", "ref": "if 23 < 19 {\n  print 23;\n} else {\n  print 19;\n}"}
+{"id": "t_max_of_three", "tier": "easy", "spec": "prints the largest of 4, 9, and 6", "ref": "let m = 4;\nif 9 > m {\n  m = 9;\n}\nif 6 > m {\n  m = 6;\n}\nprint m;"}
+{"id": "t_sum_consts", "tier": "easy", "spec": "adds 111, 222, and 333 and prints the total", "ref": "print 111 + 222 + 333;"}
+{"id": "t_avg_3", "tier": "easy", "spec": "prints the integer average of 10, 20, and 33", "ref": "print (10 + 20 + 33) / 3;"}
+{"id": "t_sq_9", "tier": "easy", "spec": "prints the square of 9", "ref": "print 9 * 9;"}
+{"id": "t_rem_45_7", "tier": "easy", "spec": "prints the remainder of 45 divided by 7", "ref": "print 45 % 7;"}
+{"id": "t_guard_div", "tier": "easy", "spec": "prints 100 divided by 4, but prints 0 instead if the divisor 4 were zero", "ref": "if 4 == 0 {\n  print 0;\n} else {\n  print 100 / 4;\n}"}
+{"id": "t_even_28", "tier": "easy", "spec": "prints true if 28 is even and false otherwise", "ref": "print 28 % 2 == 0;"}
+{"id": "t_cmp_chain", "tier": "easy", "spec": "prints true if 5 is less than 8 and 8 is less than 13", "ref": "print 5 < 8 && 8 < 13;"}
+{"id": "t_bigger_product", "tier": "easy", "spec": "prints the larger of 6 times 7 and 5 times 9", "ref": "if 6 * 7 > 5 * 9 {\n  print 6 * 7;\n} else {\n  print 5 * 9;\n}"}
+{"id": "t_abs_diff", "tier": "easy", "spec": "prints the absolute difference of 19 and 47", "ref": "if 19 > 47 {\n  print 19 - 47;\n} else {\n  print 47 - 19;\n}"}
+{"id": "t_n_and_square", "tier": "easy", "spec": "prints 12 and then its square on the next line", "ref": "print 12;\nprint 12 * 12;"}
+{"id": "t_count_3_9", "tier": "easy", "spec": "prints the numbers from 3 to 9 in order, one per line", "ref": "let i = 3;\nrepeat 7 {\n  print i;\n  i = i + 1;\n}"}
+{"id": "t_countdown_8", "tier": "easy", "spec": "counts down from 8 to 1, printing each number", "ref": "let i = 8;\nrepeat 8 {\n  print i;\n  i = i - 1;\n}"}
+{"id": "t_mults_4", "tier": "easy", "spec": "prints the first 5 multiples of 4, starting at 4", "ref": "let m = 4;\nrepeat 5 {\n  print m;\n  m = m + 4;\n}"}
+{"id": "t_halving_64", "tier": "easy", "spec": "starts at 64 and prints 6 numbers, halving after each print", "ref": "let x = 64;\nrepeat 6 {\n  print x;\n  x = x / 2;\n}"}
+{"id": "t_doubling_3", "tier": "easy", "spec": "starts at 3 and prints 5 numbers, doubling after each print", "ref": "let x = 3;\nrepeat 5 {\n  print x;\n  x = x * 2;\n}"}
+{"id": "t_odds_1_11", "tier": "easy", "spec": "prints the odd numbers from 1 through 11", "ref": "let i = 1;\nrepeat 6 {\n  print i;\n  i = i + 2;\n}"}
+{"id": "t_step_down_10", "tier": "easy", "spec": "prints 100, 90, 80, and so on down to 10", "ref": "let x = 100;\nrepeat 10 {\n  print x;\n  x = x - 10;\n}"}
+{"id": "t_squares_678", "tier": "easy", "spec": "prints the squares of 6, 7, and 8", "ref": "print 6 * 6;\nprint 7 * 7;\nprint 8 * 8;"}
+{"id": "t_pow3_seq", "tier": "easy", "spec": "starts at 3 and prints 3 numbers, tripling after each print", "ref": "let x = 3;\nrepeat 3 {\n  print x;\n  x = x * 3;\n}"}
+{"id": "t_add_7_five", "tier": "easy", "spec": "adds 7 to a total five times using a loop and prints the final total", "ref": "let t = 0;\nrepeat 5 {\n  t = t + 7;\n}\nprint t;"}
+{"id": "t_sum_1_37", "tier": "medium", "spec": "adds the numbers from 1 to 37 and prints the total", "ref": "let s = 0;\nlet i = 1;\nrepeat 37 {\n  s = s + i;\n  i = i + 1;\n}\nprint s;"}
+{"id": "t_sum_10_20", "tier": "medium", "spec": "adds the numbers from 10 to 20 and prints the total", "ref": "let s = 0;\nlet i = 10;\nrepeat 11 {\n  s = s + i;\n  i = i + 1;\n}\nprint s;"}
+{"id": "t_prod_1_5", "tier": "medium", "spec": "multiplies the numbers 1 through 5 together and prints the product", "ref": "let p = 1;\nlet i = 1;\nrepeat 5 {\n  p = p * i;\n  i = i + 1;\n}\nprint p;"}
+{"id": "t_sum_mult3_30", "tier": "medium", "spec": "adds the multiples of 3 from 3 up to 30 and prints the total", "ref": "let s = 0;\nlet m = 3;\nrepeat 10 {\n  s = s + m;\n  m = m + 3;\n}\nprint s;"}
+{"id": "t_sum_evens_2_14", "tier": "medium", "spec": "adds the even numbers from 2 to 14 and prints the total", "ref": "let s = 0;\nlet e = 2;\nrepeat 7 {\n  s = s + e;\n  e = e + 2;\n}\nprint s;"}
+{"id": "t_count_div7", "tier": "medium", "spec": "counts how many numbers from 1 to 100 are divisible by 7 and prints the count", "ref": "let c = 0;\nlet i = 1;\nrepeat 100 {\n  if i % 7 == 0 {\n    c = c + 1;\n  }\n  i = i + 1;\n}\nprint c;"}
+{"id": "t_mod3_pattern", "tier": "medium", "spec": "prints i modulo 3 for each i from 1 to 7", "ref": "let i = 1;\nrepeat 7 {\n  print i % 3;\n  i = i + 1;\n}"}
+{"id": "t_running_max", "tier": "medium", "spec": "checks the values 5, 12, 7, 3, and 18 in order, tracking the maximum, and prints it at the end", "ref": "let m = 5;\nif 12 > m {\n  m = 12;\n}\nif 7 > m {\n  m = 7;\n}\nif 3 > m {\n  m = 3;\n}\nif 18 > m {\n  m = 18;\n}\nprint m;"}
+{"id": "t_gcd_48_18", "tier": "medium", "spec": "computes the greatest common divisor of 48 and 18 by repeated subtraction and prints it", "ref": "let a = 48;\nlet b = 18;\nrepeat 20 {\n  if a > b {\n    a = a - b;\n  } else if b > a {\n    b = b - a;\n  }\n}\nprint a;"}
+{"id": "t_triangular_9", "tier": "medium", "spec": "computes the 9th triangular number by summing 1 through 9 and prints it", "ref": "let s = 0;\nlet i = 1;\nrepeat 9 {\n  s = s + i;\n  i = i + 1;\n}\nprint s;"}
+{"id": "t_guarded_countdown", "tier": "medium", "spec": "starts at 30 and subtracts 7 five times, printing the value before each subtraction only while it is positive", "ref": "let x = 30;\nrepeat 5 {\n  if x > 0 {\n    print x;\n  }\n  x = x - 7;\n}"}
+{"id": "t_flag_mult4", "tier": "medium", "spec": "prints 1 for each multiple of 4 and 0 otherwise, for the numbers 1 to 8", "ref": "let i = 1;\nrepeat 8 {\n  if i % 4 == 0 {\n    print 1;\n  } else {\n    print 0;\n  }\n  i = i + 1;\n}"}
+{"id": "t_nested_table", "tier": "medium", "spec": "prints i times j for i from 1 to 2 and j from 1 to 3, in row order", "ref": "let i = 1;\nrepeat 2 {\n  let j = 1;\n  repeat 3 {\n    print i * j;\n    j = j + 1;\n  }\n  i = i + 1;\n}"}
+{"id": "t_collatz_step_7", "tier": "medium", "spec": "applies one Collatz step to 7 (halve if even, else 3 times it plus 1) and prints the result", "ref": "let n = 7;\nif n % 2 == 0 {\n  print n / 2;\n} else {\n  print 3 * n + 1;\n}"}
+{"id": "t_and_table", "tier": "medium", "spec": "prints the AND of the four boolean pairs true/true, true/false, false/true, false/false, one per line", "ref": "print true && true;\nprint true && false;\nprint false && true;\nprint false && false;"}
+{"id": "t_div_rem_89_6", "tier": "medium", "spec": "prints the quotient of 89 divided by 6, then the remainder on the next line", "ref": "print 89 / 6;\nprint 89 % 6;"}
+{"id": "t_mixed_sum", "tier": "medium", "spec": "adds -5, 10, -15, and 20 and prints the total", "ref": "print -5 + 10 - 15 + 20;"}
+{"id": "t_count_gt7", "tier": "medium", "spec": "counts how many of the values 8, 3, 11, 6, and 14 exceed 7 and prints the count", "ref": "let c = 0;\nif 8 > 7 {\n  c = c + 1;\n}\nif 3 > 7 {\n  c = c + 1;\n}\nif 11 > 7 {\n  c = c + 1;\n}\nif 6 > 7 {\n  c = c + 1;\n}\nif 14 > 7 {\n  c = c + 1;\n}\nprint c;"}
+{"id": "t_swap", "tier": "medium", "spec": "sets a to 3 and b to 8, swaps them using a temporary, then prints a and b on separate lines", "ref": "let a = 3;\nlet b = 8;\nlet t = a;\na = b;\nb = t;\nprint a;\nprint b;"}
+{"id": "t_grade_band", "tier": "medium", "spec": "prints 2 if 75 is at least 90, else 1 if 75 is at least 60, else 0", "ref": "if 75 >= 90 {\n  print 2;\n} else if 75 >= 60 {\n  print 1;\n} else {\n  print 0;\n}"}
+{"id": "t_final_after_steps", "tier": "medium", "spec": "starts at 25, subtracts 4 six times, and prints only the final value", "ref": "let x = 25;\nrepeat 6 {\n  x = x - 4;\n}\nprint x;"}
+{"id": "t_toggle_add", "tier": "medium", "spec": "starts at 0 and makes six additions that alternate between adding 5 and adding 3, starting with 5, then prints the final value", "ref": "let x = 0;\nlet t = 0;\nrepeat 6 {\n  if t == 0 {\n    x = x + 5;\n    t = 1;\n  } else {\n    x = x + 3;\n    t = 0;\n  }\n}\nprint x;"}
+{"id": "t_loop_plus10", "tier": "medium", "spec": "prints the loop counter plus 10 for counters 1 through 4", "ref": "let i = 1;\nrepeat 4 {\n  print i + 10;\n  i = i + 1;\n}"}
+{"id": "t_parity_flip", "tier": "medium", "spec": "prints true when the counter is even and false otherwise, for counters 1 through 5", "ref": "let i = 1;\nrepeat 5 {\n  print i % 2 == 0;\n  i = i + 1;\n}"}

@@ -178,6 +178,8 @@ p6 — the prooflite reward tool (N=2)
   p6 eval     <pool.jsonl>       the validity-ladder distribution over a pool
   p6 novelty  <pool> <corpus>    of a pool's RICH programs, the fraction absent from a corpus
   p6 solve    <problems> <sols>  pass@k on held-out spec->program problems (the transfer test)
+  p6 trainstyles <problems>      training specs as sampling prompts, one per line
+  p6 solvereward <problems> <pool>  spec-conditioned reward: top rung = correct output (- = stdin)
   p6 run      <program.txt | ->  run a prooflite program, print its output
 ";
 
@@ -270,20 +272,134 @@ fn cmd_novelty(pool_path: &str, corpus_path: &str) -> Result<(), String> {
     Ok(())
 }
 
-/// Canonical stdout of a prooflite program (trailing whitespace normalized), or
-/// None if it does not run clean. Used to compare a candidate against a problem's
-/// reference solution.
+/// Trailing-whitespace-normalized output, the one canonical form every
+/// output comparison in this tool uses.
+fn canon_output(raw: &str) -> String {
+    raw.lines()
+        .map(|l| l.trim_end())
+        .collect::<Vec<_>>()
+        .join("\n")
+        .trim_end()
+        .to_string()
+}
+
+/// Canonical stdout of a prooflite program, or None if it does not run clean.
+/// Used to compare a candidate against a problem's reference solution.
 fn run_output(src: &str) -> Option<String> {
-    let o = run(src, Limits::default()).ok()?;
-    Some(
-        o.output
-            .lines()
-            .map(|l| l.trim_end())
-            .collect::<Vec<_>>()
-            .join("\n")
-            .trim_end()
-            .to_string(),
-    )
+    run(src, Limits::default())
+        .ok()
+        .map(|o| canon_output(&o.output))
+}
+
+/// The spec-conditioned reward ladder — the correctness analog of `reward`.
+/// Bottom rungs are identical (compile 0, run 1/3); the top rung is no longer
+/// RICH output but the SPEC: output equal to the problem reference's scores 1
+/// ("ok"), a clean run with the wrong output scores 2/3 ("gate"). Facts
+/// (fuel, distinct, lines) are emitted the same, so the trainer's admission
+/// path is unchanged.
+fn spec_reward(src: &str, want: &str) -> Reward {
+    if src.trim().is_empty() {
+        return Reward {
+            value: 0.0,
+            class: "compile",
+            fuel: 0,
+            distinct: 0,
+            lines: 0,
+        };
+    }
+    match run(src, Limits::default()) {
+        Err(d) => {
+            let parsed = d.code.is_some_and(|c| c >= 200);
+            Reward {
+                value: if parsed { 1.0 / 3.0 } else { 0.0 },
+                class: if parsed { "run" } else { "compile" },
+                fuel: 0,
+                distinct: 0,
+                lines: 0,
+            }
+        }
+        Ok(o) => {
+            let printed: Vec<&str> = o.output.lines().filter(|l| !l.is_empty()).collect();
+            let lines = printed.len();
+            let mut uniq = printed.clone();
+            uniq.sort_unstable();
+            uniq.dedup();
+            let correct = canon_output(&o.output) == want;
+            Reward {
+                value: if correct { 1.0 } else { 2.0 / 3.0 },
+                class: if correct { "ok" } else { "gate" },
+                fuel: o.fuel_used,
+                distinct: uniq.len(),
+                lines,
+            }
+        }
+    }
+}
+
+/// Training problems: (id, spec, canonical reference output), in file order —
+/// the order `trainstyles` emits and rollout style indices refer to.
+fn read_specs(path: &str) -> Result<Vec<(String, String, String)>, String> {
+    let mut out = Vec::new();
+    for (n, line) in read_text(path)?
+        .lines()
+        .enumerate()
+        .filter(|(_, l)| !l.trim().is_empty())
+    {
+        let v: Value =
+            serde_json::from_str(line).map_err(|e| format!("problem line {}: {e}", n + 1))?;
+        let id = v["id"].as_str().unwrap_or("?").to_string();
+        let spec = v["spec"].as_str().unwrap_or("").to_string();
+        let canon = run_output(v["ref"].as_str().unwrap_or(""))
+            .ok_or_else(|| format!("problem {id}: reference solution does not run clean"))?;
+        out.push((id, spec, canon));
+    }
+    Ok(out)
+}
+
+/// The style index a trainer rollout id carries (`r<round>s<idx>n<j>`) —
+/// which problem the rollout was prompted with. A malformed id is an ERROR,
+/// never a silent mis-score.
+fn style_index(id: &str) -> Result<usize, String> {
+    let s = id
+        .find('s')
+        .ok_or_else(|| format!("id {id}: no s<idx> segment"))?;
+    let digits: String = id[s + 1..]
+        .chars()
+        .take_while(char::is_ascii_digit)
+        .collect();
+    digits
+        .parse()
+        .map_err(|_| format!("id {id}: no digits after s"))
+}
+
+/// Emit each training problem's spec as a sampling prompt, one per line, in
+/// file order — the spec-conditioned arm's replacement for `styles`.
+fn cmd_trainstyles(problems_path: &str) -> Result<(), String> {
+    for (_, spec, _) in read_specs(problems_path)? {
+        println!("a program that {spec}");
+    }
+    Ok(())
+}
+
+/// Per-rollout spec-conditioned reward records — the `reward`-compatible
+/// scoring for self-play where the target is correctness, not richness.
+fn cmd_solvereward(problems_path: &str, pool_path: &str) -> Result<(), String> {
+    let specs = read_specs(problems_path)?;
+    let mut out = String::new();
+    for (id, src) in read_pool(pool_path)? {
+        let si = style_index(&id)?;
+        let (_, _, want) = specs
+            .get(si)
+            .ok_or_else(|| format!("id {id}: style index {si} >= {} problems", specs.len()))?;
+        let r = spec_reward(&src, want);
+        out.push_str(&format!(
+            "{{\"id\":{},\"value\":{:.6},\"class\":\"{}\",\"fuel\":{},\"distinct\":{},\"lines\":{},\"nkey\":\"0x{:016x}\"}}\n",
+            serde_json::to_string(&id).unwrap(),
+            r.value, r.class, r.fuel, r.distinct, r.lines, novelty_key(&src)
+        ));
+    }
+    print!("{out}");
+    Ok(())
 }
 
 /// The TRANSFER / problem-solving benchmark. Each problem is a spec + a reference
@@ -414,6 +530,14 @@ fn main() -> ExitCode {
             (Some(p), Some(s)) => cmd_solve(p, s),
             _ => Err("usage: p6 solve <problems.jsonl> <solutions.jsonl>".into()),
         },
+        Some("trainstyles") => match args.get(1) {
+            Some(p) => cmd_trainstyles(p),
+            None => Err("usage: p6 trainstyles <problems.jsonl>".into()),
+        },
+        Some("solvereward") => match (args.get(1), args.get(2)) {
+            (Some(p), Some(s)) => cmd_solvereward(p, s),
+            _ => Err("usage: p6 solvereward <problems.jsonl> <pool.jsonl | ->".into()),
+        },
         Some("run") => match args.get(1) {
             Some(p) => cmd_run(p),
             None => Err("usage: p6 run <program.txt | ->".into()),
@@ -484,6 +608,30 @@ mod tests {
         // A wrong answer does not; nor does a program that faults.
         assert_ne!(run_output("print 1; print 2; print 4;"), want);
         assert_eq!(run_output("print nope;"), None);
+    }
+
+    #[test]
+    fn spec_reward_top_rung_is_correctness_not_richness() {
+        let want = run_output("print 1; print 2; print 3;").unwrap();
+        // Correct output -> ok/1.0, regardless of richness.
+        assert_eq!(spec_reward("print 1; print 2; print 3;", &want).class, "ok");
+        // The RICH-shaped failure: right answer then padding is NOT ok here.
+        let padded = spec_reward("print 1; print 2; print 3; print 99;", &want);
+        assert_eq!((padded.class, padded.value), ("gate", 2.0 / 3.0));
+        // A single correct line is ok even though RICH would gate it.
+        let single = run_output("print 42;").unwrap();
+        assert_eq!(spec_reward("print 6 * 7;", &single).class, "ok");
+        // Bottom rungs unchanged: fault -> run, garbage -> compile.
+        assert_eq!(spec_reward("print nope;", &want).class, "run");
+        assert_eq!(spec_reward("not a program", &want).class, "compile");
+        assert_eq!(spec_reward("   ", &want).class, "compile");
+    }
+
+    #[test]
+    fn style_index_reads_the_trainer_id_format() {
+        assert_eq!(style_index("r3s12n7"), Ok(12));
+        assert_eq!(style_index("r0s0n127"), Ok(0));
+        assert!(style_index("c42").is_err()); // corpus id: no s<idx> digits
     }
 
     #[test]
