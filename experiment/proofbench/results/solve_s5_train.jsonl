@@ -1,0 +1,384 @@
+{"id": "t_double_17", "source": "// 17 * 2 = 34\nlet x = 17;\nprint x * 2;"}
+{"id": "t_double_17", "source": "let x = 17;\nlet y = x * 2;\nprint y;"}
+{"id": "t_double_17", "source": "// 17 * 2 = 34\nlet x = 17;\nlet y = x * 2;\nprint y;"}
+{"id": "t_double_17", "source": "let x = 17;\nlet result = x * 2;\nprint result;\n// no loop needed; 17 * 2 is already computed."}
+{"id": "t_double_17", "source": "// 17 * 2 = 34\nlet x = 17;\nprint x * 2;"}
+{"id": "t_double_17", "source": "let x = 17;\nlet y = x * 2;\nprint y;"}
+{"id": "t_double_17", "source": "// 17 * 2 = 34\nlet x = 17;\nlet y = x * 2;\nprint y;\nrepeat 1 {\n  y = y * 2;\n}"}
+{"id": "t_double_17", "source": "let x = 17;\nlet y = x * 2;\nprint y;\n// no loop needed; it's a simple multiplication"}
+{"id": "t_triple_13", "source": "// 13 * 3 = 39\nlet x = 13;\nlet result = x * 3;\nprint result;"}
+{"id": "t_triple_13", "source": "// 13 * 3 = 39\nlet x = 13;\nprint x * 3;"}
+{"id": "t_triple_13", "source": "// 13 * 3 = 39\nlet x = 13;\nlet result = x * 3;\nprint result;"}
+{"id": "t_triple_13", "source": "// 13 * 3 = 39\nlet x = 13;\nlet y = x * 3;\nprint y;"}
+{"id": "t_triple_13", "source": "// 13 * 3 = 39\nlet x = 13;\nprint x * 3;\nrepeat 3 {\n  x = x * 3;\n}"}
+{"id": "t_triple_13", "source": "// 13 * 3 = 39\nlet x = 13;\nlet result = x * 3;\nprint result;\n// no loop required; it's a simple multiplication"}
+{"id": "t_triple_13", "source": "// 13 * 3 = 39\nlet x = 13;\nlet y = x * 3;\nprint y;"}
+{"id": "t_triple_13", "source": "let x = 13;\nlet result = x * 3;\nprint result;\n// no loop needed; it's a simple multiplication"}
+{"id": "t_min_23_19", "source": "let a = 23;\nlet b = 19;\nif a < b {\n  print a;\n} else {\n  print b;\n}"}
+{"id": "t_min_23_19", "source": "// 19 is smaller than 23\nlet a = 19;\nlet b = 23;\nif a < b {\n  print a;\n} else {\n  print b;\n}"}
+{"id": "t_min_23_19", "source": "let x = 23;\nlet y = 19;\nif x < y { print x; } else { print y; }"}
+{"id": "t_min_23_19", "source": "// 19 is smaller than 23\nlet a = 19;\nlet b = 23;\nif a < b {\n  print a;\n} else {\n  print b;\n}"}
+{"id": "t_min_23_19", "source": "// 23 is smaller than 19\nlet x = 23;\nlet y = 19;\nif x < y {\n  print x;\n} else {\n  print y;\n}"}
+{"id": "t_min_23_19", "source": "// 19 is smaller than 23\nlet x = 19;\nif x < 23 {\n  print x;\n} else {\n  print 23;\n}"}
+{"id": "t_min_23_19", "source": "let a = 23;\nlet b = 19;\nif a < b {\n  print a;\n} else {\n  print b;\n}"}
+{"id": "t_min_23_19", "source": "let x = 23;\nlet y = 19;\nif x < y {\n  print x;\n} else {\n  print y;\n}"}
+{"id": "t_max_of_three", "source": "let a = 9;\nlet b = 6;\nlet c = 4;\nlet max = a;\nif b > max { max = b; }\nif c > max { max = c; }\nprint max;"}
+{"id": "t_max_of_three", "source": "let a = 9;\nlet b = 6;\nlet c = 4;\nlet max = a;\nif b > max { max = b; }\nif c > max { max = c; }\nprint max;"}
+{"id": "t_max_of_three", "source": "// largest of 4, 9, and 6\nlet a = 4;\nlet b = 9;\nlet c = 6;\nif a > b && a > c {\n  print a;\n} else if b > c {\n  print b;\n} else {\n  print c;\n}"}
+{"id": "t_max_of_three", "source": "// 4, 9, and 6: largest is 9\nlet a = 4;\nlet b = 9;\nlet c = 6;\nlet max = a;\nif b > max { max = b; }\nif c > max { max = c; }\nprint max;"}
+{"id": "t_max_of_three", "source": "// 3 largest of 4, 9, and 6\nlet a = 4;\nlet b = 9;\nlet c = 6;\nif a > b && a > c {\n  print a;\n} else if b > a && b > c {\n  print b;\n} else {\n  print c;\n}"}
+{"id": "t_max_of_three", "source": "// 4, 9, and 6: largest is 9\nlet a = 4;\nlet b = 9;\nlet c = 6;\nif a > b && a > c {\n  print a;\n} else if b > a && b > c {\n  print b;\n} else {\n  print c;\n}"}
+{"id": "t_max_of_three", "source": "let a = 9;\nlet b = 6;\nlet c = 4;\nlet max = a;\nif b > max { max = b; }\nif c > max { max = c; }\nprint max;"}
+{"id": "t_max_of_three", "source": "// 9 is the largest of 4, 9, and 6\nlet x = 9;\nif x > 6 && x > 4 {\n  print x;\n} else {\n  print 6;\n}"}
+{"id": "t_sum_consts", "source": "let a = 111;\nlet b = 222;\nlet c = 333;\nlet sum = a + b + c;\nprint sum;\n// no loop needed; it's a simple addition."}
+{"id": "t_sum_consts", "source": "let a = 111;\nlet b = 222;\nlet c = 333;\nlet total = a + b + c;\nprint total;\n// no loop required; it's a simple addition."}
+{"id": "t_sum_consts", "source": "// 111 + 222 + 333 = 666\nlet a = 111;\nlet b = 222;\nlet c = 333;\nlet sum = a + b + c;\nprint sum;\n// no loop required"}
+{"id": "t_sum_consts", "source": "// add 111, 222, and 333\nlet a = 111;\nlet b = 222;\nlet c = 333;\nlet total = a + b + c;\nprint total;\n// no loops needed; it's a simple addition"}
+{"id": "t_sum_consts", "source": "// sum 111, 222, and 333\nlet a = 111;\nlet b = 222;\nlet c = 333;\nlet total = a + b + c;\nprint total;\n// no loops needed; it's a simple addition"}
+{"id": "t_sum_consts", "source": "// add 111, 222, and 333 and print the total\nlet a = 111;\nlet b = 222;\nlet c = 333;\nlet sum = a + b + c;\nprint sum;\n// no loop required; it's a simple addition"}
+{"id": "t_sum_consts", "source": "let a = 111;\nlet b = 222;\nlet c = 333;\nlet sum = a + b + c;\nprint sum;\n// no loop required; the sum is computed once."}
+{"id": "t_sum_consts", "source": "// add 111, 222, and 333\nlet a = 111;\nlet b = 222;\nlet c = 333;\nlet sum = a + b + c;\nprint sum;\n// no loop needed; it's a simple addition"}
+{"id": "t_avg_3", "source": "let a = 10;\nlet b = 20;\nlet c = 33;\nlet sum = a + b + c;\nlet avg = sum / 3;\nprint avg;\n// no loop required"}
+{"id": "t_avg_3", "source": "// average of 10, 20, and 33\nlet a = 10;\nlet b = 20;\nlet c = 33;\nlet avg = (a + b + c) / 3;\nprint avg;\n// no loop required; it's a simple addition and division"}
+{"id": "t_avg_3", "source": "// integer average of 10, 20, and 33\nlet x = 10;\nlet y = 20;\nlet z = 33;\nlet average = (x + y + z) / 3;\nprint average;"}
+{"id": "t_avg_3", "source": "let x = 10;\nlet y = 20;\nlet z = 33;\nlet average = (x + y + z) / 3;\nprint average;"}
+{"id": "t_avg_3", "source": "// integer average of 10, 20, and 33\nlet a = 10;\nlet b = 20;\nlet c = 33;\nlet sum = a + b + c;\nlet average = sum / 3;\nprint average;"}
+{"id": "t_avg_3", "source": "// average of 10, 20, and 33\nlet sum = 10 + 20 + 33;\nlet avg = sum / 3;\nprint avg;\n// no loop required, only one calculation"}
+{"id": "t_avg_3", "source": "let a = 10;\nlet b = 20;\nlet c = 33;\nlet average = (a + b + c) / 3;\nprint average;"}
+{"id": "t_avg_3", "source": "// average of 10, 20, and 33\nlet a = 10;\nlet b = 20;\nlet c = 33;\nlet average = (a + b + c) / 3;\nprint average;\n// no loop needed; it's a simple sum divided by 3"}
+{"id": "t_sq_9", "source": "let x = 9;\nlet square = x * x;\nprint square;\n// no loop required, just a single multiplication."}
+{"id": "t_sq_9", "source": "let square = 9 * 9;\nprint square;\n// no loop needed; it's a simple multiplication."}
+{"id": "t_sq_9", "source": "let x = 9;\nlet square = x * x;\nprint square;\n// no loop required; it's a simple multiplication."}
+{"id": "t_sq_9", "source": "let x = 9;\nlet square = x * x;\nprint square;"}
+{"id": "t_sq_9", "source": "// 9 squared is 81\nlet x = 9;\nprint x * x;"}
+{"id": "t_sq_9", "source": "// 9 squared is 81\nlet x = 9;\nprint x * x;"}
+{"id": "t_sq_9", "source": "// 9 squared is 81\nlet x = 9;\nprint x * x;"}
+{"id": "t_sq_9", "source": "// square of 9\nlet x = 9;\nlet square = x * x;\nprint square;\n// no loop needed; it's a simple multiplication."}
+{"id": "t_rem_45_7", "source": "let x = 45;\nlet remainder = x % 7;\nprint remainder;\n// 45 divided by 7 has a remainder of 3."}
+{"id": "t_rem_45_7", "source": "// 45 divided by 7, remainder is 3\nlet x = 45;\nlet rem = x % 7;\nprint rem;\n// no loop required; 45 / 7 = 6 with remainder 3."}
+{"id": "t_rem_45_7", "source": "// 45 divided by 7\nlet x = 45;\nlet remainder = x % 7;\nprint remainder;\n// no loop required; 45 divided by 7 gives remainder 3"}
+{"id": "t_rem_45_7", "source": "// 45 divided by 7 leaves a remainder of 3\nlet x = 45;\nlet remainder = x % 7;\nprint remainder;\n// no loop required; it's a simple division and remainder calculation"}
+{"id": "t_rem_45_7", "source": "let x = 45;\nlet rem = x % 7;\nprint rem;\n// no loop needed; it's a simple division and modulus check."}
+{"id": "t_rem_45_7", "source": "// 45 divided by 7, remainder is 3\nlet x = 45;\nlet r = x % 7;\nprint r;\n// no loop required; it's a simple division and remainder check."}
+{"id": "t_rem_45_7", "source": "// 45 divided by 7 has a remainder of 3\nlet x = 45;\nlet r = x % 7;\nprint r;\n// no loop required; it's a simple division and remainder check"}
+{"id": "t_rem_45_7", "source": "// 45 divided by 7: remainder is 3\nlet x = 45;\nlet r = x % 7;\nprint r;\n// no loop required; division is exact."}
+{"id": "t_guard_div", "source": "// 100 / 4, but 4 != 0\nlet x = 100;\nlet d = 4;\nif d == 0 {\n  x = 0;\n} else {\n  x = x / d;\n}\nprint x;"}
+{"id": "t_guard_div", "source": "let x = 100;\nlet divisor = 4;\nif divisor == 0 {\n  x = 0;\n} else {\n  x = x / divisor;\n}\nprint x;\n// 4 is not zero, so 100 / 4 = 25"}
+{"id": "t_guard_div", "source": "let x = 100;\nlet divisor = 4;\nif divisor == 0 {\n  x = 0;\n} else {\n  x = x / divisor;\n}\nprint x;"}
+{"id": "t_guard_div", "source": "// 100 / 4, but 4 is zero if 4 is zero\nlet x = 100;\nlet divisor = 4;\nif divisor == 0 {\n  x = 0;\n} else {\n  x = x / divisor;\n}\nprint x;"}
+{"id": "t_guard_div", "source": "// 100 divided by 4, but 0 if 4 is zero\nlet x = 100;\nif 4 == 0 {\n  print 0;\n} else {\n  print x / 4;\n}"}
+{"id": "t_guard_div", "source": "let a = 100;\nlet b = 4;\nif b == 0 {\n  a = 0;\n} else {\n  a = a / b;\n}\nprint a;\n// 400 / 4 = 100, but 400 / 4 = 100, 0 / 4 = 0"}
+{"id": "t_guard_div", "source": "let x = 100;\nif 4 == 0 {\n  x = 0;\n} else {\n  x = 100 / 4;\n}\nprint x;"}
+{"id": "t_guard_div", "source": "// divisor 4 is zero, so we print 0 instead\nlet x = 100;\nif 4 == 0 {\n  print 0;\n} else {\n  print x / 4;\n}"}
+{"id": "t_even_28", "source": "let isEven = true;\nif 28 % 2 == 0 {\n  isEven = true;\n} else {\n  isEven = false;\n}\nprint isEven;"}
+{"id": "t_even_28", "source": "let x = 28;\nprint x % 2 == 0 ? true : false;"}
+{"id": "t_even_28", "source": "let isEven = false;\nlet x = 28;\nif x % 2 == 0 {\n  isEven = true;\n} else {\n  isEven = false;\n}\nprint isEven;"}
+{"id": "t_even_28", "source": "// 28 is even if it is divisible by 2\nlet x = 28;\nif x % 2 == 0 {\n  print true;\n} else {\n  print false;\n}"}
+{"id": "t_even_28", "source": "// 28 is even if it is divisible by 2\nlet x = 28;\nif x % 2 == 0 {\n  print true;\n} else {\n  print false;\n}"}
+{"id": "t_even_28", "source": "let x = 28;\nlet isEven = true;\nif x % 2 == 0 {\n  isEven = true;\n} else {\n  isEven = false;\n}\nprint isEven;"}
+{"id": "t_even_28", "source": "let x = 28;\nlet isEven = x % 2 == 0;\nprint isEven;"}
+{"id": "t_even_28", "source": "// 28 is even if 28 % 2 == 0\nlet x = 28;\nif x % 2 == 0 {\n  print true;\n} else {\n  print false;\n}"}
+{"id": "t_cmp_chain", "source": "let a = 5;\nlet b = 8;\nif a < b && b < 13 {\n  print true;\n} else {\n  print false;\n}"}
+{"id": "t_cmp_chain", "source": "// 5 is less than 8 and 8 is less than 13\nlet x = 5;\nlet y = 8;\nif x < y && y < 13 {\n  print true;\n} else {\n  print false;\n}"}
+{"id": "t_cmp_chain", "source": "let x = 5;\nlet y = 8;\nif x < y && y < 13 {\n  print true;\n} else {\n  print false;\n}"}
+{"id": "t_cmp_chain", "source": "// 5 < 8 and 8 < 13\nlet x = 5;\nlet y = 8;\nif x < y && y < 13 {\n  print true;\n} else {\n  print false;\n}"}
+{"id": "t_cmp_chain", "source": "let x = 5;\nif x < 8 && x < 13 {\n  print true;\n} else {\n  print false;\n}"}
+{"id": "t_cmp_chain", "source": "// 5 < 8 and 8 < 13\nlet x = 5;\nif x < 8 {\n  print true;\n} else {\n  print false;\n}"}
+{"id": "t_cmp_chain", "source": "let x = 5;\nlet y = 8;\nif x < y && y < 13 {\n  print true;\n} else {\n  print false;\n}"}
+{"id": "t_cmp_chain", "source": "// 5 < 8 and 8 < 13\nlet x = 5;\nif x < 8 {\n  print true;\n} else {\n  print false;\n}"}
+{"id": "t_bigger_product", "source": "let x = 6 * 7;\nlet y = 5 * 9;\nif x > y {\n  print x;\n} else {\n  print y;\n}"}
+{"id": "t_bigger_product", "source": "// 6*7 vs 5*9: which is larger?\nlet a = 6 * 7;\nlet b = 5 * 9;\nif a > b {\n  print a;\n} else {\n  print b;\n}"}
+{"id": "t_bigger_product", "source": "// 6*7 vs 5*9: larger is 6*7\nlet a = 6*7;\nlet b = 5*9;\nif a > b {\n  print a;\n} else {\n  print b;\n}"}
+{"id": "t_bigger_product", "source": "let a = 6 * 7;\nlet b = 5 * 9;\nlet larger = a;\nif b > a {\n  larger = b;\n}\nprint larger;"}
+{"id": "t_bigger_product", "source": "let x = 6 * 7;\nlet y = 5 * 9;\nlet max = x;\nif y > x {\n  max = y;\n}\nprint max;"}
+{"id": "t_bigger_product", "source": "let a = 6 * 7;\nlet b = 5 * 9;\nif a > b {\n  print a;\n} else {\n  print b;\n}"}
+{"id": "t_bigger_product", "source": "// 6 * 7 vs 5 * 9\nlet x = 6 * 7;\nlet y = 5 * 9;\nif x > y {\n  print x;\n} else {\n  print y;\n}"}
+{"id": "t_bigger_product", "source": "let x = 6 * 7;\nlet y = 5 * 9;\nlet larger = x;\nif y > x {\n  larger = y;\n} else {\n  larger = x;\n}\nprint larger;"}
+{"id": "t_abs_diff", "source": "// absolute difference of 19 and 47\nlet x = 19;\nlet y = 47;\nlet diff = y - x;\nprint diff;\n// no loop needed; it's a simple subtraction"}
+{"id": "t_abs_diff", "source": "// absolute difference of 19 and 47\nlet x = 19;\nlet y = 47;\nlet diff = y - x;\nprint diff;"}
+{"id": "t_abs_diff", "source": "// absolute difference of 19 and 47\nlet a = 19;\nlet b = 47;\nlet diff = b - a;\nprint diff;\n// no loop required"}
+{"id": "t_abs_diff", "source": "// absolute difference between 19 and 47\nlet x = 19;\nlet y = 47;\nlet diff = y - x;\nprint diff;\n// no loop needed; it's a simple subtraction"}
+{"id": "t_abs_diff", "source": "// absolute difference of 19 and 47\nlet a = 19;\nlet b = 47;\nlet diff = b - a;\nprint diff;\n// no loop needed"}
+{"id": "t_abs_diff", "source": "// absolute difference between 19 and 47\nlet a = 19;\nlet b = 47;\nlet diff = b - a;\nprint diff;\n// no loop required; it's a simple subtraction"}
+{"id": "t_abs_diff", "source": "// absolute difference of 19 and 47\nlet a = 19;\nlet b = 47;\nlet diff = b - a;\nprint diff;\n// no loop needed; it's a simple subtraction"}
+{"id": "t_abs_diff", "source": "let a = 19;\nlet b = 47;\nlet diff = b - a;\nprint diff;\n// 19 and 47 have an absolute difference of 28."}
+{"id": "t_n_and_square", "source": "// 12, 144\nlet x = 12;\nprint x;\nlet y = x * x;\nprint y;"}
+{"id": "t_n_and_square", "source": "let x = 12;\nprint x;\nlet square = x * x;\nprint square;"}
+{"id": "t_n_and_square", "source": "let x = 12;\nprint x;\nlet square = x * x;\nprint square;"}
+{"id": "t_n_and_square", "source": "// 12 and 12 squared\nlet x = 12;\nprint x;\nlet y = x * x;\nprint y;"}
+{"id": "t_n_and_square", "source": "// 12 and its square\nlet x = 12;\nprint x;\nlet square = x * x;\nprint square;"}
+{"id": "t_n_and_square", "source": "// 12 and 12 squared\nlet x = 12;\nprint x;\nlet square = x * x;\nprint square;"}
+{"id": "t_n_and_square", "source": "let x = 12;\nprint x;\nlet y = x * x;\nprint y;"}
+{"id": "t_n_and_square", "source": "let x = 12;\nprint x;\nlet square = x * x;\nprint square;"}
+{"id": "t_count_3_9", "source": "// print numbers from 3 to 9\nlet n = 3;\nrepeat 7 {\n  print n;\n  n = n + 1;\n}"}
+{"id": "t_count_3_9", "source": "// print numbers from 3 to 9\nlet x = 3;\nrepeat 7 {\n  print x;\n  x = x + 1;\n}"}
+{"id": "t_count_3_9", "source": "// numbers from 3 to 9, inclusive\nlet i = 3;\nrepeat 7 {\n  print i;\n  i = i + 1;\n}"}
+{"id": "t_count_3_9", "source": "let i = 3;\nrepeat 7 {\n  print i;\n  i = i + 1;\n}"}
+{"id": "t_count_3_9", "source": "// print numbers from 3 to 9\nlet n = 3;\nrepeat 7 {\n  print n;\n  n = n + 1;\n}"}
+{"id": "t_count_3_9", "source": "// print numbers from 3 to 9, inclusive\nlet x = 3;\nrepeat 7 {\n  print x;\n  x = x + 1;\n}"}
+{"id": "t_count_3_9", "source": "// numbers from 3 to 9, inclusive\nlet x = 3;\nrepeat 7 {\n  print x;\n  x = x + 1;\n}"}
+{"id": "t_count_3_9", "source": "// print numbers from 3 to 9\nlet x = 3;\nrepeat 7 {\n  print x;\n  x = x + 1;\n}"}
+{"id": "t_countdown_8", "source": "// countdown from 8 to 1\nlet n = 8;\nrepeat 8 {\n  print n;\n  n = n - 1;\n}"}
+{"id": "t_countdown_8", "source": "let start = 8;\nrepeat 8 {\n  print start;\n  start = start - 1;\n}"}
+{"id": "t_countdown_8", "source": "// countdown from 8 to 1\nlet x = 8;\nrepeat 8 {\n  print x;\n  x = x - 1;\n}"}
+{"id": "t_countdown_8", "source": "// countdown from 8 to 1\nlet count = 8;\nrepeat 8 {\n  print count;\n  count = count - 1;\n}"}
+{"id": "t_countdown_8", "source": "// countdown from 8 to 1\nlet x = 8;\nrepeat 8 {\n  print x;\n  x = x - 1;\n}"}
+{"id": "t_countdown_8", "source": "// countdown from 8 to 1, printing each number\nlet n = 8;\nrepeat 8 {\n  print n;\n  n = n - 1;\n}"}
+{"id": "t_countdown_8", "source": "let start = 8;\nlet end = 1;\nrepeat end {\n  print start;\n  start = start - 1;\n}"}
+{"id": "t_countdown_8", "source": "// countdown from 8 to 1, printing each number\nlet x = 8;\nrepeat 8 {\n  print x;\n  x = x - 1;\n}"}
+{"id": "t_mults_4", "source": "let n = 1;\nrepeat 5 {\n  print n * 4;\n  n = n + 1;\n}"}
+{"id": "t_mults_4", "source": "// first 5 multiples of 4, starting at 4\nlet x = 1;\nrepeat 5 {\n  print x * 4;\n  x = x + 1;\n}"}
+{"id": "t_mults_4", "source": "// first 5 multiples of 4, starting at 4\nlet n = 1;\nrepeat 5 {\n  let m = 4 * n;\n  print m;\n  n = n + 1;\n}"}
+{"id": "t_mults_4", "source": "let i = 1;\nrepeat 5 {\n  print i * 4;\n  i = i + 1;\n}"}
+{"id": "t_mults_4", "source": "// first 5 multiples of 4, starting at 4\nlet x = 1;\nrepeat 5 {\n  print x * 4;\n  x = x + 1;\n}"}
+{"id": "t_mults_4", "source": "let i = 1;\nrepeat 5 {\n  let m = 4 * i;\n  print m;\n  i = i + 1;\n}"}
+{"id": "t_mults_4", "source": "// first 5 multiples of 4, starting at 4\nlet i = 1;\nrepeat 5 {\n  print i * 4;\n  i = i + 1;\n}"}
+{"id": "t_mults_4", "source": "let count = 1;\nrepeat 5 {\n  print count * 4;\n  count = count + 1;\n}"}
+{"id": "t_halving_64", "source": "// 64, 32, 16, 8, 4, 2\nlet x = 64;\nrepeat 6 {\n  print x;\n  x = x / 2;\n}"}
+{"id": "t_halving_64", "source": "// 64, 32, 16, 8, 4, 2\nlet x = 64;\nrepeat 6 {\n  print x;\n  x = x / 2;\n}"}
+{"id": "t_halving_64", "source": "// 64, 32, 16, 8, 4, 2\nlet x = 64;\nrepeat 6 {\n  print x;\n  x = x / 2;\n}"}
+{"id": "t_halving_64", "source": "// start at 64 and print 6 numbers, halving after each print\nlet x = 64;\nrepeat 6 {\n  print x;\n  x = x / 2;\n}"}
+{"id": "t_halving_64", "source": "// 64, 32, 16, 8, 4, 2\nlet x = 64;\nrepeat 6 {\n  print x;\n  x = x / 2;\n}"}
+{"id": "t_halving_64", "source": "// 64, 32, 16, 8, 4, 2\nlet a = 64;\nrepeat 6 {\n  print a;\n  a = a / 2;\n}"}
+{"id": "t_halving_64", "source": "let a = 64;\nrepeat 6 {\n  print a;\n  a = a / 2;\n}"}
+{"id": "t_halving_64", "source": "// 64, 32, 16, 8, 4, 2\nlet a = 64;\nlet b = 32;\nrepeat 5 {\n  print a;\n  a = a / 2;\n  b = b / 2;\n}"}
+{"id": "t_doubling_3", "source": "// 3, 6, 12, 24, 48\nlet x = 3;\nlet i = 1;\nrepeat 5 {\n  print x;\n  x = x * 2;\n  i = i + 1;\n}"}
+{"id": "t_doubling_3", "source": "// start at 3, print 5 numbers, doubling after each print\nlet x = 3;\nrepeat 5 {\n  print x;\n  x = x * 2;\n}"}
+{"id": "t_doubling_3", "source": "let x = 3;\nlet i = 1;\nrepeat 5 {\n  print x;\n  x = x * 2;\n  i = i + 1;\n}"}
+{"id": "t_doubling_3", "source": "// 3, 6, 12, 24, 48\nlet a = 3;\nrepeat 5 {\n  print a;\n  a = a * 2;\n}"}
+{"id": "t_doubling_3", "source": "// 3, 6, 12, 24, 48\nlet x = 3;\nrepeat 5 {\n  print x;\n  x = x * 2;\n}"}
+{"id": "t_doubling_3", "source": "let a = 3;\nlet b = 1;\nrepeat 5 {\n  print a;\n  a = a * 2;\n  b = b * 2;\n}"}
+{"id": "t_doubling_3", "source": "// 3, 6, 12, 24, 48\nlet n = 3;\nlet count = 1;\nrepeat 5 {\n  print n;\n  n = n * 2;\n  count = count + 1;\n}"}
+{"id": "t_doubling_3", "source": "// 3, 6, 12, 24, 48\nlet x = 3;\nlet count = 1;\nrepeat 5 {\n  print x;\n  x = x * 2;\n  count = count + 1;\n}"}
+{"id": "t_odds_1_11", "source": "// odd numbers from 1 through 11\nlet i = 1;\nrepeat 11 {\n  if i % 2 == 1 {\n    print i;\n  }\n  i = i + 1;\n}"}
+{"id": "t_odds_1_11", "source": "// odd numbers from 1 through 11\nlet i = 1;\nrepeat 11 {\n  if i % 2 != 0 {\n    print i;\n  }\n  i = i + 1;\n}"}
+{"id": "t_odds_1_11", "source": "// odd numbers from 1 through 11\nlet n = 1;\nrepeat 11 {\n  if n % 2 == 1 {\n    print n;\n  }\n  n = n + 1;\n}"}
+{"id": "t_odds_1_11", "source": "let n = 1;\nrepeat 11 {\n  if n % 2 == 1 {\n    print n;\n  }\n  n = n + 1;\n}"}
+{"id": "t_odds_1_11", "source": "let i = 1;\nrepeat 11 {\n  if i % 2 == 1 {\n    print i;\n  }\n  i = i + 1;\n}"}
+{"id": "t_odds_1_11", "source": "// odd numbers from 1 through 11\nlet x = 1;\nrepeat 11 {\n  if x % 2 != 0 {\n    print x;\n  }\n  x = x + 1;\n}"}
+{"id": "t_odds_1_11", "source": "// odd numbers from 1 through 11\nlet x = 1;\nrepeat 11 {\n  if x % 2 == 1 {\n    print x;\n  }\n  x = x + 2;\n}"}
+{"id": "t_odds_1_11", "source": "// odd numbers from 1 through 11\nlet x = 1;\nrepeat 11 {\n  if x % 2 == 1 {\n    print x;\n  }\n  x = x + 1;\n}"}
+{"id": "t_step_down_10", "source": "// decrement from 100 to 10, stepping by 10\nlet x = 100;\nrepeat 10 {\n  print x;\n  x = x - 10;\n}"}
+{"id": "t_step_down_10", "source": "// 100 down to 10 in steps of 10\nlet x = 100;\nrepeat 10 {\n  print x;\n  x = x - 10;\n}"}
+{"id": "t_step_down_10", "source": "// 100 down to 10 in steps of 10\nlet n = 100;\nrepeat 10 {\n  print n;\n  n = n - 10;\n}"}
+{"id": "t_step_down_10", "source": "// print numbers from 100 down to 10 in steps of 10\nlet n = 100;\nrepeat 10 {\n  print n;\n  n = n - 10;\n}"}
+{"id": "t_step_down_10", "source": "// print 100, 90, 80, ..., 10\nlet i = 100;\nrepeat 10 {\n  print i;\n  i = i - 10;\n}"}
+{"id": "t_step_down_10", "source": "// print numbers from 100 down to 10 in steps of 10\nlet x = 100;\nrepeat 10 {\n  print x;\n  x = x - 10;\n}"}
+{"id": "t_step_down_10", "source": "// 100 down to 10 in steps of 10\nlet i = 100;\nrepeat 10 {\n  print i;\n  i = i - 10;\n}"}
+{"id": "t_step_down_10", "source": "// print numbers from 100 down to 10 in steps of 10\nlet i = 100;\nrepeat 10 {\n  print i;\n  i = i - 10;\n}"}
+{"id": "t_squares_678", "source": "let x = 6;\nprint x * x;\nlet x = 7;\nprint x * x;\nlet x = 8;\nprint x * x;"}
+{"id": "t_squares_678", "source": "// squares of 6, 7, and 8\nlet x = 6;\nlet y = 7;\nlet z = 8;\nprint x * x;\nprint y * y;\nprint z * z;"}
+{"id": "t_squares_678", "source": "let x = 6;\nlet y = 7;\nlet z = 8;\nprint x * x;\nprint y * y;\nprint z * z;"}
+{"id": "t_squares_678", "source": "// squares of 6, 7, and 8\nlet x = 6;\nprint x * x;\nlet x = 7;\nprint x * x;\nlet x = 8;\nprint x * x;"}
+{"id": "t_squares_678", "source": "let x = 6;\nprint x * x;\nlet x = 7;\nprint x * x;\nlet x = 8;\nprint x * x;"}
+{"id": "t_squares_678", "source": "let a = 6;\nlet b = 7;\nlet c = 8;\nlet square = a * a;\nprint square;\nlet square2 = b * b;\nprint square2;\nlet square3 = c * c;\nprint square3;"}
+{"id": "t_squares_678", "source": "let a = 6;\nlet b = 7;\nlet c = 8;\nlet square = a * a;\nlet square2 = b * b;\nlet square3 = c * c;\nprint square;\nprint square2;\nprint square3;"}
+{"id": "t_squares_678", "source": "// squares of 6, 7, and 8\nlet x = 6;\nlet y = 7;\nlet z = 8;\nprint x * x;\nprint y * y;\nprint z * z;"}
+{"id": "t_pow3_seq", "source": "// 3, 9, 27\nlet a = 3;\nlet b = 3;\nrepeat 3 {\n  print a;\n  a = a * 3;\n  b = b * 3;\n}"}
+{"id": "t_pow3_seq", "source": "// start at 3, print 3 numbers, tripling after each print\nlet n = 3;\nrepeat 3 {\n  print n;\n  n = n * 3;\n}"}
+{"id": "t_pow3_seq", "source": "// 3, 9, 27\nlet a = 3;\nlet b = 3;\nlet c = 3;\nrepeat 3 {\n  print a;\n  a = a * 3;\n  b = b * 3;\n  c = c * 3;\n}"}
+{"id": "t_pow3_seq", "source": "let a = 3;\nlet b = 3;\nlet c = 3;\nrepeat 3 {\n  print a;\n  a = a * 3;\n  b = b * 3;\n  c = c * 3;\n}"}
+{"id": "t_pow3_seq", "source": "// 3, 9, 27\nlet x = 3;\nrepeat 3 {\n  print x;\n  x = x * 3;\n}"}
+{"id": "t_pow3_seq", "source": "// 3, 9, 27\nlet a = 3;\nlet b = 3;\nrepeat 3 {\n  print a;\n  a = a * 3;\n  b = b * 3;\n}"}
+{"id": "t_pow3_seq", "source": "// 3, 9, 27\nlet a = 3;\nrepeat 3 {\n  print a;\n  a = a * 3;\n}"}
+{"id": "t_pow3_seq", "source": "let a = 3;\nrepeat 3 {\n  print a;\n  a = a * 3;\n}"}
+{"id": "t_add_7_five", "source": "let total = 0;\nlet i = 0;\nrepeat 5 {\n  total = total + 7;\n  i = i + 1;\n}\nprint total;"}
+{"id": "t_add_7_five", "source": "let total = 0;\nlet i = 0;\nrepeat 5 {\n  total = total + 7;\n  i = i + 1;\n}\nprint total;"}
+{"id": "t_add_7_five", "source": "// 7 added 5 times\nlet total = 0;\nlet i = 0;\nrepeat 5 {\n  total = total + 7;\n  i = i + 1;\n}\nprint total;\n// no loop unboundedly required; only a simple loop is needed."}
+{"id": "t_add_7_five", "source": "let total = 0;\nlet count = 0;\nrepeat 5 {\n  total = total + 7;\n  count = count + 1;\n}\nprint total;\n// 7 * 5 = 35"}
+{"id": "t_add_7_five", "source": "// 7 added five times\nlet total = 0;\nlet count = 0;\nrepeat 5 {\n  total = total + 7;\n  count = count + 1;\n}\nprint total;"}
+{"id": "t_add_7_five", "source": "// add 7 to total five times\nlet total = 0;\nlet i = 0;\nrepeat 5 {\n  total = total + 7;\n  i = i + 1;\n}\nprint total;"}
+{"id": "t_add_7_five", "source": "let total = 0;\nlet i = 0;\nrepeat 5 {\n  total = total + 7;\n  i = i + 1;\n}\nprint total;"}
+{"id": "t_add_7_five", "source": "let total = 0;\nlet i = 0;\nrepeat 5 {\n  total = total + 7;\n  i = i + 1;\n}\nprint total;\n// no loop bounds; it's a fixed number, 5 times"}
+{"id": "t_sum_1_37", "source": "// sum from 1 to 37\nlet total = 0;\nlet i = 1;\nrepeat 37 {\n  total = total + i;\n  i = i + 1;\n}\nprint total;"}
+{"id": "t_sum_1_37", "source": "let sum = 0;\nlet n = 1;\nrepeat 37 {\n  sum = sum + n;\n  n = n + 1;\n}\nprint sum;"}
+{"id": "t_sum_1_37", "source": "// sum from 1 to n\nlet n = 37;\nlet sum = 0;\nrepeat n {\n  sum = sum + n;\n  n = n - 1;\n}\nprint sum;"}
+{"id": "t_sum_1_37", "source": "// sum of 1 to 37\nlet sum = 0;\nlet i = 1;\nrepeat 37 {\n  sum = sum + i;\n  i = i + 1;\n}\nprint sum;\n// no loops needed; it's a simple arithmetic sequence."}
+{"id": "t_sum_1_37", "source": "// sum from 1 to n\nlet n = 37;\nlet sum = 0;\nlet i = 1;\nrepeat n {\n  sum = sum + i;\n  i = i + 1;\n}\nprint sum;\n// no loop unboundedly or recursion required"}
+{"id": "t_sum_1_37", "source": "let sum = 0;\nlet n = 1;\nrepeat 37 {\n  sum = sum + n;\n  n = n + 1;\n}\nprint sum;"}
+{"id": "t_sum_1_37", "source": "let total = 0;\nlet n = 1;\nrepeat 37 {\n  total = total + n;\n  n = n + 1;\n}\nprint total;\n// no loops needed; it's a simple arithmetic series"}
+{"id": "t_sum_1_37", "source": "let sum = 0;\nlet n = 37;\nrepeat n {\n  sum = sum + n;\n  n = n - 1;\n}\nprint sum;"}
+{"id": "t_sum_10_20", "source": "// sum from 10 to 20 inclusive\nlet sum = 0;\nlet i = 10;\nrepeat 11 {\n  sum = sum + i;\n  i = i + 1;\n}\nprint sum;\n// no loop unboundedly or recursion required"}
+{"id": "t_sum_10_20", "source": "// sum from 10 to 20\nlet total = 0;\nlet n = 10;\nrepeat 11 {\n  total = total + n;\n  n = n + 1;\n}\nprint total;\n// no loop unboundedly or recursion needed"}
+{"id": "t_sum_10_20", "source": "let sum = 0;\nlet n = 10;\nrepeat 11 {\n  sum = sum + n;\n  n = n + 1;\n}\nprint sum;"}
+{"id": "t_sum_10_20", "source": "// sum from 10 to 20\nlet total = 0;\nlet i = 10;\nrepeat 11 {\n  total = total + i;\n  i = i + 1;\n}\nprint total;\n// no loop unboundedly or recursion needed; it's a simple loop with a count"}
+{"id": "t_sum_10_20", "source": "// sum from 10 to 20\nlet sum = 0;\nlet i = 10;\nrepeat 11 {\n  sum = sum + i;\n  i = i + 1;\n}\nprint sum;"}
+{"id": "t_sum_10_20", "source": "let sum = 0;\nlet i = 10;\nrepeat 11 {\n  sum = sum + i;\n  i = i + 1;\n}\nprint sum;"}
+{"id": "t_sum_10_20", "source": "let sum = 0;\nlet i = 10;\nrepeat 11 {\n  sum = sum + i;\n  i = i + 1;\n}\nprint sum;\n// 195"}
+{"id": "t_sum_10_20", "source": "let sum = 0;\nlet i = 10;\nrepeat 11 {\n  sum = sum + i;\n  i = i + 1;\n}\nprint sum;"}
+{"id": "t_prod_1_5", "source": "let product = 1;\nlet i = 1;\nrepeat 5 {\n  product = product * i;\n  i = i + 1;\n}\nprint product;"}
+{"id": "t_prod_1_5", "source": "let x = 1;\nlet y = 2;\nlet z = 3;\nlet w = 4;\nlet v = 5;\nprint x * y * z * w * v;"}
+{"id": "t_prod_1_5", "source": "let product = 1;\nlet i = 1;\nrepeat 5 {\n  product = product * i;\n  i = i + 1;\n}\nprint product;"}
+{"id": "t_prod_1_5", "source": "let product = 1;\nlet i = 1;\nrepeat 5 {\n  product = product * i;\n  i = i + 1;\n}\nprint product;"}
+{"id": "t_prod_1_5", "source": "// product of 1 through 5\nlet result = 1;\nlet i = 1;\nrepeat 5 {\n  result = result * i;\n  i = i + 1;\n}\nprint result;"}
+{"id": "t_prod_1_5", "source": "// 1 * 2 * 3 * 4 * 5 = 120\nlet x = 1;\nlet y = 2;\nlet z = 3;\nlet w = 4;\nlet v = 5;\nprint x * y * z * w * v;"}
+{"id": "t_prod_1_5", "source": "let x = 1;\nlet product = 1;\nrepeat 5 {\n  product = product * x;\n  x = x + 1;\n}\nprint product;"}
+{"id": "t_prod_1_5", "source": "// product of 1 through 5\nlet product = 1;\nlet i = 1;\nrepeat 5 {\n  product = product * i;\n  i = i + 1;\n}\nprint product;"}
+{"id": "t_sum_mult3_30", "source": "let sum = 0;\nlet i = 3;\nrepeat 10 {\n  if i % 3 == 0 {\n    sum = sum + i;\n  }\n  i = i + 3;\n}\nprint sum;\n// 195"}
+{"id": "t_sum_mult3_30", "source": "// sum of multiples of 3 from 3 to 30\nlet sum = 0;\nlet i = 3;\nrepeat 10 {\n  if i % 3 == 0 {\n    sum = sum + i;\n  }\n  i = i + 3;\n}\nprint sum;\n// no loops needed; it's a simple arithmetic series"}
+{"id": "t_sum_mult3_30", "source": "let total = 0;\nlet i = 3;\nrepeat 10 {\n  if i % 3 == 0 {\n    total = total + i;\n  }\n  i = i + 3;\n}\nprint total;"}
+{"id": "t_sum_mult3_30", "source": "let sum = 0;\nlet n = 3;\nrepeat 10 {\n  if n % 3 == 0 {\n    sum = sum + n;\n  }\n  n = n + 3;\n}\nprint sum;"}
+{"id": "t_sum_mult3_30", "source": "let sum = 0;\nlet i = 3;\nrepeat 10 {\n  if i % 3 == 0 {\n    sum = sum + i;\n  }\n  i = i + 3;\n}\nprint sum;\n// no loop unboundedly, no way to recurse; only loop with an up-front count"}
+{"id": "t_sum_mult3_30", "source": "// sum of multiples of 3 from 3 to 30\nlet sum = 0;\nlet i = 3;\nrepeat 10 {\n  if i % 3 == 0 {\n    sum = sum + i;\n  }\n  i = i + 3;\n}\nprint sum;"}
+{"id": "t_sum_mult3_30", "source": "let sum = 0;\nlet n = 3;\nrepeat 10 {\n  if n % 3 == 0 {\n    sum = sum + n;\n  }\n  n = n + 3;\n}\nprint sum;\n// 3 + 6 + 9 + 12 + 15 + 18 + 21 + 24 + 27 + 30 = 105"}
+{"id": "t_sum_mult3_30", "source": "let sum = 0;\nlet i = 3;\nrepeat 10 {\n  if i % 3 == 0 {\n    sum = sum + i;\n  }\n  i = i + 3;\n}\nprint sum;\n// 10 is the count; the loop runs 10 times, adding 3 each time."}
+{"id": "t_sum_evens_2_14", "source": "// add even numbers from 2 to 14\nlet sum = 0;\nlet n = 2;\nrepeat 7 {\n  if n % 2 == 0 {\n    sum = sum + n;\n  }\n  n = n + 2;\n}\nprint sum;"}
+{"id": "t_sum_evens_2_14", "source": "let start = 2;\nlet total = 0;\nlet n = 14;\nrepeat n {\n  if start % 2 == 0 {\n    total = total + start;\n  }\n  start = start + 2;\n}\nprint total;"}
+{"id": "t_sum_evens_2_14", "source": "let total = 0;\nlet i = 2;\nrepeat 7 {\n  if i % 2 == 0 {\n    total = total + i;\n  }\n  i = i + 2;\n}\nprint total;"}
+{"id": "t_sum_evens_2_14", "source": "// add even numbers from 2 to 14\nlet sum = 0;\nlet i = 2;\nrepeat 7 {\n  if i % 2 == 0 {\n    sum = sum + i;\n  }\n  i = i + 2;\n}\nprint sum;\n// no loop unboundedly or recursion required"}
+{"id": "t_sum_evens_2_14", "source": "// sum of even numbers from 2 to 14\nlet sum = 0;\nlet n = 14;\nrepeat 7 {\n  if n % 2 == 0 {\n    sum = sum + n;\n  }\n  n = n - 2;\n}\nprint sum;\n// no loop unboundedly, no recursion"}
+{"id": "t_sum_evens_2_14", "source": "// sum of even numbers from 2 to 14\nlet sum = 0;\nlet i = 2;\nrepeat 7 {\n  if i % 2 == 0 {\n    sum = sum + i;\n  }\n  i = i + 2;\n}\nprint sum;"}
+{"id": "t_sum_evens_2_14", "source": "// sum of even numbers from 2 to 14\nlet sum = 0;\nlet n = 2;\nrepeat 7 {\n  if n % 2 == 0 {\n    sum = sum + n;\n  }\n  n = n + 2;\n}\nprint sum;"}
+{"id": "t_sum_evens_2_14", "source": "// sum of even numbers from 2 to 14\nlet total = 0;\nlet i = 2;\nrepeat 7 {\n  if i % 2 == 0 {\n    total = total + i;\n  }\n  i = i + 2;\n}\nprint total;"}
+{"id": "t_count_div7", "source": "// count numbers from 1 to 100 divisible by 7\nlet count = 0;\nrepeat 14 { // 7*14 = 98, 7*15 = 105 > 100\n  if (7 % 7 == 0) {\n    count = count + 1;\n  }\n}\nprint count;\n// 14"}
+{"id": "t_count_div7", "source": "let count = 0;\nlet i = 7;\nrepeat 14 {\n  if i % 7 == 0 {\n    count = count + 1;\n  }\n  i = i + 7;\n}\nprint count;\n// 14"}
+{"id": "t_count_div7", "source": "// count how many numbers from 1 to 100 are divisible by 7\nlet count = 0;\nlet i = 7;\nrepeat 14 {  // 7 * 14 = 98, 7 * 15 = 105 > 100\n  if i % 7 == 0 {\n    count = count + 1;\n  }\n  i = i + 7;\n}\nprint count;\n// 14"}
+{"id": "t_count_div7", "source": "// count numbers from 1 to 100 divisible by 7\nlet count = 0;\nrepeat 14 { // 100 / 7 = 14.2857, 14 is the max\n  if (7 % 7 == 0) {\n    count = count + 1;\n  }\n}\nprint count;\n// no loop unboundedly needed"}
+{"id": "t_count_div7", "source": "// count numbers from 1 to 100 divisible by 7\nlet count = 0;\nlet i = 1;\nrepeat 14 {  // 14 is 100 / 7 + 2\n  if i % 7 == 0 {\n    count = count + 1;\n  }\n  i = i + 1;\n}\nprint count;\n// 14"}
+{"id": "t_count_div7", "source": "// count numbers from 1 to 100 divisible by 7\nlet count = 0;\nrepeat 14 { \n  if (7 % 7 == 0) {\n    count = count + 1;\n  }\n}\nprint count;"}
+{"id": "t_count_div7", "source": "// count numbers from 1 to 100 divisible by 7\nlet count = 0;\nlet i = 7;\nrepeat 14 {\n  if i % 7 == 0 {\n    count = count + 1;\n  }\n  i = i + 7;\n}\nprint count;\n// 14"}
+{"id": "t_count_div7", "source": "let count = 0;\nlet i = 7;\nrepeat 14 { \n  if i % 7 == 0 { \n    count = count + 1;\n  }\n  i = i + 7;\n}\nprint count;\n// 14"}
+{"id": "t_mod3_pattern", "source": "// i modulo 3 for i = 1 to 7\nlet i = 1;\nrepeat 7 {\n  print i % 3;\n  i = i + 1;\n}"}
+{"id": "t_mod3_pattern", "source": "let i = 1;\nrepeat 7 {\n  let rem = i % 3;\n  print rem;\n  i = i + 1;\n}"}
+{"id": "t_mod3_pattern", "source": "let i = 1;\nrepeat 7 {\n  print i % 3;\n  i = i + 1;\n}"}
+{"id": "t_mod3_pattern", "source": "// i modulo 3 for i = 1 to 7\nlet i = 1;\nrepeat 7 {\n  let mod = i % 3;\n  print mod;\n  i = i + 1;\n}"}
+{"id": "t_mod3_pattern", "source": "let i = 1;\nlet n = 7;\nrepeat n {\n  let rem = i % 3;\n  print rem;\n  i = i + 1;\n}"}
+{"id": "t_mod3_pattern", "source": "// i modulo 3 for i = 1 to 7\nlet i = 1;\nrepeat 7 {\n  print i % 3;\n  i = i + 1;\n}"}
+{"id": "t_mod3_pattern", "source": "let i = 1;\nrepeat 7 {\n  let mod = i % 3;\n  print mod;\n  i = i + 1;\n}"}
+{"id": "t_mod3_pattern", "source": "// i modulo 3 for i = 1 to 7\nlet i = 1;\nrepeat 7 {\n  let mod = i % 3;\n  print mod;\n  i = i + 1;\n}"}
+{"id": "t_running_max", "source": "// check max of 5, 12, 7, 3, 18\nlet max = 5;\nlet i = 1;\nrepeat 5 {\n  if i == 1 || (i == 5 && max < 18) {\n    max = 18;\n  }\n  i = i + 1;\n}\nprint max;"}
+{"id": "t_running_max", "source": "let max = 5;\nlet a = 5;\nlet b = 12;\nlet c = 7;\nlet d = 3;\nlet e = 18;\nif a > max { max = a; }\nif b > max { max = b; }\nif c > max { max = c; }\nif d > max { max = d; }\nif e > max { max = e; }\nprint max;\n// no loops required; max is updated in a single pass"}
+{"id": "t_running_max", "source": "// maximum of 5, 12, 7, 3, 18\nlet max = 5;\nlet a = 5;\nlet b = 12;\nlet c = 7;\nlet d = 3;\nlet e = 18;\nrepeat 5 {\n  if a > max { max = a; } else if b > max { max = b; } else if c > max { max = c; } else if d > max { max = d; } else if e > max { max = e; }\n}\nprint max;\n// 18"}
+{"id": "t_running_max", "source": "let max = 5;\nlet a = 5;\nlet b = 12;\nlet c = 7;\nlet d = 3;\nlet e = 18;\nif a > max { max = a; }\nif b > max { max = b; }\nif c > max { max = c; }\nif d > max { max = d; }\nif e > max { max = e; }\nprint max;\n// no loop required"}
+{"id": "t_running_max", "source": "let max = 5;\nlet a = 5;\nlet b = 12;\nlet c = 7;\nlet d = 3;\nlet e = 18;\nrepeat 5 {\n  if a > max { max = a; }\n  if b > max { max = b; }\n  if c > max { max = c; }\n  if d > max { max = d; }\n  if e > max { max = e; }\n}\nprint max;"}
+{"id": "t_running_max", "source": "// check maximum of 5, 12, 7, 3, 18\nlet max = 5;\nlet i = 1;\nrepeat 5 {\n  if i == 1 || (i == 5 && max < 18) {\n    max = 18;\n  }\n  i = i + 1;\n}\nprint max;"}
+{"id": "t_running_max", "source": "// check the maximum of 5, 12, 7, 3, 18\nlet max = 5;\nlet i = 1;\nrepeat 5 {\n  if i == 1 || (i == 5 && max < 18) {\n    max = 18;\n  }\n  i = i + 1;\n}\nprint max;"}
+{"id": "t_running_max", "source": "// check max of 5, 12, 7, 3, 18\nlet max = 5;\nlet i = 1;\nrepeat 5 {\n  if i == 1 {\n    max = 12;\n  } else if i == 2 {\n    max = 7;\n  } else if i == 3 {\n    max = 3;\n  } else if i == 4 {\n    max = 18;\n  }\n  i = i + 1;\n}\nprint max;"}
+{"id": "t_gcd_48_18", "source": "// gcd of 48 and 18 via repeated subtraction\nlet x = 48;\nlet y = 18;\nrepeat 3 {\n  x = x - y;\n  y = y - x;\n}\nprint x;"}
+{"id": "t_gcd_48_18", "source": "// gcd of 48 and 18\nlet a = 48;\nlet b = 18;\nrepeat 2 {\n  let d = a % b;\n  a = b;\n  b = d;\n}\nprint a;"}
+{"id": "t_gcd_48_18", "source": "// gcd of 48 and 18 using repeated subtraction\nlet x = 48;\nlet y = 18;\nrepeat 3 {\n  let d = x % y;\n  x = y;\n  y = d;\n}\nprint x;\n// 18 and 48 have gcd of 12"}
+{"id": "t_gcd_48_18", "source": "let a = 48;\nlet b = 18;\nlet d = 1;\nrepeat 3 {\n  let next = a % b;\n  a = b;\n  b = next;\n  d = d * 2;\n}\nprint d;"}
+{"id": "t_gcd_48_18", "source": "let x = 48;\nlet y = 18;\nrepeat 1 {\n  x = x - y;\n  y = y - x;\n}\nprint x;\n// 48 and 18 have a greatest common divisor of 6."}
+{"id": "t_gcd_48_18", "source": "// greatest common divisor of 48 and 18 using repeated subtraction\nlet a = 48;\nlet b = 18;\nrepeat 4 {\n  let diff = a - b;\n  a = b;\n  b = diff;\n}\nprint b;"}
+{"id": "t_gcd_48_18", "source": "// gcd of 48 and 18 using repeated subtraction\nlet x = 48;\nlet y = 18;\nrepeat 3 {\n  let temp = x % y;\n  x = y;\n  y = temp;\n}\nprint x;\n// 18"}
+{"id": "t_gcd_48_18", "source": "// compute gcd of 48 and 18 using repeated subtraction\nlet x = 48;\nlet y = 18;\nrepeat 3 {\n  let temp = x % y;\n  x = y;\n  y = temp;\n}\nprint x;"}
+{"id": "t_triangular_9", "source": "// 9th triangular number is 45\nlet n = 9;\nlet sum = 0;\nrepeat n {\n  sum = sum + n;\n  n = n - 1;\n}\nprint sum;"}
+{"id": "t_triangular_9", "source": "let sum = 0;\nlet i = 1;\nrepeat 9 {\n  sum = sum + i;\n  i = i + 1;\n}\nprint sum;\n// no loops required, just a single sum from 1 to 9"}
+{"id": "t_triangular_9", "source": "// 9th triangular number\nlet n = 9;\nlet sum = 0;\nrepeat n {\n  sum = sum + n;\n  n = n - 1;\n}\nprint sum;"}
+{"id": "t_triangular_9", "source": "// 9th triangular number: sum 1 through 9\nlet sum = 0;\nlet n = 9;\nrepeat n {\n  sum = sum + n;\n  n = n - 1;\n}\nprint sum;"}
+{"id": "t_triangular_9", "source": "// 9th triangular number is 45\nlet n = 9;\nlet sum = 0;\nrepeat n {\n  sum = sum + n;\n  n = n - 1;\n}\nprint sum;"}
+{"id": "t_triangular_9", "source": "// 9th triangular number is the sum of 1 through 9\nlet n = 9;\nlet sum = 0;\nlet i = 1;\nrepeat n {\n  sum = sum + i;\n  i = i + 1;\n}\nprint sum;"}
+{"id": "t_triangular_9", "source": "// 9th triangular number\nlet n = 9;\nlet sum = 0;\nlet i = 1;\nrepeat n {\n  sum = sum + i;\n  i = i + 1;\n}\nprint sum;"}
+{"id": "t_triangular_9", "source": "// 9th triangular number\nlet n = 9;\nlet sum = 0;\nlet i = 1;\nrepeat n {\n  sum = sum + i;\n  i = i + 1;\n}\nprint sum;"}
+{"id": "t_guarded_countdown", "source": "// 30, 23, 16, 9, 2\nlet a = 30;\nrepeat 5 {\n  if a > 0 {\n    print a;\n    a = a - 7;\n  }\n}"}
+{"id": "t_guarded_countdown", "source": "let x = 30;\nlet count = 0;\nrepeat 5 {\n  if x > 0 {\n    print x;\n    x = x - 7;\n  }\n  count = count + 1;\n}"}
+{"id": "t_guarded_countdown", "source": "let start = 30;\nlet count = 0;\nrepeat 5 {\n  if start > 0 {\n    print start;\n    start = start - 7;\n  }\n  count = count + 1;\n}"}
+{"id": "t_guarded_countdown", "source": "let count = 5;\nlet current = 30;\nrepeat count {\n  if current > 0 {\n    print current;\n    current = current - 7;\n  }\n}"}
+{"id": "t_guarded_countdown", "source": "// subtract 7 five times, printing before each subtraction only while it is positive\nlet x = 30;\nlet i = 0;\nrepeat 5 {\n  if x > 0 {\n    print x;\n    x = x - 7;\n  }\n  i = i + 1;\n}"}
+{"id": "t_guarded_countdown", "source": "// subtract 7 five times, print value before each subtraction only while it is positive\nlet x = 30;\nlet count = 0;\nrepeat 5 {\n  if x > 0 {\n    print x;\n    x = x - 7;\n  }\n  count = count + 1;\n}"}
+{"id": "t_guarded_countdown", "source": "let x = 30;\nlet i = 0;\nrepeat 5 {\n  if x > 0 {\n    print x;\n    x = x - 7;\n  }\n  i = i + 1;\n}"}
+{"id": "t_guarded_countdown", "source": "let x = 30;\nlet count = 0;\nrepeat 5 {\n  if x > 0 {\n    print x;\n    x = x - 7;\n  }\n  count = count + 1;\n}"}
+{"id": "t_flag_mult4", "source": "let i = 1;\nrepeat 8 {\n  if i % 4 == 0 {\n    print 1;\n  } else {\n    print 0;\n  }\n  i = i + 1;\n}"}
+{"id": "t_flag_mult4", "source": "// 1 for each multiple of 4, 0 otherwise\nlet i = 1;\nrepeat 8 {\n  if i % 4 == 0 {\n    print 1;\n  } else {\n    print 0;\n  }\n  i = i + 1;\n}"}
+{"id": "t_flag_mult4", "source": "let n = 1;\nrepeat 8 {\n  let m = 4;\n  if n % 4 == 0 {\n    print 1;\n  } else {\n    print 0;\n  }\n  n = n + 1;\n}"}
+{"id": "t_flag_mult4", "source": "// print 1 for each multiple of 4, 0 otherwise for numbers 1 to 8\nlet n = 1;\nrepeat 8 {\n  if n % 4 == 0 {\n    print 1;\n  } else {\n    print 0;\n  }\n  n = n + 1;\n}"}
+{"id": "t_flag_mult4", "source": "let n = 1;\nrepeat 8 {\n  if n % 4 == 0 {\n    print 1;\n  } else {\n    print 0;\n  }\n  n = n + 1;\n}"}
+{"id": "t_flag_mult4", "source": "// 1 for each multiple of 4, 0 otherwise\nlet i = 1;\nrepeat 8 {\n  if i % 4 == 0 {\n    print 1;\n  } else {\n    print 0;\n  }\n  i = i + 1;\n}"}
+{"id": "t_flag_mult4", "source": "let i = 1;\nrepeat 8 {\n  if i % 4 == 0 {\n    print 1;\n  } else {\n    print 0;\n  }\n  i = i + 1;\n}"}
+{"id": "t_flag_mult4", "source": "let i = 1;\nrepeat 8 {\n  if i % 4 == 0 {\n    print 1;\n  } else {\n    print 0;\n  }\n  i = i + 1;\n}"}
+{"id": "t_nested_table", "source": "let i = 1;\nlet j = 1;\nrepeat 2 {\n  let p = i * j;\n  print p;\n  i = i + 1;\n}"}
+{"id": "t_nested_table", "source": "// i from 1 to 2, j from 1 to 3\nlet i = 1;\nlet j = 1;\nrepeat 2 {\n  let count = 0;\n  let j = 1;\n  repeat 3 {\n    count = count + j;\n    j = j + 1;\n  }\n  print i * count;\n  i = i + 1;\n}"}
+{"id": "t_nested_table", "source": "// i from 1 to 2, j from 1 to 3\nlet i = 1;\nlet j = 1;\nrepeat 2 {\n  let result = 0;\n  repeat 3 {\n    result = result + i * j;\n  }\n  print result;\n  i = i + 1;\n  j = j + 1;\n}"}
+{"id": "t_nested_table", "source": "// i from 1 to 2, j from 1 to 3, in row order\nlet i = 1;\nlet j = 1;\nrepeat 2 {\n  print i * j;\n  i = i + 1;\n  j = 1;\n  j = j + 1;\n}"}
+{"id": "t_nested_table", "source": "// i from 1 to 2, j from 1 to 3\nlet i = 1;\nlet j = 1;\nrepeat 2 {\n  let x = i * j;\n  print x;\n  i = i + 1;\n  j = j + 1;\n}"}
+{"id": "t_nested_table", "source": "let i = 1;\nlet j = 1;\nrepeat 2 {\n  let val = i * j;\n  print val;\n  i = i + 1;\n}"}
+{"id": "t_nested_table", "source": "// i from 1 to 2, j from 1 to 3\nlet i = 1;\nlet j = 1;\nrepeat 2 {\n  let val = i * j;\n  print val;\n  i = i + 1;\n}"}
+{"id": "t_nested_table", "source": "// i from 1 to 2, j from 1 to 3\nlet i = 1;\nlet j = 1;\nrepeat 2 {\n  let product = i * j;\n  print product;\n  i = i + 1;\n  j = j + 1;\n}"}
+{"id": "t_collatz_step_7", "source": "let n = 7;\nif n % 2 == 0 {\n  n = n / 2;\n} else {\n  n = 3 * n + 1;\n}\nprint n;\n// no loop needed, 1 step is sufficient"}
+{"id": "t_collatz_step_7", "source": "let n = 7;\nif n % 2 == 0 {\n  n = n / 2;\n} else {\n  n = 3 * n + 1;\n}\nprint n;"}
+{"id": "t_collatz_step_7", "source": "let x = 7;\nif x % 2 == 0 {\n  x = x / 2;\n} else {\n  x = 3 * x + 1;\n}\nprint x;\n// no loop required"}
+{"id": "t_collatz_step_7", "source": "// apply one Collatz step to 7\nlet x = 7;\nif x % 2 == 0 {\n  x = x / 2;\n} else {\n  x = 3 * x + 1;\n}\nprint x;"}
+{"id": "t_collatz_step_7", "source": "let x = 7;\nif x % 2 == 0 {\n  x = x / 2;\n} else {\n  x = 3 * x + 1;\n}\nprint x;"}
+{"id": "t_collatz_step_7", "source": "let x = 7;\nlet step = 1;\nif x % 2 == 0 {\n  x = x / 2;\n} else {\n  x = 3 * x + 1;\n}\nprint x;\nstep = 1;"}
+{"id": "t_collatz_step_7", "source": "// apply one Collatz step to 7\nlet x = 7;\nif x % 2 == 0 {\n  x = x / 2;\n} else {\n  x = 3 * x + 1;\n}\nprint x;"}
+{"id": "t_collatz_step_7", "source": "let n = 7;\nif n % 2 == 0 {\n  n = n / 2;\n} else {\n  n = 3 * n + 1;\n}\nprint n;"}
+{"id": "t_and_table", "source": "let t1 = true;\nlet t2 = true;\nlet t3 = true;\nlet t4 = true;\nlet a1 = t1 && t2;\nlet a2 = t1 && !t2;\nlet a3 = !t1 && t2;\nlet a4 = !t1 && !t2;\nprint a1;\nprint a2;\nprint a3;\nprint a4;"}
+{"id": "t_and_table", "source": "// pairs of true/true, true/false, false/true, false/false\nlet t1 = true;\nlet t2 = true;\nlet f1 = true;\nlet f2 = true;\nlet and1 = t1 && t2;\nlet and2 = t1 && !f1;\nlet and3 = !t1 && t2;\nlet and4 = !t1 && !f2;\nprint and1;\nprint and2;\nprint and3;\nprint and4;"}
+{"id": "t_and_table", "source": "let t1 = true;\nlet t2 = true;\nlet t3 = true;\nlet t4 = true;\nlet and1 = t1 && t2;\nlet and2 = t1 && !t2;\nlet and3 = !t1 && t2;\nlet and4 = !t1 && !t2;\nprint and1;\nprint and2;\nprint and3;\nprint and4;"}
+{"id": "t_and_table", "source": "let t1 = true;\nlet t2 = true;\nlet t3 = true;\nlet t4 = true;\nlet and1 = t1 && t2;\nlet and2 = t1 && !t2;\nlet and3 = !t1 && t2;\nlet and4 = !t1 && !t2;\nprint and1;\nprint and2;\nprint and3;\nprint and4;"}
+{"id": "t_and_table", "source": "// pairs of true/true, true/false, false/true, false/false\nlet t1 = true;\nlet t2 = true;\nlet f1 = true;\nlet f2 = true;\nprint t1 && t2;\nprint t1 && !f1;\nprint !f1 && t2;\nprint !f1 && !f2;"}
+{"id": "t_and_table", "source": "// pairs of booleans, true/true, true/false, false/true, false/false\nlet t1 = true;\nlet t2 = true;\nlet f1 = true;\nlet f2 = true;\nlet and1 = t1 && t2;\nlet and2 = t1 && !f1;\nlet and3 = !t1 && t2;\nlet and4 = !t1 && !f2;\nprint and1;\nprint and2;\nprint and3;\nprint and4;"}
+{"id": "t_and_table", "source": "// true/true, true/false, false/true, false/false\nlet t1 = true;\nlet t2 = true;\nlet f1 = true;\nlet f2 = true;\nlet and1 = t1 && t2;\nlet and2 = t1 && !f1;\nlet and3 = !f1 && t2;\nlet and4 = !f2 && !f1;\nprint and1;\nprint and2;\nprint and3;\nprint and4;"}
+{"id": "t_and_table", "source": "// 4 boolean pairs, one per line\nlet t1 = true;\nlet t2 = true;\nlet f1 = true;\nlet f2 = true;\nlet and1 = t1 && t2;\nlet and2 = t1 && !f1;\nlet and3 = !f1 && t2;\nlet and4 = !f1 && !f2;\nprint and1;\nprint and2;\nprint and3;\nprint and4;"}
+{"id": "t_div_rem_89_6", "source": "let a = 89;\nlet b = 6;\nlet q = a / b;\nlet r = a % b;\nprint q;\nprint r;"}
+{"id": "t_div_rem_89_6", "source": "// 89 / 6 = 14 with remainder 5\nlet x = 89;\nlet quotient = x / 6;\nlet remainder = x % 6;\nprint quotient;\nprint remainder;"}
+{"id": "t_div_rem_89_6", "source": "// 89 divided by 6\nlet x = 89;\nlet q = x / 6;\nlet r = x % 6;\nprint q;\nprint r;\n// no loops needed; it's a simple division and remainder calculation"}
+{"id": "t_div_rem_89_6", "source": "// 89 / 6 = 14, remainder 5\nlet x = 89;\nlet q = x / 6;\nlet r = x % 6;\nprint q;\nprint r;"}
+{"id": "t_div_rem_89_6", "source": "let quotient = 89 / 6;\nlet remainder = 89 % 6;\nprint quotient;\nprint remainder;"}
+{"id": "t_div_rem_89_6", "source": "let quot = 89 / 6;\nlet rem = 89 % 6;\nprint quot;\nprint rem;"}
+{"id": "t_div_rem_89_6", "source": "let quotient = 89 / 6;\nlet remainder = 89 % 6;\nprint quotient;\nprint remainder;"}
+{"id": "t_div_rem_89_6", "source": "let x = 89;\nlet y = 6;\nlet quotient = x / y;\nlet remainder = x % y;\nprint quotient;\nprint remainder;"}
+{"id": "t_mixed_sum", "source": "let sum = -5 + 10 - 15 + 20;\nprint sum;\n// no loops required; it's a simple addition"}
+{"id": "t_mixed_sum", "source": "// sum of -5, 10, -15, and 20\nlet x = -5;\nlet y = 10;\nlet z = -15;\nlet w = 20;\nlet total = x + y + z + w;\nprint total;\n// no loop required; it's a simple addition"}
+{"id": "t_mixed_sum", "source": "let total = -5 + 10 - 15 + 20;\nprint total;\n// no loop needed; it's a simple addition"}
+{"id": "t_mixed_sum", "source": "// add -5, 10, -15, and 20\nlet a = -5;\nlet b = 10;\nlet c = -15;\nlet d = 20;\nlet total = a + b + c + d;\nprint total;\n// no loops required; it's a simple addition"}
+{"id": "t_mixed_sum", "source": "let a = -5;\nlet b = 10;\nlet c = -15;\nlet d = 20;\nlet sum = a + b + c + d;\nprint sum;"}
+{"id": "t_mixed_sum", "source": "let a = -5;\nlet b = 10;\nlet c = -15;\nlet d = 20;\nlet sum = a + b + c + d;\nprint sum;\n// no loop needed"}
+{"id": "t_mixed_sum", "source": "let x = -5;\nlet y = 10;\nlet z = -15;\nlet w = 20;\nlet sum = x + y + z + w;\nprint sum;\n// no loop required; it's a simple sum."}
+{"id": "t_mixed_sum", "source": "// sum of -5, 10, -15, and 20\nlet sum = -5 + 10 - 15 + 20;\nprint sum;\n// no loop needed; it's a simple addition"}
+{"id": "t_count_gt7", "source": "let count = 0;\nlet a = 8;\nif a > 7 {\n  count = count + 1;\n}\nlet b = 3;\nif b > 7 {\n  count = count + 1;\n}\nlet c = 11;\nif c > 7 {\n  count = count + 1;\n}\nlet d = 6;\nif d > 7 {\n  count = count + 1;\n}\nlet e = 14;\nif e > 7 {\n  count = count + 1;\n}\nprint count;\n// 1"}
+{"id": "t_count_gt7", "source": "let x = 8;\nlet count = 0;\nif x > 7 {\n  count = count + 1;\n}\nlet x = 3;\nif x > 7 {\n  count = count + 1;\n}\nlet x = 11;\nif x > 7 {\n  count = count + 1;\n}\nlet x = 6;\nif x > 7 {\n  count = count + 1;\n}\nlet x = 14;\nif x > 7 {\n  count = count + 1;\n}\nprint count;\n// 1"}
+{"id": "t_count_gt7", "source": "// count how many of 8, 3, 11, 6, 14 exceed 7\nlet count = 0;\nlet num = 8;\nif num > 7 {\n  count = count + 1;\n}\nlet num = 3;\nif num > 7 {\n  count = count + 1;\n}\nlet num = 11;\nif num > 7 {\n  count = count + 1;\n}\nlet num = 6;\nif num > 7 {\n  count = count + 1;\n}\nlet num = 14;\nif num > 7 {\n  count = count + 1;\n}\nprint count;\n// no loops needed; all values are checked in order"}
+{"id": "t_count_gt7", "source": "// count how many values exceed 7 in {8, 3, 11, 6, 14}\nlet count = 0;\nlet i = 0;\nrepeat 5 {\n  if i % 2 == 0 && i != 0 {\n    if i == 8 || i == 11 || i == 14 {\n      count = count + 1;\n    }\n  }\n  i = i + 1;\n}\nprint count;\n// no loops required; 8, 11, 14 are the values exceeding 7"}
+{"id": "t_count_gt7", "source": "let x = 8;\nlet count = 0;\nif x > 7 {\n  count = count + 1;\n}\nlet x = 3;\nif x > 7 {\n  count = count + 1;\n}\nlet x = 11;\nif x > 7 {\n  count = count + 1;\n}\nlet x = 6;\nif x > 7 {\n  count = count + 1;\n}\nlet x = 14;\nif x > 7 {\n  count = count + 1;\n}\nprint count;\n// 3"}
+{"id": "t_count_gt7", "source": "let x = 8;\nlet count = 0;\nif x > 7 {\n  count = count + 1;\n}\nlet x = 3;\nif x > 7 {\n  count = count + 1;\n}\nlet x = 11;\nif x > 7 {\n  count = count + 1;\n}\nlet x = 6;\nif x > 7 {\n  count = count + 1;\n}\nlet x = 14;\nif x > 7 {\n  count = count + 1;\n}\nprint count;\n// 3"}
+{"id": "t_count_gt7", "source": "let x = 8;\nlet count = 0;\nif x > 7 {\n  count = count + 1;\n}\nlet x = 3;\nif x > 7 {\n  count = count + 1;\n}\nlet x = 11;\nif x > 7 {\n  count = count + 1;\n}\nlet x = 6;\nif x > 7 {\n  count = count + 1;\n}\nlet x = 14;\nif x > 7 {\n  count = count + 1;\n}\nprint count;\n// 1"}
+{"id": "t_count_gt7", "source": "// counts how many of the values 8, 3, 11, 6, and 14 exceed 7\nlet count = 0;\nlet num = 8;\nif num > 7 {\n  count = count + 1;\n}\nlet num = 3;\nif num > 7 {\n  count = count + 1;\n}\nlet num = 11;\nif num > 7 {\n  count = count + 1;\n}\nlet num = 6;\nif num > 7 {\n  count = count + 1;\n}\nlet num = 14;\nif num > 7 {\n  count = count + 1;\n}\nprint count;\n// no loop required; all checks are made."}
+{"id": "t_swap", "source": "let a = 3;\nlet b = 8;\nlet temp = a;\na = b;\nb = temp;\nprint a;\nprint b;"}
+{"id": "t_swap", "source": "// swap a and b using a temporary\nlet a = 3;\nlet b = 8;\nlet temp = a;\na = b;\nb = temp;\nprint a;\nprint b;"}
+{"id": "t_swap", "source": "let a = 3;\nlet b = 8;\nlet temp = b;\nb = a;\na = temp;\nprint a;\nprint b;"}
+{"id": "t_swap", "source": "let a = 3;\nlet b = 8;\nlet temp = a;\na = b;\nb = temp;\nprint a;\nprint b;"}
+{"id": "t_swap", "source": "// swap a and b using a temporary\nlet temp = 0;\nlet a = 3;\nlet b = 8;\ntemp = a;\na = b;\nb = temp;\nprint a;\nprint b;"}
+{"id": "t_swap", "source": "let a = 3;\nlet b = 8;\nlet temp = a;\na = b;\nb = temp;\nprint a;\nprint b;"}
+{"id": "t_swap", "source": "// swap a and b using a temporary\nlet a = 3;\nlet b = 8;\nlet temp = a;\na = b;\nb = temp;\nprint a;\nprint b;"}
+{"id": "t_swap", "source": "// swap a and b using a temporary\nlet temp = 0;\nlet a = 3;\nlet b = 8;\ntemp = a;\na = b;\nb = temp;\nprint a;\nprint b;"}
+{"id": "t_grade_band", "source": "let x = 75;\nif x >= 90 {\n  print 2;\n} else if x >= 60 {\n  print 1;\n} else {\n  print 0;\n}"}
+{"id": "t_grade_band", "source": "let x = 75;\nif x >= 90 {\n  print 2;\n} else if x >= 60 {\n  print 1;\n} else {\n  print 0;\n}"}
+{"id": "t_grade_band", "source": "// 75 is at least 90, 60, or 0\nlet x = 75;\nif x >= 90 {\n  print 2;\n} else if x >= 60 {\n  print 1;\n} else {\n  print 0;\n}"}
+{"id": "t_grade_band", "source": "let x = 75;\nif x >= 90 {\n  print 2;\n} else if x >= 60 {\n  print 1;\n} else {\n  print 0;\n}"}
+{"id": "t_grade_band", "source": "let x = 75;\nif x >= 90 {\n  print 2;\n} else if x >= 60 {\n  print 1;\n} else {\n  print 0;\n}"}
+{"id": "t_grade_band", "source": "// 75 is at least 90? 1\n// 75 is at least 60? 0\n// 75 is at least 90? 1\n// 75 is at least 60? 0\n// 75 is at least 90? 1\n// 75 is at least 60? 0\n// 75 is at least 90? 1\n// 75 is at least 60? 0\n// 75 is at least 90? 1\n// 75 is at least 60? 0\n// 75 is at least 90? 1\n// 75 is at least 60? 0\n// 75 is at least 90? 1\n// 75 is at least 60? 0\n// 75 is at least 90? 1\n// 75 is at least 60? 0"}
+{"id": "t_grade_band", "source": "let x = 75;\nif x >= 90 {\n  print 2;\n} else if x >= 60 {\n  print 1;\n} else {\n  print 0;\n}"}
+{"id": "t_grade_band", "source": "// 75 vs 90, 60\nlet x = 75;\nif x >= 90 {\n  print 2;\n} else if x >= 60 {\n  print 1;\n} else {\n  print 0;\n}"}
+{"id": "t_final_after_steps", "source": "// start at 25, subtract 4 six times, print final value\nlet x = 25;\nlet count = 0;\nrepeat 6 {\n  x = x - 4;\n  count = count + 1;\n}\nprint x;"}
+{"id": "t_final_after_steps", "source": "let start = 25;\nlet count = 0;\nrepeat 6 {\n  start = start - 4;\n  count = count + 1;\n}\nprint start;"}
+{"id": "t_final_after_steps", "source": "// 25 - 4 * 6 = 17\nlet x = 25;\nlet count = 6;\nrepeat count {\n  x = x - 4;\n}\nprint x;"}
+{"id": "t_final_after_steps", "source": "let start = 25;\nlet count = 6;\nlet result = start;\nrepeat count {\n  result = result - 4;\n}\nprint result;"}
+{"id": "t_final_after_steps", "source": "// start at 25, subtract 4 six times\nlet x = 25;\nlet count = 0;\nrepeat 6 {\n  x = x - 4;\n  count = count + 1;\n}\nprint x;"}
+{"id": "t_final_after_steps", "source": "let x = 25;\nlet count = 0;\nrepeat 6 {\n  x = x - 4;\n  count = count + 1;\n}\nprint x;\n// no loop unboundedly required; 6 iterations are sufficient"}
+{"id": "t_final_after_steps", "source": "let x = 25;\nlet count = 0;\nrepeat 6 {\n  x = x - 4;\n  count = count + 1;\n}\nprint x;"}
+{"id": "t_final_after_steps", "source": "// 25 - 4 * 6 = 17\nlet x = 25;\nlet i = 0;\nrepeat 6 {\n  x = x - 4;\n  i = i + 1;\n}\nprint x;"}
+{"id": "t_toggle_add", "source": "let x = 0;\nlet n = 0;\nrepeat 6 {\n  if n % 2 == 0 {\n    x = x + 5;\n  } else {\n    x = x + 3;\n  }\n  n = n + 1;\n}\nprint x;"}
+{"id": "t_toggle_add", "source": "let sum = 0;\nlet n = 0;\nrepeat 6 {\n  if n % 2 == 0 {\n    sum = sum + 5;\n  } else {\n    sum = sum + 3;\n  }\n  n = n + 1;\n}\nprint sum;"}
+{"id": "t_toggle_add", "source": "// sum of six alternating additions: 5, 3, 5, 3, 5, 3\nlet sum = 0;\nlet i = 0;\nrepeat 6 {\n  if i % 2 == 0 {\n    sum = sum + 5;\n  } else {\n    sum = sum + 3;\n  }\n  i = i + 1;\n}\nprint sum;"}
+{"id": "t_toggle_add", "source": "// 0, 5, 3, 8, 11, 14\nlet x = 0;\nrepeat 6 {\n  if x % 2 == 0 {\n    x = x + 5;\n  } else {\n    x = x + 3;\n  }\n}\nprint x;"}
+{"id": "t_toggle_add", "source": "let sum = 0;\nlet i = 0;\nrepeat 6 {\n  if i % 2 == 0 {\n    sum = sum + 5;\n  } else {\n    sum = sum + 3;\n  }\n  i = i + 1;\n}\nprint sum;"}
+{"id": "t_toggle_add", "source": "let sum = 0;\nlet i = 0;\nrepeat 6 {\n  if i % 2 == 0 {\n    sum = sum + 5;\n  } else {\n    sum = sum + 3;\n  }\n  i = i + 1;\n}\nprint sum;"}
+{"id": "t_toggle_add", "source": "let count = 0;\nlet total = 0;\nrepeat 6 {\n  if count % 2 == 0 {\n    total = total + 5;\n  } else {\n    total = total + 3;\n  }\n  count = count + 1;\n}\nprint total;"}
+{"id": "t_toggle_add", "source": "// starts at 0, adds 5 and 3 alternately, prints the final value\nlet sum = 0;\nlet count = 0;\nrepeat 6 {\n  if count % 2 == 0 {\n    sum = sum + 5;\n  } else {\n    sum = sum + 3;\n  }\n  count = count + 1;\n}\nprint sum;"}
+{"id": "t_loop_plus10", "source": "// loop counter plus 10 for counters 1 through 4\nlet i = 1;\nrepeat 4 {\n  let count = i + 10;\n  print count;\n  i = i + 1;\n}"}
+{"id": "t_loop_plus10", "source": "// loop counter + 10 for counters 1 through 4\nlet count = 1;\nrepeat 4 {\n  let result = count + 10;\n  print result;\n  count = count + 1;\n}"}
+{"id": "t_loop_plus10", "source": "// loop counter + 10 for counters 1 through 4\nlet counter = 1;\nrepeat 4 {\n  let result = counter + 10;\n  print result;\n  counter = counter + 1;\n}"}
+{"id": "t_loop_plus10", "source": "// loop counter + 10 for counters 1 through 4\nlet count = 1;\nrepeat 4 {\n  let loop = count + 10;\n  print loop;\n  count = count + 1;\n}"}
+{"id": "t_loop_plus10", "source": "// loop counter + 10 for counters 1 through 4\nlet n = 1;\nrepeat 4 {\n  let c = n + 10;\n  print c;\n  n = n + 1;\n}"}
+{"id": "t_loop_plus10", "source": "// loop counter + 10 for 1-4\nlet i = 1;\nrepeat 4 {\n  let count = i + 10;\n  print count;\n  i = i + 1;\n}"}
+{"id": "t_loop_plus10", "source": "let n = 1;\nrepeat 4 {\n  let counter = n + 10;\n  print counter;\n  n = n + 1;\n}"}
+{"id": "t_loop_plus10", "source": "// loop counter + 10 for counters 1 through 4\nlet i = 1;\nrepeat 4 {\n  let c = i + 10;\n  print c;\n  i = i + 1;\n}"}
+{"id": "t_parity_flip", "source": "let n = 1;\nrepeat 5 {\n  if n % 2 == 0 {\n    print true;\n  } else {\n    print false;\n  }\n  n = n + 1;\n}"}
+{"id": "t_parity_flip", "source": "let counter = 1;\nrepeat 5 {\n  if counter % 2 == 0 {\n    print true;\n  } else {\n    print false;\n  }\n  counter = counter + 1;\n}"}
+{"id": "t_parity_flip", "source": "let c = 1;\nrepeat 5 {\n  if c % 2 == 0 {\n    print true;\n  } else {\n    print false;\n  }\n  c = c + 1;\n}"}
+{"id": "t_parity_flip", "source": "let count = 1;\nrepeat 5 {\n  if count % 2 == 0 {\n    print true;\n  } else {\n    print false;\n  }\n  count = count + 1;\n}"}
+{"id": "t_parity_flip", "source": "// print true when counter is even, false otherwise, for 1 through 5\nlet count = 1;\nrepeat 5 {\n  if count % 2 == 0 {\n    print true;\n  } else {\n    print false;\n  }\n  count = count + 1;\n}"}
+{"id": "t_parity_flip", "source": "let i = 1;\nrepeat 5 {\n  if i % 2 == 0 {\n    print true;\n  } else {\n    print false;\n  }\n  i = i + 1;\n}"}
+{"id": "t_parity_flip", "source": "// counter 1-5, print true if even\nlet count = 1;\nrepeat 5 {\n  if count % 2 == 0 {\n    print true;\n  } else {\n    print false;\n  }\n  count = count + 1;\n}"}
+{"id": "t_parity_flip", "source": "// counter 1 through 5, true for even numbers\nlet count = 1;\nrepeat 5 {\n  if count % 2 == 0 {\n    print true;\n  } else {\n    print false;\n  }\n  count = count + 1;\n}"}

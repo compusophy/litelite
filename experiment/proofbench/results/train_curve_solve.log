@@ -1,0 +1,8 @@
+# spec-conditioned self-play (checkpoints_solve S0-S5): correct-of-768 per round
+# round 0 ran in an earlier launch (seeded: bit-identical on relaunch); paused/resumed at C0
+round 0: histogram={'gate': 434, 'ok': 207, 'run': 32, 'compile': 95} admitted=192 distinct_nkeys=163 fuel[min,max]=(4, 1229)
+round 1: histogram={'ok': 494, 'gate': 222, 'run': 21, 'compile': 31} admitted=368 distinct_nkeys=283 fuel[min,max]=(4, 1164)
+round 2: histogram={'ok': 624, 'gate': 105, 'compile': 23, 'run': 16} admitted=409 distinct_nkeys=294 fuel[min,max]=(6, 341)
+round 3: histogram={'ok': 681, 'gate': 73, 'run': 8, 'compile': 6} admitted=434 distinct_nkeys=305 fuel[min,max]=(6, 343)
+round 4: histogram={'ok': 714, 'gate': 46, 'run': 7, 'compile': 1} admitted=417 distinct_nkeys=276 fuel[min,max]=(6, 343)
+round 5: histogram={'ok': 715, 'run': 10, 'gate': 40, 'compile': 3} admitted=410 distinct_nkeys=273 fuel[min,max]=(6, 343)

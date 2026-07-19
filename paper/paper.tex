@@ -86,8 +86,15 @@ pass@8 --- but the self-play that wins generation (94.5\% vs 48.8\% RICH) gives
 half of that back (43.3\%), and the loss localizes exactly to problems whose
 correct output conflicts with the reward's shape, with the answer computed
 and then padded: the policy internalizes the verifier's preferences as
-unconditional habits that override the spec. A verifier certifies validity,
-not intent --- measured here at the policy level.
+unconditional habits that override the spec. A fourth arm confirms the
+mechanism by fixing it: swap the reward's top rung from output shape to
+output CORRECTNESS on 48 training specs (families disjoint from the held-out
+hard tier) and the same recipe reaches 93.3\% pass@8 --- above plain SFT,
+including hard families it was never trained on --- while its unconditional
+generation drops to 24.2\% RICH. Each arm maximizes exactly its reward and
+degrades the other axis: self-play makes the model more like its reward,
+everywhere; a verifier certifies what you ask it to certify, and the policy
+becomes it.
 One experiment remains unrun --- a frozen-model A/B arm for which there is no API
 key --- and ships as an instrument with pre-registered commands, marked PENDING.
 The deterministic verifier plus committed artifacts reproduce every number in
@@ -1049,6 +1056,50 @@ was also never in the training objective for EITHER checkpoint --- the surprise
 is not that C6 solves worse than a solver would, but that plain SFT solves
 this well and self-play then gives half of it back.
 
+If that diagnosis is right --- the deficit is the reward's shape, not self-play
+itself --- then changing what the verifier rewards, and nothing else, should
+move it. A fourth arm tests exactly that. Same trainer, same admission
+guards, same Cinit start; every sampling prompt is now a training task
+("a program that \{spec\}") drawn from 48 training problems with verified
+references (\code{problems/train.jsonl} --- ids disjoint from the 30 benchmark
+problems, and with NO family overlap with the held-out hard tier: no
+primality, popcount, digit-sum or -reverse, Collatz length, Fibonacci,
+powers, or square/cube/odd sums); and the reward's top rung is CORRECTNESS ---
+exact output match against that spec's reference (\code{p6 solvereward}) --- instead
+of RICH shape. Correct-of-768 on the training specs climbed 27.0\% $\rightarrow$ 64.3\% $\rightarrow$
+81.3\% $\rightarrow$ 88.7\% $\rightarrow$ 93.0\% $\rightarrow$ 93.1\% over six rounds
+(\code{results/train\_curve\_solve.log}), and on the held-out benchmark:
+
+\begingroup\small
+\begin{longtable}{p{0.150\linewidth} p{0.150\linewidth} p{0.150\linewidth} p{0.150\linewidth} p{0.150\linewidth} p{0.150\linewidth}}
+\toprule
+\textbf{model} & \textbf{reward trained on} & \textbf{RICH generation} & \textbf{solve pass@8} & \textbf{hard tier} & \textbf{pad} \\
+\midrule\endhead
+Cinit & (none --- plain SFT) & 48.8\% & 80.0\% & 7/12 & 1 \\
+C6 & RICH shape & \textbf{94.5\%} & 43.3\% & 2/12 & 8 \\
+S5 & spec correctness & 24.2\% & \textbf{93.3\%} & \textbf{10/12} & 1 \\
+\bottomrule
+\end{longtable}\endgroup
+
+The fix works, and overshoots: S5 solves 28/30 --- easy and medium perfect,
+and the hard tier rises from Cinit's 7/12 to 10/12 even though the training
+specs share no family with it (alternating sums, primality, Fibonacci newly
+solved) --- so the gain is composition transferring across task families, not
+leakage; the train-vs-held-out gap is small but real (97.9\% on the 48
+training specs vs 93.3\% held-out). One round of correctness self-play (S1,
+86.7\%) already beats plain SFT, and the padding habit is gone (one \code{pad}
+against C6's eight). And the mirror image completes the argument: S5's
+unconditional generation drops to 24.2\% RICH (parse 91.0\% --- the programs are
+short, terse, correct-shaped) against C6's 94.5\% and Cinit's 48.8\%. Each
+self-play arm maximized exactly its own reward and degraded the other axis
+relative to Cinit. Self-play does not make the model generically better; it
+makes the model more like its reward, everywhere, including in contexts the
+reward never scored. Which capability you get is decided by which predicate
+you hand the verifier --- the design freedom \S{}5.5 claims for verifier-as-reward
+is real, and it cuts both ways. Scoring for all four arms reproduces from the
+committed pools (\code{solve\_s\{1,3,5\}.jsonl}, \code{solve\_s5\_train.jsonl},
+\code{s5gen.jsonl}).
+
 \subsection*{5.9 PENDING (permanently keyless): the frozen-model A/B arm}
 
 One experiment on the instrument has complete plumbing and a committed protocol
@@ -1247,7 +1298,10 @@ less varied than an R4 checkpoint's would be. And narrowing is the milder half
 of what self-play does to the policy: \S{}5.8 measures the sharper half --- the
 reward's output shape persisting as an unconditional habit that overrides
 held-out specs, halving the plain-SFT checkpoint's problem-solving where spec
-and reward shape conflict.
+and reward shape conflict --- and then shows it is symmetric: retrain with
+correctness as the top rung and solving rises past plain SFT while free-form
+richness collapses instead. The imprinting is not a defect of one reward; it
+is what optimizing against any verifier does.
 
 Two further edges of the fine-tune stay untested, and belong here rather than
 only inline in \S{}5.7. First, cross-model generality: both arms fine-tune the same

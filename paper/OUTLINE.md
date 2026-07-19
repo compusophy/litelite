@@ -87,8 +87,14 @@ conversation context is required. Heavy drafting runs as multi-agent workflows
   is real, AND self-play overwrites spec-following with the reward's output
   shape (8 of C6's 17 misses compute the right answer then pad; the loss
   localizes to the problems whose correct output is short, where the RICH
-  rung disprefers the correct shape). Repro: `cd experiment/proofbench &&
-  ./target/release/p6 solve problems/heldout.jsonl results/solve_c6.jsonl`.
+  rung disprefers the correct shape). The FIX ARM ran the same day
+  (2026-07-19): spec-conditioned self-play (48 training specs, reward top
+  rung = exact output match, `p6 solvereward`) from the same Cinit → S5
+  93.3% pass@8 (hard tier 10/12 with training families disjoint from it),
+  while unconditional RICH drops to 24.2% — each arm maximizes its own
+  reward and degrades the other axis; the symmetry is the §5.8 finding.
+  Repro: `cd experiment/proofbench &&
+  ./target/release/p6 solve problems/heldout.jsonl results/solve_s5.jsonl`.
   STILL PENDING:
   the frozen-big-model A/B arm — there is NO Anthropic API key and there will
   not be one; that arm stays a protocol slot unless a keyless generator fills it.

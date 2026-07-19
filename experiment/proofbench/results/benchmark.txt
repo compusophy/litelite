@@ -165,3 +165,136 @@ answer-then-padding (correct prefix, not counted solved): 8/30 — solved-or-pad
   fail popcount_13 [hard] (8 tries)
   fail collatz_len_6 [hard] (8 tries)
   fail fib_12 [hard] (8 tries)
+
+# SPEC-CONDITIONED self-play arm (checkpoints_solve S1/S3/S5): same trainer +
+# admission from the same Cinit; reward = p6 solvereward on problems/train.jsonl
+# (top rung: exact output match) instead of RICH. Curve: results/train_curve_solve.log.
+
+########## solve: s1 (spec-conditioned) ##########
+=== prooflite solve (held-out problems) ===
+problems 30 | solutions 240 | SOLVED (pass@k) 26/30 = 86.7%
+answer-then-padding (correct prefix, not counted solved): 1/30 — solved-or-padded 90.0%
+  easy: 9/9 = 100.0% (+0 padded)
+  hard: 9/12 = 75.0% (+1 padded)
+  medium: 8/9 = 88.9% (+0 padded)
+  PASS count_1_10 [easy] (8 tries)
+  PASS countdown_5 [easy] (8 tries)
+  PASS evens_to_20 [easy] (8 tries)
+  PASS multiples_of_3 [easy] (8 tries)
+  PASS powers_of_2 [easy] (8 tries)
+  PASS squares_1_5 [easy] (8 tries)
+  PASS abs_neg7 [easy] (8 tries)
+  PASS max_12_9 [easy] (8 tries)
+  PASS div_rem_100_7 [easy] (8 tries)
+  PASS triangular_5 [medium] (8 tries)
+  PASS factorial_6 [medium] (8 tries)
+  PASS sum_1_100 [medium] (8 tries)
+  PASS sum_evens_20 [medium] (8 tries)
+  PASS fib_8 [medium] (8 tries)
+  PASS parity_1_6 [medium] (8 tries)
+  PASS fizz0_1_15 [medium] (8 tries)
+  fail mult_table_3 [medium] (8 tries)
+  PASS collatz_step_6 [medium] (8 tries)
+  PASS sum_squares_10 [hard] (8 tries)
+  PASS power_2_10 [hard] (8 tries)
+  PASS odd_sum_7 [hard] (8 tries)
+  fail alt_sum_10 [hard] (8 tries)
+  PASS digit_sum_1234 [hard] (8 tries)
+  PASS reverse_123 [hard] (8 tries)
+  PASS is_prime_7 [hard] (8 tries)
+  pad  is_prime_9 [hard] (8 tries)
+  PASS cube_sum_5 [hard] (8 tries)
+  PASS popcount_13 [hard] (8 tries)
+  fail collatz_len_6 [hard] (8 tries)
+  PASS fib_12 [hard] (8 tries)
+
+########## solve: s3 (spec-conditioned) ##########
+=== prooflite solve (held-out problems) ===
+problems 30 | solutions 240 | SOLVED (pass@k) 26/30 = 86.7%
+answer-then-padding (correct prefix, not counted solved): 0/30 — solved-or-padded 86.7%
+  easy: 8/9 = 88.9% (+0 padded)
+  hard: 10/12 = 83.3% (+0 padded)
+  medium: 8/9 = 88.9% (+0 padded)
+  PASS count_1_10 [easy] (8 tries)
+  PASS countdown_5 [easy] (8 tries)
+  PASS evens_to_20 [easy] (8 tries)
+  PASS multiples_of_3 [easy] (8 tries)
+  fail powers_of_2 [easy] (8 tries)
+  PASS squares_1_5 [easy] (8 tries)
+  PASS abs_neg7 [easy] (8 tries)
+  PASS max_12_9 [easy] (8 tries)
+  PASS div_rem_100_7 [easy] (8 tries)
+  PASS triangular_5 [medium] (8 tries)
+  PASS factorial_6 [medium] (8 tries)
+  PASS sum_1_100 [medium] (8 tries)
+  PASS sum_evens_20 [medium] (8 tries)
+  PASS fib_8 [medium] (8 tries)
+  PASS parity_1_6 [medium] (8 tries)
+  PASS fizz0_1_15 [medium] (8 tries)
+  fail mult_table_3 [medium] (8 tries)
+  PASS collatz_step_6 [medium] (8 tries)
+  PASS sum_squares_10 [hard] (8 tries)
+  PASS power_2_10 [hard] (8 tries)
+  PASS odd_sum_7 [hard] (8 tries)
+  PASS alt_sum_10 [hard] (8 tries)
+  PASS digit_sum_1234 [hard] (8 tries)
+  PASS reverse_123 [hard] (8 tries)
+  PASS is_prime_7 [hard] (8 tries)
+  PASS is_prime_9 [hard] (8 tries)
+  PASS cube_sum_5 [hard] (8 tries)
+  PASS popcount_13 [hard] (8 tries)
+  fail collatz_len_6 [hard] (8 tries)
+  fail fib_12 [hard] (8 tries)
+
+########## solve: s5 (spec-conditioned) ##########
+=== prooflite solve (held-out problems) ===
+problems 30 | solutions 240 | SOLVED (pass@k) 28/30 = 93.3%
+answer-then-padding (correct prefix, not counted solved): 1/30 — solved-or-padded 96.7%
+  easy: 9/9 = 100.0% (+0 padded)
+  hard: 10/12 = 83.3% (+1 padded)
+  medium: 9/9 = 100.0% (+0 padded)
+  PASS count_1_10 [easy] (8 tries)
+  PASS countdown_5 [easy] (8 tries)
+  PASS evens_to_20 [easy] (8 tries)
+  PASS multiples_of_3 [easy] (8 tries)
+  PASS powers_of_2 [easy] (8 tries)
+  PASS squares_1_5 [easy] (8 tries)
+  PASS abs_neg7 [easy] (8 tries)
+  PASS max_12_9 [easy] (8 tries)
+  PASS div_rem_100_7 [easy] (8 tries)
+  PASS triangular_5 [medium] (8 tries)
+  PASS factorial_6 [medium] (8 tries)
+  PASS sum_1_100 [medium] (8 tries)
+  PASS sum_evens_20 [medium] (8 tries)
+  PASS fib_8 [medium] (8 tries)
+  PASS parity_1_6 [medium] (8 tries)
+  PASS fizz0_1_15 [medium] (8 tries)
+  PASS mult_table_3 [medium] (8 tries)
+  PASS collatz_step_6 [medium] (8 tries)
+  PASS sum_squares_10 [hard] (8 tries)
+  PASS power_2_10 [hard] (8 tries)
+  PASS odd_sum_7 [hard] (8 tries)
+  PASS alt_sum_10 [hard] (8 tries)
+  PASS digit_sum_1234 [hard] (8 tries)
+  PASS reverse_123 [hard] (8 tries)
+  PASS is_prime_7 [hard] (8 tries)
+  pad  is_prime_9 [hard] (8 tries)
+  PASS cube_sum_5 [hard] (8 tries)
+  PASS popcount_13 [hard] (8 tries)
+  fail collatz_len_6 [hard] (8 tries)
+  PASS fib_12 [hard] (8 tries)
+
+########## solve: s5 on the 48 TRAIN problems (the train-vs-held-out gap) ##########
+=== prooflite solve (held-out problems) ===
+problems 48 | solutions 384 | SOLVED (pass@k) 47/48 = 97.9%
+answer-then-padding (correct prefix, not counted solved): 0/48 — solved-or-padded 97.9%
+  easy: 24/24 = 100.0% (+0 padded)
+  medium: 23/24 = 95.8% (+0 padded)
+
+########## s5 unconditional generation (256, the style prompts) ##########
+=== prooflite validity eval ===
+pool: 256 programs | 241 distinct source keys
+parse rate 91.0% | of parsers, run-clean 94.8% | of all, RICH (ok) 24.2%
+ladder: compile 23 | run 12 | gate 159 | ok 62
+=== prooflite novelty (rich programs vs the 174-program cold-start corpus) ===
+ok 62 | novel ok 62 (100.0%) | distinct ok keys 55 | distinct novel keys 55

@@ -155,3 +155,49 @@ model family, one language; `pad` catches prefix-shaped padding only, so the
 "obeys reward over prompt" mass is a lower bound. The base row's 20% shows the
 problems are not unreachable from pretraining alone — surface familiarity
 solves a few easy ones.)
+
+## The fix arm: spec-conditioned self-play (S1–S5)
+
+If the deficit above is really the reward's shape imprinting, then changing
+WHAT the verifier rewards — nothing else — should move it. This arm does
+exactly that: same trainer, same admission guards, same Cinit start; every
+sampling prompt is now a training task ("a program that {spec}",
+`problems/train.jsonl` — 48 specs with verified references, ids disjoint from
+the 30 held-out problems and NO family overlap with the held-out hard tier:
+no primes, popcount, digit-sum/reverse, Collatz-length, fib, powers, or
+square/cube/odd sums), and the reward's top rung is CORRECTNESS — exact
+output match against that spec's reference (`p6 solvereward`) — instead of
+RICH shape. Six rounds; correct-of-768 on train climbed 27.0% → 64.3% →
+81.3% → 88.7% → 93.0% → 93.1% (`train_curve_solve.log`; admitted distinct
+keys peak at round 3 — the inverted-U again).
+
+| model | reward trained on | RICH generation | solve pass@8 | hard tier | `pad` |
+|---|---|---|---|---|---|
+| Cinit | (none — plain SFT) | 48.8% | 80.0% | 7/12 | 1 |
+| C6 | RICH shape | **94.5%** | 43.3% | 2/12 | 8 |
+| **S5** | spec correctness | 24.2% | **93.3%** | **10/12** | 1 |
+
+Three facts.
+
+**The fix works, and overshoots.** S5 solves 28/30 (easy 9/9, medium 9/9,
+hard 10/12) — not merely recovering Cinit's 80% but beating it by 13 points,
+with one round of correctness self-play (S1, 86.7%) already enough to pass
+plain SFT. The padding habit is gone (1 `pad`, vs C6's 8).
+
+**The hard-tier gain is transfer, not leakage.** The training specs share no
+family with the held-out hard problems, yet S5 takes the hard tier from
+Cinit's 7/12 to 10/12 — alternating sums, primality, fib(12) all newly
+solved. Composing loop-accumulator-conditional skills on 48 disjoint tasks
+transferred to algorithm families the model was never trained to solve. The
+train-vs-held-out gap is 97.9% vs 93.3% (4.6 points) — real but small.
+
+**The symmetry is the finding.** Each self-play arm maximized exactly its own
+reward and DEGRADED the other axis relative to Cinit: C6 is 94.5% RICH /
+43.3% solve, S5 is 24.2% RICH / 93.3% solve (its unconditional generations
+are short, correct-shaped, terse — parse 91.0%, but only 24.2% clear the ≥3
+distinct lines + ≥30 fuel bar). Self-play does not "make the model better";
+it makes the model MORE LIKE ITS REWARD, everywhere, including contexts the
+reward never saw. Which capability you get is decided entirely by which
+predicate you hand the verifier — and both arms' scoring reproduces from the
+committed pools (`solve_s{1,3,5}.jsonl`, `solve_s5_train.jsonl`,
+`s5gen.jsonl`; `p6 solve` / `p6 eval`).

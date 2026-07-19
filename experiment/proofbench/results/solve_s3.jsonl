@@ -1,0 +1,240 @@
+{"id": "count_1_10", "source": "// print numbers from 1 to 10\nlet i = 1;\nrepeat 10 {\n  print i;\n  i = i + 1;\n}"}
+{"id": "count_1_10", "source": "let i = 1;\nrepeat 10 {\n  print i;\n  i = i + 1;\n}"}
+{"id": "count_1_10", "source": "// print integers from 1 to 10\nlet i = 1;\nrepeat 10 {\n  print i;\n  i = i + 1;\n}"}
+{"id": "count_1_10", "source": "let i = 1;\nrepeat 10 {\n  print i;\n  i = i + 1;\n}"}
+{"id": "count_1_10", "source": "let i = 1;\nrepeat 10 {\n  print i;\n  i = i + 1;\n}"}
+{"id": "count_1_10", "source": "let i = 1;\nrepeat 10 {\n  print i;\n  i = i + 1;\n}"}
+{"id": "count_1_10", "source": "// prints 1-10, one per line\nlet n = 1;\nrepeat 10 {\n  print n;\n  n = n + 1;\n}"}
+{"id": "count_1_10", "source": "let i = 1;\nrepeat 10 {\n  print i;\n  i = i + 1;\n}"}
+{"id": "countdown_5", "source": "let x = 5;\nrepeat 5 {\n  print x;\n  x = x - 1;\n}"}
+{"id": "countdown_5", "source": "let i = 5;\nrepeat 5 {\n  print i;\n  i = i - 1;\n}"}
+{"id": "countdown_5", "source": "// countdown from 5 down to 1\nlet n = 5;\nrepeat 5 {\n  print n;\n  n = n - 1;\n}"}
+{"id": "countdown_5", "source": "let i = 5;\nrepeat 5 {\n  print i;\n  i = i - 1;\n}"}
+{"id": "countdown_5", "source": "// countdown from 5 down to 1\nlet x = 5;\nrepeat 5 {\n  print x;\n  x = x - 1;\n}"}
+{"id": "countdown_5", "source": "let count = 5;\nrepeat 5 {\n  print count;\n  count = count - 1;\n}"}
+{"id": "countdown_5", "source": "// countdown from 5 down to 1\nlet i = 5;\nrepeat 5 {\n  print i;\n  i = i - 1;\n}"}
+{"id": "countdown_5", "source": "// countdown from 5 down to 1\nlet i = 5;\nrepeat 5 {\n  print i;\n  i = i - 1;\n}"}
+{"id": "evens_to_20", "source": "// print even numbers from 2 to 20\nlet i = 2;\nrepeat 10 {\n  if i % 2 == 0 {\n    print i;\n  }\n  i = i + 2;\n}"}
+{"id": "evens_to_20", "source": "// even numbers from 2 to 20\nlet n = 2;\nrepeat 10 {\n  if n % 2 == 0 {\n    print n;\n  }\n  n = n + 2;\n}"}
+{"id": "evens_to_20", "source": "// even numbers from 2 to 20, one per line\nlet n = 2;\nrepeat 10 {\n  if n % 2 == 0 {\n    print n;\n  }\n  n = n + 2;\n}"}
+{"id": "evens_to_20", "source": "let i = 2;\nrepeat 10 {\n  if i % 2 == 0 {\n    print i;\n  }\n  i = i + 2;\n}"}
+{"id": "evens_to_20", "source": "let n = 2;\nrepeat 10 {\n  if n % 2 == 0 {\n    print n;\n  }\n  n = n + 1;\n}"}
+{"id": "evens_to_20", "source": "let n = 2;\nrepeat 10 {\n  if n % 2 == 0 {\n    print n;\n  }\n  n = n + 2;\n}"}
+{"id": "evens_to_20", "source": "// even numbers from 2 to 20, one per line\nlet n = 2;\nrepeat 10 {\n  if n % 2 == 0 {\n    print n;\n  }\n  n = n + 2;\n}"}
+{"id": "evens_to_20", "source": "// even numbers from 2 to 20, one per line\nlet n = 2;\nrepeat 10 {\n  if n % 2 == 0 {\n    print n;\n  }\n  n = n + 2;\n}"}
+{"id": "multiples_of_3", "source": "let i = 1;\nrepeat 6 {\n  print i * 3;\n  i = i + 1;\n}"}
+{"id": "multiples_of_3", "source": "let x = 3;\nrepeat 6 {\n  print x;\n  x = x + 3;\n}"}
+{"id": "multiples_of_3", "source": "let x = 3;\nlet n = 1;\nrepeat 6 {\n  print x;\n  x = x + 3;\n}"}
+{"id": "multiples_of_3", "source": "let i = 1;\nrepeat 2 {\n  let multiple = 3 * i;\n  print multiple;\n  i = i + 1;\n}"}
+{"id": "multiples_of_3", "source": "// multiples of 3\nlet n = 1;\nrepeat 6 {\n  print n * 3;\n  n = n + 1;\n}"}
+{"id": "multiples_of_3", "source": "let i = 1;\nrepeat 2 {\n  print i * 3;\n  i = i + 1;\n}"}
+{"id": "multiples_of_3", "source": "// 3, 6, 9, 12, 15, 18\nlet i = 1;\nrepeat 6 {\n  print i * 3;\n  i = i + 1;\n}"}
+{"id": "multiples_of_3", "source": "let n = 1;\nrepeat 2 {\n  let m = n * 3;\n  print m;\n  n = n + 1;\n}"}
+{"id": "powers_of_2", "source": "let x = 1;\nlet i = 1;\nrepeat 8 {\n  print x;\n  x = x * 2;\n}"}
+{"id": "powers_of_2", "source": "// 2^0 = 1, 2^1 = 2, ..., 2^8 = 256\nlet i = 0;\nrepeat 8 {\n  let power = 2 ** i;\n  print power;\n  i = i + 1;\n}"}
+{"id": "powers_of_2", "source": "let i = 1;\nrepeat 8 {\n  let power = 2 * i;\n  print power;\n  i = i + 1;\n}"}
+{"id": "powers_of_2", "source": "// powers of two\nlet i = 1;\nrepeat 8 {\n  let power = 2 * i;\n  print power;\n  i = i + 1;\n}"}
+{"id": "powers_of_2", "source": "// powers of 2\nlet i = 1;\nrepeat 8 {\n  let x = 2 * i;\n  print x;\n  i = i + 1;\n}"}
+{"id": "powers_of_2", "source": "// powers of two from 2^1 to 2^8\nlet i = 1;\nrepeat 8 {\n  print 2 * i;\n  i = i + 1;\n}"}
+{"id": "powers_of_2", "source": "let x = 1;\nlet i = 1;\nrepeat 8 {\n  print x;\n  x = x * 2;\n}"}
+{"id": "powers_of_2", "source": "// 8 powers of two\nlet n = 1;\nrepeat 8 {\n  print 2 * n;\n  n = n + 1;\n}"}
+{"id": "squares_1_5", "source": "// squares of 1-5\nlet x = 1;\nrepeat 5 {\n  print x * x;\n  x = x + 1;\n}"}
+{"id": "squares_1_5", "source": "// squares of integers 1 through 5\nlet x = 1;\nrepeat 5 {\n  print x * x;\n  x = x + 1;\n}"}
+{"id": "squares_1_5", "source": "let x = 1;\nrepeat 5 {\n  print x * x;\n  x = x + 1;\n}"}
+{"id": "squares_1_5", "source": "let i = 1;\nrepeat 5 {\n  print i * i;\n  i = i + 1;\n}"}
+{"id": "squares_1_5", "source": "let n = 1;\nrepeat 5 {\n  let square = n * n;\n  print square;\n  n = n + 1;\n}"}
+{"id": "squares_1_5", "source": "// squares of 1-5\nlet i = 1;\nrepeat 5 {\n  let square = i * i;\n  print square;\n  i = i + 1;\n}"}
+{"id": "squares_1_5", "source": "// squares from 1 to 5\nlet x = 1;\nrepeat 5 {\n  print x * x;\n  x = x + 1;\n}"}
+{"id": "squares_1_5", "source": "let i = 1;\nrepeat 5 {\n  let square = i * i;\n  print square;\n  i = i + 1;\n}"}
+{"id": "abs_neg7", "source": "let x = -7;\nlet abs = x;\nif x < 0 {\n  abs = -x;\n}\nprint abs;"}
+{"id": "abs_neg7", "source": "// absolute value of -7\nlet x = -7;\nprint x;  // -7\n// absolute value of -7\nlet x = -7;\nprint x;  // 7"}
+{"id": "abs_neg7", "source": "// x is -7, absolute value is 7\nlet x = -7;\nlet abs = 0;\nif x < 0 {\n  abs = -x;\n} else {\n  abs = x;\n}\nprint abs;\nrepeat 1 {\n  let abs = 0;\n  if x < 0 {\n    abs = -x;\n  } else {\n    abs = x;\n  }\n}"}
+{"id": "abs_neg7", "source": "// absolute value of -7\nlet x = -7;\nlet abs = 0;\nif x < 0 {\n  abs = -x;\n}\nprint abs;"}
+{"id": "abs_neg7", "source": "let x = -7;\nlet abs = x;\nif x < 0 {\n  abs = -x;\n}\nprint abs;"}
+{"id": "abs_neg7", "source": "let x = -7;\nlet absolute = 0;\nif x < 0 {\n  absolute = -x;\n}\nprint absolute;"}
+{"id": "abs_neg7", "source": "let x = -7;\nlet absolute = x;\nprint absolute;"}
+{"id": "abs_neg7", "source": "let x = -7;\nprint x;"}
+{"id": "max_12_9", "source": "// 12 > 9, so a is larger\nlet a = 12;\nlet b = 9;\nif a > b {\n  print a;\n} else {\n  print b;\n}"}
+{"id": "max_12_9", "source": "let a = 12;\nlet b = 9;\nif a > b {\n  print a;\n} else {\n  print b;\n}"}
+{"id": "max_12_9", "source": "let a = 12;\nlet b = 9;\nif a > b {\n  print a;\n} else {\n  print b;\n}"}
+{"id": "max_12_9", "source": "let a = 12;\nlet b = 9;\nif a > b {\n  print a;\n} else {\n  print b;\n}"}
+{"id": "max_12_9", "source": "let a = 12;\nlet b = 9;\nlet max = 0;\nif a > b {\n  max = a;\n} else {\n  max = b;\n}\nprint max;"}
+{"id": "max_12_9", "source": "let a = 12;\nlet b = 9;\nif a > b {\n  print a;\n} else {\n  print b;\n}"}
+{"id": "max_12_9", "source": "let a = 12;\nlet b = 9;\nif a > b {\n  print a;\n} else {\n  print b;\n}"}
+{"id": "max_12_9", "source": "// a to 12, b to 9, print larger\nlet a = 12;\nlet b = 9;\nif a > b {\n  print a;\n} else {\n  print b;\n}"}
+{"id": "div_rem_100_7", "source": "let a = 100;\nlet b = 7;\nlet c = a / b;\nlet d = a % b;\nprint c;\nprint d;"}
+{"id": "div_rem_100_7", "source": "let x = 100;\nlet remainder = 100 % 7;\nlet division = x / 7;\nprint division;\nprint remainder;"}
+{"id": "div_rem_100_7", "source": "// 100 / 7 using integer division and remainder\nlet x = 100;\nlet y = 7;\nlet q = x / y;\nlet r = x % y;\nprint q;\nprint r;"}
+{"id": "div_rem_100_7", "source": "// 100 divided by 7 using integer division\nlet x = 100 / 7;\nlet rem = 100 % 7;\nprint x;\nprint rem;"}
+{"id": "div_rem_100_7", "source": "// 100 divided by 7 using integer division\nlet x = 100;\nlet y = 7;\nlet q = x / y;\nlet r = x % y;\nprint q;\nprint r;"}
+{"id": "div_rem_100_7", "source": "// 100 divided by 7 using integer division and remainder\nlet x = 100;\nlet y = 7;\nlet quot = x / y;\nlet rem = x % y;\nprint quot;\nprint rem;"}
+{"id": "div_rem_100_7", "source": "// 100 / 7\nlet x = 100 / 7;\nlet rem = 100 % 7;\nprint x;\nprint rem;"}
+{"id": "div_rem_100_7", "source": "// 100 divided by 7 using integer division\nlet x = 100;\nlet y = 7;\nlet q = x / y;\nlet r = x % y;\nprint q;\nprint r;"}
+{"id": "triangular_5", "source": "let n = 1;\nrepeat 5 {\n  let t = n * (n + 1) / 2;\n  print t;\n  n = n + 1;\n}"}
+{"id": "triangular_5", "source": "let n = 1;\nrepeat 5 {\n  let t = n * (n + 1) / 2;\n  print t;\n  n = n + 1;\n}"}
+{"id": "triangular_5", "source": "// triangular numbers: 1, 3, 6, 10, 15\nlet n = 1;\nrepeat 5 {\n  let t = n * (n + 1) / 2;\n  print t;\n  n = n + 1;\n}"}
+{"id": "triangular_5", "source": "let n = 1;\nlet t = 0;\nrepeat 5 {\n  t = t + n;\n  n = n + 1;\n}\nprint t;"}
+{"id": "triangular_5", "source": "let n = 1;\nlet t = 0;\nrepeat 5 {\n  t = t + n;\n  print t;\n  n = n + 1;\n}"}
+{"id": "triangular_5", "source": "// triangular numbers: 1, 3, 6, 10, 15\nlet n = 1;\nrepeat 5 {\n  let t = n * (n + 1) / 2;\n  print t;\n  n = n + 1;\n}"}
+{"id": "triangular_5", "source": "// 1, 3, 6, 10, 15\nlet n = 1;\nrepeat 5 {\n  let t = n * (n + 1) / 2;\n  print t;\n  n = n + 1;\n}"}
+{"id": "triangular_5", "source": "// triangular numbers: 1, 3, 6, 10, 15\nlet n = 1;\nrepeat 5 {\n  let t = n * (n + 1) / 2;\n  print t;\n  n = n + 1;\n}"}
+{"id": "factorial_6", "source": "let factorial = 1;\nlet n = 6;\nrepeat 6 {\n  factorial = factorial * n;\n  n = n - 1;\n}\nprint factorial;"}
+{"id": "factorial_6", "source": "let factorial = 1;\nlet i = 2;\nrepeat 6 {\n  factorial = factorial * i;\n  i = i + 1;\n}\nprint factorial;"}
+{"id": "factorial_6", "source": "let n = 6;\nlet result = 1;\nrepeat n {\n  result = result * n;\n  n = n - 1;\n}\nprint result;"}
+{"id": "factorial_6", "source": "// 6! = 6 * 5 * 4 * 3 * 2 * 1 = 720\nlet result = 1;\nlet i = 6;\nrepeat 6 {\n  result = result * i;\n  i = i - 1;\n} print result;"}
+{"id": "factorial_6", "source": "let result = 1;\nlet i = 1;\nrepeat 6 {\n  result = result * i;\n  i = i + 1;\n}\nprint result;"}
+{"id": "factorial_6", "source": "// 6 factorial\nlet n = 6;\nlet result = 1;\nrepeat 6 {\n  result = result * n;\n  n = n - 1;\n} print result;"}
+{"id": "factorial_6", "source": "let result = 1;\nlet n = 6;\nrepeat 6 {\n  result = result * n;\n  n = n - 1;\n}\nprint result;"}
+{"id": "factorial_6", "source": "// 6 factorial\nlet n = 6;\nlet fact = 1;\nrepeat n {\n  fact = fact * n;\n  n = n - 1;\n}\nprint fact;"}
+{"id": "sum_1_100", "source": "// sum of integers from 1 to 100\nlet total = 0;\nlet n = 100;\nrepeat n {\n  total = total + n;\n  n = n - 1;\n}\nprint total;"}
+{"id": "sum_1_100", "source": "let sum = 0;\nlet n = 100;\nrepeat n {\n  sum = sum + n;\n  n = n - 1;\n}\nprint sum;"}
+{"id": "sum_1_100", "source": "// sum from 1 to 100\nlet sum = 0;\nlet i = 1;\nrepeat 100 {\n  sum = sum + i;\n  i = i + 1;\n}\nprint sum;"}
+{"id": "sum_1_100", "source": "let sum = 0;\nlet i = 1;\nrepeat 100 {\n  sum = sum + i;\n  i = i + 1;\n}\nprint sum;"}
+{"id": "sum_1_100", "source": "let total = 0;\nlet i = 1;\nrepeat 100 {\n  total = total + i;\n  i = i + 1;\n}\nprint total;"}
+{"id": "sum_1_100", "source": "// sum from 1 to 100\nlet sum = 0;\nlet n = 100;\nrepeat n {\n  sum = sum + n;\n  n = n - 1;\n}\nprint sum;"}
+{"id": "sum_1_100", "source": "let sum = 0;\nrepeat 100 {\n  sum = sum + 1;\n}\nprint sum;"}
+{"id": "sum_1_100", "source": "// sum from 1 to n is n*(n+1)/2\nlet n = 100;\nlet sum = n * (n + 1) / 2;\nprint sum;"}
+{"id": "sum_evens_20", "source": "// sum of even numbers from 2 to 20\nlet sum = 0;\nlet n = 2;\nrepeat 10 {\n  if n % 2 == 0 {\n    sum = sum + n;\n  }\n  n = n + 2;\n}\nprint sum;"}
+{"id": "sum_evens_20", "source": "// sum of even numbers from 2 to 20\nlet sum = 0;\nlet n = 20;\nrepeat 10 {\n  if n % 2 == 0 {\n    sum = sum + n;\n  }\n  n = n - 2;\n}\nprint sum;\n// 2 + 4 + 6 + 8 + 10 + 12 + 14 + 16 + 18 + 20 = 110"}
+{"id": "sum_evens_20", "source": "// sum of even numbers from 2 to 20\nlet sum = 0;\nlet n = 20;\nrepeat 10 {\n  if n % 2 == 0 {\n    sum = sum + n;\n  }\n  n = n - 2;\n}\nprint sum;"}
+{"id": "sum_evens_20", "source": "// sum of even numbers from 2 to 20\nlet sum = 0;\nlet n = 2;\nrepeat 10 {\n  if n % 2 == 0 {\n    sum = sum + n;\n  }\n  n = n + 2;\n}\nprint sum;"}
+{"id": "sum_evens_20", "source": "let sum = 0;\nlet n = 2;\nrepeat 10 {\n  if n % 2 == 0 {\n    sum = sum + n;\n  }\n  n = n + 2;\n}\nprint sum;\n// 2 + 4 + 6 + 8 + 10 + 12 + 14 + 16 + 18 + 20 = 110"}
+{"id": "sum_evens_20", "source": "let sum = 0;\nlet n = 2;\nrepeat 10 {\n  if n % 2 == 0 {\n    sum = sum + n;\n  }\n  n = n + 2;\n}\nprint sum;"}
+{"id": "sum_evens_20", "source": "// sum of even numbers from 2 to 20\nlet n = 2;\nlet sum = 0;\nrepeat 10 {\n  if n % 2 == 0 {\n    sum = sum + n;\n  }\n  n = n + 2;\n}\nprint sum;"}
+{"id": "sum_evens_20", "source": "// sum of even numbers from 2 to 20\nlet n = 10;\nrepeat n {\n  let x = 2 * n;\n  print x;\n  n = n + 1;\n}"}
+{"id": "fib_8", "source": "// first 8 Fibonacci numbers\nlet a = 1;\nlet b = 1;\nlet n = 8;\nrepeat n {\n  print a;\n  let next = a + b;\n  a = b;\n  b = next;\n}"}
+{"id": "fib_8", "source": "let a = 1;\nlet b = 1;\nlet i = 0;\nrepeat 8 {\n  print a;\n  a = b;\n  b = a + b;\n  i = i + 1;\n}"}
+{"id": "fib_8", "source": "let a = 1;\nlet b = 1;\nlet f = 0;\nrepeat 8 {\n  print a;\n  let next = a + b;\n  a = b;\n  b = next;\n}"}
+{"id": "fib_8", "source": "let a = 1;\nlet b = 1;\nlet count = 1;\nrepeat 8 {\n  print a;\n  let next = a + b;\n  a = b;\n  b = next;\n  count = count + 1;\n}"}
+{"id": "fib_8", "source": "let a = 1;\nlet b = 1;\nlet c = 2;\nrepeat 8 {\n  print a;\n  a = b;\n  b = c;\n  c = a + b;\n}"}
+{"id": "fib_8", "source": "// first 8 Fibonacci numbers\nlet a = 1;\nlet b = 1;\nlet i = 2;\nrepeat 8 {\n  print a;\n  let next = a + b;\n  a = b;\n  b = next;\n  i = i + 1;\n}"}
+{"id": "fib_8", "source": "let a = 1;\nlet b = 1;\nlet c = a + b;\nlet i = 2;\nrepeat 8 {\n  print a;\n  a = b;\n  b = c;\n  c = a + b;\n  i = i + 1;\n}"}
+{"id": "fib_8", "source": "// Fibonacci sequence: 1, 1, 2, 3, 5, 8, 13, 21\nlet a = 1;\nlet b = 1;\nlet count = 1;\nrepeat 8 {\n  print a;\n  if count == 2 {\n    a = b;\n    b = 2;\n  } else {\n    a = a + b;\n    b = a;\n  }\n  count = count + 1;\n}"}
+{"id": "parity_1_6", "source": "// i is even if i % 2 == 0\nlet i = 1;\nrepeat 6 {\n  if i % 2 == 0 {\n    print 1;\n  } else {\n    print 0;\n  }\n  i = i + 1;\n}"}
+{"id": "parity_1_6", "source": "let i = 1;\nrepeat 6 {\n  let even = i % 2 == 0;\n  print even ? 1 : 0;\n  i = i + 1;\n}"}
+{"id": "parity_1_6", "source": "let i = 1;\nrepeat 6 {\n  if i % 2 == 0 {\n    print 1;\n  } else {\n    print 0;\n  }\n  i = i + 1;\n}"}
+{"id": "parity_1_6", "source": "// i from 1 to 6\nlet i = 1;\nrepeat 6 {\n  if i % 2 == 0 {\n    print 1;\n  } else {\n    print 0;\n  }\n  i = i + 1;\n}"}
+{"id": "parity_1_6", "source": "let i = 1;\nrepeat 6 {\n  if i % 2 == 0 {\n    print 1;\n  } else {\n    print 0;\n  }\n  i = i + 1;\n}"}
+{"id": "parity_1_6", "source": "let i = 1;\nrepeat 6 {\n  let even = true;\n  if i % 2 == 0 {\n    even = true;\n  } else {\n    even = false;\n  }\n  print 1 if even else 0;\n  i = i + 1;\n}"}
+{"id": "parity_1_6", "source": "let i = 1;\nrepeat 6 {\n  if i % 2 == 0 {\n    print 1;\n  } else {\n    print 0;\n  }\n  i = i + 1;\n}"}
+{"id": "parity_1_6", "source": "// even-odd parity: 1 if even, 0 if odd\nlet i = 1;\nrepeat 6 {\n  if i % 2 == 0 {\n    print 1;\n  } else {\n    print 0;\n  }\n  i = i + 1;\n}"}
+{"id": "fizz0_1_15", "source": "let i = 1;\nrepeat 15 {\n  if i % 3 == 0 {\n    print 0;\n  } else {\n    print i;\n  }\n  i = i + 1;\n}"}
+{"id": "fizz0_1_15", "source": "let i = 1;\nrepeat 15 {\n  if i % 3 == 0 {\n    print 0;\n  } else {\n    print i;\n  }\n  i = i + 1;\n}"}
+{"id": "fizz0_1_15", "source": "let i = 1;\nrepeat 15 {\n  if i % 3 == 0 {\n    print 0;\n  } else {\n    print i;\n  }\n  i = i + 1;\n}"}
+{"id": "fizz0_1_15", "source": "let i = 1;\nrepeat 15 {\n  if i % 3 == 0 {\n    print 0;\n  } else {\n    print i;\n  }\n  i = i + 1;\n}"}
+{"id": "fizz0_1_15", "source": "let i = 1;\nrepeat 15 {\n  if i % 3 == 0 {\n    print 0;\n  } else {\n    print i;\n  }\n  i = i + 1;\n}"}
+{"id": "fizz0_1_15", "source": "let i = 1;\nrepeat 15 {\n  if i % 3 == 0 {\n    print 0;\n  } else {\n    print i;\n  }\n  i = i + 1;\n}"}
+{"id": "fizz0_1_15", "source": "let i = 1;\nrepeat 15 {\n  if i % 3 == 0 {\n    print 0;\n  } else {\n    print i;\n  }\n  i = i + 1;\n}"}
+{"id": "fizz0_1_15", "source": "let i = 1;\nrepeat 15 {\n  if i % 3 == 0 {\n    print 0;\n  } else {\n    print i;\n  }\n  i = i + 1;\n}"}
+{"id": "mult_table_3", "source": "let r = 1;\nlet c = 1;\nrepeat 3 {\n  let product = r * c;\n  print product;\n  r = r + 1;\n}"}
+{"id": "mult_table_3", "source": "let r = 1;\nlet c = 1;\nrepeat 3 {\n  let val = r * c;\n  print val;\n  r = r + 1;\n}"}
+{"id": "mult_table_3", "source": "let r = 1;\nlet c = 1;\nrepeat 3 {\n  let row = r * c;\n  print row;\n  r = r + 1;\n}"}
+{"id": "mult_table_3", "source": "let r = 1;\nlet c = 1;\nrepeat 3 {\n  let product = r * c;\n  print product;\n  r = r + 1;\n}"}
+{"id": "mult_table_3", "source": "// 3x3 multiplication table\nlet r = 1;\nlet c = 1;\nrepeat 3 {\n  print r * c;\n  r = r + 1;\n}"}
+{"id": "mult_table_3", "source": "let r = 1;\nlet c = 1;\nlet i = 0;\nrepeat 3 {\n  let row = 0;\n  let j = 0;\n  repeat 3 {\n    let product = r * c;\n    print product;\n    row = row + 1;\n  }\n  c = c + 1;\n}"}
+{"id": "mult_table_3", "source": "let r = 1;\nlet c = 1;\nrepeat 3 {\n  let product = r * c;\n  print product;\n  r = r + 1;\n}"}
+{"id": "mult_table_3", "source": "let r = 1;\nlet c = 1;\nrepeat 3 {\n  let row = 0;\n  repeat 3 {\n    let value = r * c;\n    print value;\n    c = c + 1;\n  }\n  r = r + 1;\n}"}
+{"id": "collatz_step_6", "source": "let n = 6;\nlet step = 0;\nrepeat 1 {\n  if n % 2 == 0 {\n    n = n / 2;\n  } else {\n    n = 3 * n + 1;\n  }\n  step = step + 1;\n  print n;\n}"}
+{"id": "collatz_step_6", "source": "let n = 6;\nif n % 2 == 0 {\n  print n / 2;\n} else {\n  print 3 * n + 1;\n}"}
+{"id": "collatz_step_6", "source": "let n = 6;\nif n % 2 == 0 {\n  print n / 2;\n} else {\n  print 3 * n + 1;\n}"}
+{"id": "collatz_step_6", "source": "let n = 6;\nif n % 2 == 0 {\n  n = n / 2;\n} else {\n  n = 3 * n + 1;\n}\nprint n;"}
+{"id": "collatz_step_6", "source": "let n = 6;\nif n % 2 == 0 {\n  let m = n / 2;\n} else {\n  let m = 3 * n + 1;\n}\nprint m;"}
+{"id": "collatz_step_6", "source": "let n = 6;\nif n % 2 == 0 {\n  print n / 2;\n} else {\n  print 3 * n + 1;\n}"}
+{"id": "collatz_step_6", "source": "let n = 6;\nif n % 2 == 0 {\n  print n / 2;\n} else {\n  print 3 * n + 1;\n}"}
+{"id": "collatz_step_6", "source": "let n = 6;\nif n % 2 == 0 {\n  print n / 2;\n} else {\n  print 3 * n + 1;\n}"}
+{"id": "sum_squares_10", "source": "// sum of squares from 1 to 10\nlet sum = 0;\nlet i = 1;\nrepeat 10 {\n  sum = sum + i * i;\n  i = i + 1;\n}\nprint sum;"}
+{"id": "sum_squares_10", "source": "let sum = 0;\nlet i = 1;\nrepeat 10 {\n  sum = sum + i * i;\n  i = i + 1;\n}\nprint sum;"}
+{"id": "sum_squares_10", "source": "let sum = 0;\nlet i = 1;\nrepeat 10 {\n  sum = sum + i * i;\n  i = i + 1;\n}\nprint sum;"}
+{"id": "sum_squares_10", "source": "let sum = 0;\nlet i = 1;\nrepeat 10 {\n  sum = sum + i * i;\n  i = i + 1;\n}\nprint sum;"}
+{"id": "sum_squares_10", "source": "// sum of squares from 1 to 10\nlet sum = 0;\nlet i = 1;\nrepeat 10 {\n  sum = sum + i * i;\n  i = i + 1;\n}\nprint sum;"}
+{"id": "sum_squares_10", "source": "let sum = 0;\nfor (let i = 1; i <= 10; i++) {\n  sum = sum + i * i;\n}\nprint sum;"}
+{"id": "sum_squares_10", "source": "// sum of squares from 1 to 10\nlet sum = 0;\nlet i = 1;\nrepeat 10 {\n  sum = sum + i * i;\n  i = i + 1;\n}\nprint sum;"}
+{"id": "sum_squares_10", "source": "// sum of squares from 1 to 10\nlet sum = 0;\nlet i = 1;\nrepeat 10 {\n  sum = sum + i * i;\n  i = i + 1;\n}\nprint sum;"}
+{"id": "power_2_10", "source": "let x = 2;\nlet power = 10;\nlet result = 1;\nrepeat power {\n  result = result * x;\n}\nprint result;"}
+{"id": "power_2_10", "source": "let result = 2;\nlet power = 10;\nlet result = result * result * result * result * result * result * result * result * result * result;\nprint result;"}
+{"id": "power_2_10", "source": "// 2^10 = 1024\nlet x = 2;\nlet pow = 1;\nlet i = 1;\nrepeat 10 {\n  pow = pow * x;\n  x = x * x;\n}\nprint pow;"}
+{"id": "power_2_10", "source": "// 2^10 = 1024\nlet x = 2;\nlet n = 10;\nlet power = 1;\nrepeat n {\n  power = power * x;\n}\nprint power;"}
+{"id": "power_2_10", "source": "let result = 1;\nlet exponent = 10;\nlet i = 1;\nrepeat exponent {\n  result = result * i;\n  i = i + 1;\n}\nprint result;"}
+{"id": "power_2_10", "source": "let x = 2;\nlet result = x * x * x * x * x * x * x * x * x * x;\nprint result;"}
+{"id": "power_2_10", "source": "let result = 1;\nlet power = 2;\nlet i = 1;\nrepeat 10 {\n  result = result * power;\n  power = power * power;\n}\nprint result;\n// 1024;"}
+{"id": "power_2_10", "source": "let power = 2;\nlet exponent = 10;\nlet result = 1;\nrepeat exponent {\n  result = result * power;\n}\nprint result;"}
+{"id": "odd_sum_7", "source": "// sum of first 7 odd numbers\nlet sum = 0;\nlet i = 1;\nrepeat 7 {\n  sum = sum + i;\n  i = i + 2;\n}\nprint sum;"}
+{"id": "odd_sum_7", "source": "let sum = 0;\nlet n = 1;\nrepeat 7 {\n  sum = sum + n;\n  n = n + 2;\n}\nprint sum;"}
+{"id": "odd_sum_7", "source": "// sum of first 7 odd numbers\nlet sum = 0;\nlet n = 1;\nrepeat 7 {\n  sum = sum + n;\n  n = n + 2;\n}\nprint sum;"}
+{"id": "odd_sum_7", "source": "let sum = 0;\nlet n = 1;\nrepeat 7 {\n  sum = sum + n;\n  n = n + 2;\n}\nprint sum;"}
+{"id": "odd_sum_7", "source": "let sum = 0;\nlet n = 1;\nrepeat 7 {\n  sum = sum + n;\n  n = n + 2;\n}\nprint sum;\n// 21"}
+{"id": "odd_sum_7", "source": "let sum = 0;\nlet n = 1;\nrepeat 7 {\n  sum = sum + n;\n  n = n + 2;\n}\nprint sum;"}
+{"id": "odd_sum_7", "source": "let sum = 0;\nlet i = 1;\nrepeat 7 {\n  sum = sum + i;\n  i = i + 2;\n}\nprint sum;"}
+{"id": "odd_sum_7", "source": "let sum = 0;\nlet n = 1;\nrepeat 7 {\n  sum = sum + n;\n  n = n + 2;\n}\nprint sum;"}
+{"id": "alt_sum_10", "source": "let i = 1;\nlet sum = 0;\nrepeat 10 {\n  if i % 2 == 1 {\n    sum = sum + i;\n  } else {\n    sum = sum - i;\n  }\n  i = i + 1;\n}\nprint sum;"}
+{"id": "alt_sum_10", "source": "// alternating sum from 1 to -10\nlet sum = 0;\nlet i = 1;\nrepeat 10 {\n  if i % 2 == 1 {\n    sum = sum + i;\n  } else {\n    sum = sum - i;\n  }\n  i = i + 1;\n}\nprint sum;"}
+{"id": "alt_sum_10", "source": "let sum = 0;\nlet i = 1;\nrepeat 10 {\n  if i % 2 == 1 {\n    sum = sum + i;\n  } else {\n    sum = sum - i;\n  }\n  i = i + 1;\n} print sum;"}
+{"id": "alt_sum_10", "source": "let n = 10;\nlet sum = 0;\nlet i = 1;\nrepeat n {\n  if i % 2 == 1 {\n    sum = sum + i;\n  } else {\n    sum = sum - i;\n  }\n  i = i + 1;\n}"}
+{"id": "alt_sum_10", "source": "let sum = 0;\nlet n = 10;\nrepeat n {\n  if n % 2 == 0 {\n    sum = sum + n;\n  } else {\n    sum = sum - n;\n  }\n  n = n + 1;\n}\nprint sum;"}
+{"id": "alt_sum_10", "source": "let sum = 0;\nlet n = 10;\nrepeat n {\n  sum = sum + (-1 * n);\n}\nprint sum;"}
+{"id": "alt_sum_10", "source": "let n = 10;\nlet sum = 0;\nlet i = 1;\nrepeat n {\n  sum = sum + i;\n  i = i + 2;\n}\nprint sum;"}
+{"id": "alt_sum_10", "source": "// alternating sum: 1 - 2 + 3 - 4 + ... - 10\nlet i = 1;\nrepeat 10 {\n  if i % 2 == 1 {\n    print i;\n  } else {\n    print i;\n  }\n  i = i + 1;\n}"}
+{"id": "digit_sum_1234", "source": "let sum = 0;\nlet n = 1234;\nrepeat 4 {\n  let digit = n % 10;\n  sum = sum + digit;\n  n = n / 10;\n}\nprint sum;"}
+{"id": "digit_sum_1234", "source": "let sum = 0;\nlet n = 1234;\nrepeat 4 {\n  sum = sum + n % 10;\n  n = n / 10;\n}\nprint sum;"}
+{"id": "digit_sum_1234", "source": "let x = 1234;\nlet sum = 0;\nlet digit = x;\nrepeat 3 {\n  sum = sum + digit % 10;\n  digit = digit / 10;\n}\nprint sum;"}
+{"id": "digit_sum_1234", "source": "let sum = 0;\nlet n = 1234;\nrepeat 4 {\n  sum = sum + n % 10;\n  n = n / 10;\n}\nprint sum;"}
+{"id": "digit_sum_1234", "source": "// 1234's digits sum: 1 + 2 + 3 + 4 = 10\nlet sum = 1 + 2 + 3 + 4;\nprint sum;"}
+{"id": "digit_sum_1234", "source": "let sum = 0;\nlet n = 1234;\nrepeat 4 {\n  sum = sum + n % 10;\n  n = n / 10;\n}\nprint sum;"}
+{"id": "digit_sum_1234", "source": "// sum of the decimal digits of 1234\nlet sum = 0;\nlet first = 1;\nlet second = 2;\nlet third = 3;\nlet fourth = 4;\nrepeat 4 {\n  sum = sum + first;\n  first = first * 10;\n  second = second * 10;\n  third = third * 10;\n  fourth = fourth * 10;\n}\nprint sum;"}
+{"id": "digit_sum_1234", "source": "// sum of digits of 1234\nlet sum = 0;\nlet i = 1;\nrepeat 4 {\n  if i % 2 == 0 {\n    sum = sum + 1;\n  } else {\n    sum = sum + 2;\n  }\n  i = i + 1;\n}\nprint sum;"}
+{"id": "reverse_123", "source": "// 123 in reverse order\nlet x = 123;\nrepeat 3 {\n  print x % 10;\n  x = x / 10;\n}"}
+{"id": "reverse_123", "source": "let x = 123;\nrepeat 3 {\n  print x % 10;\n  x = x / 10;\n}"}
+{"id": "reverse_123", "source": "let x = 123;\nlet n = 3;\nrepeat n {\n  print x % 10;\n  x = x / 10;\n}"}
+{"id": "reverse_123", "source": "// 123 reversed digits\nlet x = 123;\nrepeat 3 {\n  print x % 10;\n  x = x / 10;\n}"}
+{"id": "reverse_123", "source": "let x = 123;\nrepeat 3 {\n  print x % 10;\n  x = x / 10;\n}"}
+{"id": "reverse_123", "source": "let x = 123;\nrepeat 3 {\n  print x % 10;\n  x = x / 10;\n}"}
+{"id": "reverse_123", "source": "// 123 in reverse order\nlet a = 123;\nrepeat 3 {\n  print a;\n  a = a / 10;\n}"}
+{"id": "reverse_123", "source": "// reverse the digits of 123\nlet x = 123;\nrepeat 3 {\n  print x % 10;\n  x = x / 10;\n}"}
+{"id": "is_prime_7", "source": "// n is 7, check if it's prime\nlet n = 7;\nlet isPrime = true;\nif n % 2 == 0 {\n  isPrime = false;\n}\nif n % 3 == 0 {\n  isPrime = false;\n}\nrepeat 5 {\n  if n % 5 == 0 {\n    isPrime = false;\n  }\n}\nprint isPrime;"}
+{"id": "is_prime_7", "source": "let n = 7;\nlet isPrime = false;\nif n % 2 == 0 {\n  isPrime = false;\n} else {\n  let i = 3;\n  repeat 6 {\n    if n % i == 0 {\n      isPrime = false;\n    } else {\n      i = i + 2;\n    }\n  }\n}\nprint isPrime;"}
+{"id": "is_prime_7", "source": "let n = 7;\nlet isPrime = true;\nif n % 2 == 0 {\n  isPrime = false;\n} else {\n  let i = 3;\n  repeat 6 {\n    if n % i == 0 {\n      isPrime = false;\n    }\n    i = i + 2;\n  }\n}\nprint isPrime;"}
+{"id": "is_prime_7", "source": "// n = 7, n is prime\nlet n = 7;\nif n % 2 == 0 {\n  print 0;\n} else {\n  let i = 3;\n  repeat 6 {\n    if n % i == 0 {\n      print 0;\n    } else {\n      i = i + 2;\n    }\n  }\n}"}
+{"id": "is_prime_7", "source": "// 7 is prime\nlet n = 7;\nif n % 2 == 0 {\n  print 0;\n} else {\n  let isPrime = true;\n  let i = 3;\n  repeat 6 {\n    if n % i == 0 {\n      isPrime = false;\n    }\n    i = i + 2;\n  }\n  print isPrime ? 1 : 0;\n}"}
+{"id": "is_prime_7", "source": "let n = 7;\nif n % 2 == 0 {\n  print 0;\n} else {\n  let i = 3;\n  repeat 6 {\n    if n % i == 0 {\n      print 0;\n    } else {\n      i = i + 2;\n    }\n  }\n}"}
+{"id": "is_prime_7", "source": "let n = 7;\nif n % 2 == 0 {\n  print 0;\n} else {\n  let i = 3;\n  repeat 6 {\n    if n % i == 0 {\n      print 0;\n    } else {\n      i = i + 2;\n    }\n  }\n}"}
+{"id": "is_prime_7", "source": "// 7 is prime\nlet n = 7;\nif n % 2 == 0 {\n  print 0;\n} else {\n  print 1;\n}"}
+{"id": "is_prime_9", "source": "let n = 9;\nlet isPrime = false;\nif n % 2 == 0 {\n  isPrime = true;\n} else {\n  let i = 3;\n  repeat 6 {\n    if n % i == 0 {\n      isPrime = false;\n    } else {\n      i = i + 2;\n    }\n  }\n}\nif isPrime {\n  print 1;\n} else {\n  print 0;\n}"}
+{"id": "is_prime_9", "source": "let n = 9;\nlet isPrime = false;\nif n % 2 == 0 {\n  isPrime = true;\n} else {\n  let i = 3;\n  repeat n / 2 {\n    if i % 2 == 0 {\n      isPrime = false;\n    } else {\n      if n % i == 0 {\n        isPrime = true;\n      }\n    }\n    i = i + 2;\n  }\n}\nprint isPrime;"}
+{"id": "is_prime_9", "source": "let n = 9;\nif n % 2 == 0 {\n  print 0;\n} else {\n  let i = 3;\n  repeat n / 3 {\n    if i % 2 == 0 {\n      print 0;\n    } else {\n      print 1;\n    }\n    i = i + 2;\n  }\n}"}
+{"id": "is_prime_9", "source": "let n = 9;\nlet isPrime = true;\nrepeat 6 {\n  if n % 2 == 0 {\n    isPrime = false;\n  }\n  n = n + 1;\n}\nif isPrime {\n  print 1;\n} else {\n  print 0;\n}"}
+{"id": "is_prime_9", "source": "// 9 is prime\nlet n = 9;\nif n % 2 == 0 {\n  print 0;\n} else {\n  let i = 3;\n  repeat 6 {\n    if i % 2 == 0 {\n      print 0;\n    } else {\n      if n % i == 0 {\n        print 0;\n      } else {\n        print 1;\n      }\n    }\n    i = i + 2;\n  }\n}"}
+{"id": "is_prime_9", "source": "let n = 9;\nlet isPrime = true;\nif n % 2 == 0 {\n  isPrime = false;\n} else {\n  let i = 3;\n  while i <= n / 2 {\n    if n % i == 0 {\n      isPrime = false;\n    }\n    i += 2;\n  }\n}\nprint isPrime;"}
+{"id": "is_prime_9", "source": "let n = 9;\nlet isPrime = true;\nif n % 2 == 0 {\n  isPrime = false;\n} else {\n  let i = 3;\n  repeat 6 {\n    if n % i == 0 {\n      isPrime = false;\n    }\n    i = i + 2;\n  }\n}\nprint isPrime;"}
+{"id": "is_prime_9", "source": "let n = 9;\nif n % 2 == 0 {\n  print 0;\n} else {\n  let d = 3;\n  repeat 6 {\n    if n % d == 0 {\n      print 0;\n    } else {\n      d = d + 2;\n    }\n  }\n}"}
+{"id": "cube_sum_5", "source": "let sum = 0;\nlet i = 1;\nrepeat 5 {\n  sum = sum + i * i * i;\n  i = i + 1;\n}\nprint sum;"}
+{"id": "cube_sum_5", "source": "// sum of cubes of integers 1 through 5\nlet sum = 0;\nlet i = 1;\nrepeat 5 {\n  sum = sum + i * i * i;\n  i = i + 1;\n}\nprint sum;"}
+{"id": "cube_sum_5", "source": "let total = 0;\nlet i = 1;\nrepeat 5 {\n  total = total + i * i * i;\n  i = i + 1;\n}\nprint total;"}
+{"id": "cube_sum_5", "source": "// sum of cubes from 1 to 5\nlet sum = 0;\nlet i = 1;\nrepeat 5 {\n  sum = sum + i * i * i;\n  i = i + 1;\n}\nprint sum;"}
+{"id": "cube_sum_5", "source": "// sum of cubes from 1 to 5\nlet sum = 0;\nlet i = 1;\nrepeat 5 {\n  sum = sum + i * i * i;\n  i = i + 1;\n}\nprint sum;"}
+{"id": "cube_sum_5", "source": "// sum of cubes from 1 to 5\nlet sum = 0;\nlet i = 1;\nrepeat 5 {\n  sum = sum + i * i * i;\n  i = i + 1;\n}\nprint sum;"}
+{"id": "cube_sum_5", "source": "// sum of cubes from 1 to 5\nlet sum = 0;\nlet i = 1;\nrepeat 5 {\n  sum = sum + i * i * i;\n  i = i + 1;\n}\nprint sum;"}
+{"id": "cube_sum_5", "source": "let n = 1;\nlet total = 0;\nrepeat 5 {\n  total = total + n * n * n;\n  n = n + 1;\n}\nprint total;"}
+{"id": "popcount_13", "source": "// 13 in binary is 1101, which has 2 1 bits\nlet x = 13;\nlet count = 0;\nrepeat 4 {\n  if x % 2 == 1 {\n    count = count + 1;\n  }\n  x = x / 2;\n}\nprint count;"}
+{"id": "popcount_13", "source": "// 13 in binary is 1101, which has 2 1 bits\nlet n = 13;\nlet count = 0;\nrepeat 4 {\n  let bit = n % 2;\n  if bit == 1 {\n    count = count + 1;\n  }\n  n = n / 2;\n}\nprint count;"}
+{"id": "popcount_13", "source": "let x = 13;\nlet count = 0;\nrepeat 4 {\n  if x % 2 == 0 {\n    count = count + 1;\n  }\n  x = x / 2;\n}\nprint count;"}
+{"id": "popcount_13", "source": "let x = 13;\nlet count = 0;\nrepeat 5 {\n  if x % 2 == 0 {\n    count = count + 1;\n  }\n  x = x / 2;\n}\nprint count;"}
+{"id": "popcount_13", "source": "let x = 13;\nlet count = 0;\nrepeat 3 {\n  if x % 2 == 0 {\n    count = count + 1;\n  }\n  x = x / 2;\n}\nprint count;"}
+{"id": "popcount_13", "source": "// 13 in binary is 1101, which has 2 1 bits\nlet x = 13;\nlet count = 0;\nlet i = 0;\nrepeat 4 {\n  if (x % 2 == 1) {\n    count = count + 1;\n  }\n  x = x / 2;\n}\nprint count;"}
+{"id": "popcount_13", "source": "let n = 13;\nlet count = 0;\nrepeat 4 {\n  if (n % 2 == 0) {\n    count = count + 1;\n  }\n  n = n / 2;\n}\nprint count;\n// 13 has 2 bits set."}
+{"id": "popcount_13", "source": "let x = 13;\nlet count = 0;\nrepeat 4 {\n  if x % 2 == 0 {\n    count = count + 1;\n  }\n  x = x / 2;\n}\nprint count;\n// 13 in binary is 1101, which has 2 1 bits."}
+{"id": "collatz_len_6", "source": "let n = 6;\nlet steps = 0;\nrepeat 100 {\n  if n > 1 {\n    n = n * 2 - 1;\n    steps = steps + 1;\n  } else {\n    break;\n  }\n}\nprint steps;"}
+{"id": "collatz_len_6", "source": "let x = 6;\nrepeat 6 {\n  if x % 2 == 0 {\n    x = x / 2;\n  } else {\n    x = 3 * x + 1;\n  }\n}\nprint x;"}
+{"id": "collatz_len_6", "source": "let n = 6;\nlet steps = 0;\nrepeat 6 {\n  if n == 1 {\n    break;\n  }\n  if n % 2 == 0 {\n    n = n / 2;\n  } else {\n    n = 3 * n + 1;\n  }\n  steps = steps + 1;\n}\nprint steps;"}
+{"id": "collatz_len_6", "source": "let n = 6;\nlet steps = 0;\nrepeat 6 {\n  if n < 1 {\n    break;\n  }\n  if n % 2 == 0 {\n    n = n / 2;\n  } else {\n    n = 3 * n + 1;\n  }\n  steps = steps + 1;\n}\nprint steps;"}
+{"id": "collatz_len_6", "source": "// Collatz steps from 6 to 1\nlet n = 6;\nrepeat 10 {\n  if n % 2 == 0 {\n    n = n / 2;\n  } else {\n    n = 3 * n;\n  }\n  print n;\n}"}
+{"id": "collatz_len_6", "source": "let x = 6;\nlet steps = 0;\nrepeat 6 {\n  if x == 1 {\n    break;\n  }\n  if x % 2 == 0 {\n    x = x / 2;\n  } else {\n    x = x * 3 + 1;\n  }\n  steps = steps + 1;\n}\nprint steps;"}
+{"id": "collatz_len_6", "source": "let x = 6;\nlet steps = 0;\nrepeat 6 {\n  if x == 1 {\n    break;\n  }\n  if x % 2 == 0 {\n    x = x / 2;\n  } else {\n    x = 3 * x + 1;\n  }\n  steps = steps + 1;\n}\nprint steps;"}
+{"id": "collatz_len_6", "source": "// Collatz steps from 6 to 1\nlet n = 6;\nrepeat 10 {\n  if n == 1 {\n    print 0;\n    break;\n  }\n  if n % 2 == 0 {\n    n = n / 2;\n  } else {\n    n = 3 * n + 1;\n  }\n}"}
+{"id": "fib_12", "source": "let a = 1;\nlet b = 1;\nlet i = 2;\nrepeat 12 {\n  print a;\n  if i == 1 { a = 1; b = 1; }\n  else if i == 2 { a = b; b = 3; }\n  else { a = b; b = a + b; }\n  i = i + 1;\n}"}
+{"id": "fib_12", "source": "// Fibonacci numbers: 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144\nlet a = 1;\nlet b = 1;\nlet i = 1;\nrepeat 12 {\n  print a;\n  a = b;\n  b = a + b;\n  i = i + 1;\n}"}
+{"id": "fib_12", "source": "let a = 1;\nlet b = 1;\nlet i = 1;\nrepeat 12 {\n  print a;\n  a = b;\n  b = a + b;\n  i = i + 1;\n}"}
+{"id": "fib_12", "source": "// Fibonacci sequence starting with 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144\nlet a = 1;\nlet b = 1;\nlet next = 2;\nrepeat 11 {\n  print a;\n  a = b;\n  b = next;\n  next = a + b;\n}"}
+{"id": "fib_12", "source": "// fibonacci numbers\nlet a = 1;\nlet b = 1;\nlet i = 1;\nrepeat 12 {\n  print a;\n  if i > 1 {\n    a = b;\n    b = a + b;\n  }\n  i = i + 1;\n}"}
+{"id": "fib_12", "source": "// Fibonacci sequence\nlet a = 1;\nlet b = 1;\nlet f = 0;\nlet count = 0;\nrepeat 12 {\n  print a;\n  a = b;\n  b = f;\n  f = a + b;\n  count = count + 1;\n}"}
+{"id": "fib_12", "source": "let a = 1;\nlet b = 1;\nlet count = 1;\nrepeat 12 {\n  print a;\n  if count == 1 {\n    a = b;\n  } else if count == 2 {\n    b = a + b;\n  } else {\n    a = b;\n  }\n  count = count + 1;\n}"}
+{"id": "fib_12", "source": "// fib numbers: 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144\nlet a = 1;\nlet b = 1;\nlet i = 1;\nrepeat 12 {\n  print a;\n  if i == 1 {\n    a = b;\n  } else {\n    a = a + b;\n  }\n  b = b + a;\n  i = i + 1;\n}"}
