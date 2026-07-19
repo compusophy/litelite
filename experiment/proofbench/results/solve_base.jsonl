@@ -1,0 +1,240 @@
+{"id": "count_1_10", "source": "let x = 1;\nprint x;\nlet x = 2;\nprint x;\nlet x = 3;\nprint x;\nlet x = 4;\nprint x;\nlet x = 5;\nprint x;\nlet x = 6;\nprint x;\nlet x = 7;\nprint x;\nlet x = 8;\nprint x;\nlet x = 9;\nprint x;\nlet x = 10;\nprint x;\n"}
+{"id": "count_1_10", "source": "let x = 1;\nx = 10;\nprint x;\n"}
+{"id": "count_1_10", "source": "let x = 1;       -- introduce a variable\nlet x = x + 1;   -- reassign a variable\nprint x;        -- write one line of output\n"}
+{"id": "count_1_10", "source": "let x = 1\nx = 2\nx = 3\nx = 4\nx = 5\nx = 6\nx = 7\nx = 8\nx = 9\nx = 10\nprint x\n"}
+{"id": "count_1_10", "source": "let x = 1\nx = 2\nx = 3\nx = 4\nx = 5\nx = 6\nx = 7\nx = 8\nx = 9\nx = 10\nprint x\n"}
+{"id": "count_1_10", "source": "let x = 1\nx = 2\nx = 3\nx = 4\nx = 5\nx = 6\nx = 7\nx = 8\nx = 9\nx = 10\nprint x\n"}
+{"id": "count_1_10", "source": "let x = 1\nprint x\nlet x = 2\nprint x\nlet x = 3\nprint x\nlet x = 4\nprint x\nlet x = 5\nprint x\nlet x = 6\nprint x\nlet x = 7\nprint x\nlet x = 8\nprint x\nlet x = 9\nprint x\nlet x = 10\nprint x\n"}
+{"id": "count_1_10", "source": "let x = 1; x = 2; x = 3; x = 4; x = 5; x = 6; x = 7; x = 8; x = 9; x = 10;\nprint x;\n"}
+{"id": "countdown_5", "source": "let x = 5;\nx = 4;\nx = 3;\nx = 2;\nx = 1;\nprint x;\n"}
+{"id": "countdown_5", "source": "let x = 5\nx = 5\nprint x\nx = 4\nx = 3\nx = 2\nx = 1\nprint x\n"}
+{"id": "countdown_5", "source": "let x = 5\nx = x - 1\nprint x\n"}
+{"id": "countdown_5", "source": "let x = 5;\nx = 5;\nprint x;  -- countdown from 5 down to 1, one number per line\n"}
+{"id": "countdown_5", "source": "let x = 5\nx = x - 1\nprint x\nif x { x = x - 1 } else if x { x = x - 1 } else { x = x - 1 }\nrepeat x { x = x - 1 }\n"}
+{"id": "countdown_5", "source": "let x = 5;\nx = 5;\nx = 1;\nprint x;\n"}
+{"id": "countdown_5", "source": "let x = 5;\nx = 5;  -- reassign with let\nx = 1;  -- introduction\nprint x;  -- print one number per line\n\nrepeat 5 { \n  print x; \n}\n"}
+{"id": "countdown_5", "source": "```prooflite\nlet x = 5;\nprint x; ; // line 1\nx = x - 1; ; // line 2\nprint x; ; // line 3\nx = x - 1; ; // line 4\nprint x; ; // line 5\nx = x - 1; ; // line 6\nprint x; ; // line 7\nx = x - 1; ; // line 8\nprint x; ; // line 9\nx = x - 1; ; // line 10\nprint x; ; // line 11\nx = x - 1; ; // line 12\nprint x; ; // line 13\nx = x - 1; ; // line 14\nprint x; ; // line 15\nx = x - 1; ; // line 16\nprint x; ; // line 17\nx = x - 1; ; // line 18\nprint x; ; // line 19\nx = x - 1; ; // line 20\nprint x; ; // line 21\nx = x - "}
+{"id": "evens_to_20", "source": "let x = 2\nx = 20\nprint x\n"}
+{"id": "evens_to_20", "source": "let x = 2;\nx = 20;\n\nprint x;\n"}
+{"id": "evens_to_20", "source": "let x = 2;\nprint x;\nrepeat x { x + 2; print x; }\n"}
+{"id": "evens_to_20", "source": "let x = 2;  -- introduce variable\nx = 20;      -- reassign a variable already introduced\nprint x;     -- write one line of output\n"}
+{"id": "evens_to_20", "source": "let x = 2;\nprint x;\nx = 3;\nx = 4;\nx = 5;\nx = 6;\nx = 7;\nx = 8;\nx = 9;\nx = 10;\nx = 11;\nx = 12;\nx = 13;\nx = 14;\nx = 15;\nx = 16;\nx = 17;\nx = 18;\nx = 19;\nx = 20;\nprint x;\n"}
+{"id": "evens_to_20", "source": "let x = 2\nprint x\nrepeat x { print x } until x > 20\n"}
+{"id": "evens_to_20", "source": "let x = 2;               -- introduce a variable\nx = 20;                 -- reassign a variable already introduced\nprint x;                -- write one line of output\n"}
+{"id": "evens_to_20", "source": "let x = 2\nrepeat x { x += 2; print x }\n"}
+{"id": "multiples_of_3", "source": "let x = 3;   ; introduce variable\nx = 6;       ; assign x to 6\nx = 9;       ; assign x to 9\nx = 12;      ; assign x to 12\nx = 15;      ; assign x to 15\nx = 18;      ; assign x to 18\nprint 3;     ; print first multiple\nprint 6;     ; print second multiple\nprint 9;     ; print third multiple\nprint 12;    ; print fourth multiple\nprint 15;    ; print fifth multiple\nprint 18;    ; print sixth multiple\n"}
+{"id": "multiples_of_3", "source": "(let x (3 + 3))\nprint x\n"}
+{"id": "multiples_of_3", "source": "let x = 3;\nprint x;\nrepeat 2 { x; print x };\n"}
+{"id": "multiples_of_3", "source": "let x = 3;  -- introduce variable\nx = 3;       -- reassign with a new value\nprint x;     -- output first multiple\nx = 3;       -- repeat loop\nrepeat 3 { x = x + 3; print x; }\n"}
+{"id": "multiples_of_3", "source": "```prooflite\nlet x = 3;\nprint x;\nx = 6;\nx = 9;\nx = 12;\nx = 15;\nx = 18;\nx = 21;\nx = 24;\nx = 27;\nx = 30;\nx = 33;\nx = 36;\nx = 39;\nx = 42;\nx = 45;\nx = 48;\nx = 51;\nx = 54;\nx = 57;\nx = 60;\nx = 63;\nx = 66;\nx = 69;\nx = 72;\nx = 75;\nx = 78;\nx = 81;\nx = 84;\nx = 87;\nx = 90;\nx = 93;\nx = 96;\nx = 99;\nx = 102;\nx = 105;\nx = 108;\nx = 111;\nx = 114;\nx = 117;\nx = 120;\nx = 1"}
+{"id": "multiples_of_3", "source": "let x = 3\nprint x\nlet x = x + 3\nprint x\nlet x = x + 3\nprint x\nlet x = x + 3\nprint x\n"}
+{"id": "multiples_of_3", "source": "let x = 3;\nprint x;\nprint x * 2;\nprint x * 3;\nprint x * 4;\nprint x * 5;\n"}
+{"id": "multiples_of_3", "source": "let x = 3;       -- introduce a variable\nx = 3;          -- reassign the variable\nx = 6;          -- x is 6\nprint 6;         -- output first multiple of 3\nx = 9;          -- x is 9\nprint 9;         -- output second multiple of 3\nx = 12;         -- x is 12\nprint 12;        -- output third multiple of 3\nx = 15;         -- x is 15\nprint 15;        -- output fourth multiple of 3\nx = 18;         -- x is 18\nprint 18;        -- output fifth multiple of 3\nx = 21;         -- x is 21\nprint 21;        -- output sixth multiple of 3\n"}
+{"id": "powers_of_2", "source": "let x = 2;\nx = 2;\nprint x;\nx = 2^2;\nx = 2;\nprint x;\nx = 2^4;\nx = 2;\nprint x;\nx = 2^8;\nx = 2;\nprint x;\nx = 2^16;\nx = 2;\nprint x;\nx = 2^32;\nx = 2;\nprint x;\nx = 2^64;\nx = 2;\nprint x;\n"}
+{"id": "powers_of_2", "source": "let x = 2;  -- introduce variable\nlet x = x * 2;  -- reassign\nprint x;      -- output first power of two\nprint x;      -- output second power of two\nprint x;      -- output third power of two\nprint x;      -- output fourth power of two\nprint x;      -- output fifth power of two\nprint x;      -- output sixth power of two\nprint x;      -- output seventh power of two\nprint x;      -- output eighth power of two\n"}
+{"id": "powers_of_2", "source": "let x = 2;\nx = 4;\nx = 8;\nx = 16;\nx = 32;\nx = 64;\nx = 128;\nx = 256;\nprint x;\n"}
+{"id": "powers_of_2", "source": "let x = 2;\nprint x;\nlet x = 4;\nprint x;\nlet x = 8;\nprint x;\nlet x = 16;\nprint x;\nlet x = 32;\nprint x;\nlet x = 64;\nprint x;\nlet x = 128;\nprint x;\nlet x = 256;\nprint x;\n"}
+{"id": "powers_of_2", "source": "Sure! Here's a **prooflite program** that prints the first 8 powers of 2 (2, 4, 8, ..., 256), one per line:\n\n```prooflite\nlet x = 2;                -- define x\nx = x * 2;               -- x = x * 2\nprint x;                  -- print x\nlet x = 4;                 -- define x\nx = x * 2;               -- x = x * 2\nprint x;                  -- print x\nlet x = 8;                 -- define x\nx = x * 2;               -- x = x * 2\nprint x;                  -- print x\nlet x = 16;                 -- define x\nx = x * 2;               -- x = x * 2\nprint x;                  -- print x\nlet x = 32;                 -- define x\nx = x * 2;               -- x = x * 2\nprint x;                  -- print x\nlet x = 64;                 -- define x\nx = x * 2;               -- x = x * 2\nprint x;                  -- print x\n"}
+{"id": "powers_of_2", "source": "let x = 2;\nprint x;\nlet x = x * 2;\nprint x;\nlet x = x * 2;\nprint x;\nlet x = x * 2;\nprint x;\nlet x = x * 2;\nprint x;\nlet x = x * 2;\nprint x;\n"}
+{"id": "powers_of_2", "source": "let x = 2;  -- introduce variable x\nprint x;     -- print first power of two\nrepeat x { x * 2; }  -- loop to compute 8 times 2\n"}
+{"id": "powers_of_2", "source": "```prooflite\nlet x = 2;\nprint x;       ; 1\nlet x = x * 2;  ; 2\nprint x;       ; 3\nlet x = x * 2;  ; 4\nprint x;       ; 5\nlet x = x * 2;  ; 6\nprint x;       ; 7\nlet x = x * 2;  ; 8\nprint x;       ; 9\nlet x = x * 2;  ; 10\nprint x;       ; 11\nlet x = x * 2;  ; 12\nprint x;       ; 13\nlet x = x * 2;  ; 14\nprint x;       ; 15\nlet x = x * 2;  ; 16\nprint x;       ; 17\nlet x = x * 2;  ; 18\nprint x;       ; 19\nlet x = x * 2;  ; 20\nprint x;       ; 21\nlet x = x * 2;  ; 22\nprint x"}
+{"id": "squares_1_5", "source": "let x = 1;\nprint x;\nlet x = 4;\nprint x;\nlet x = 9;\nprint x;\nlet x = 16;\nprint x;\nlet x = 25;\nprint x;\n"}
+{"id": "squares_1_5", "source": "let x = 1;\nprint x\nlet x = 4;\nprint x\nlet x = 9;\nprint x\nlet x = 16;\nprint x\nlet x = 25;\nprint x\n"}
+{"id": "squares_1_5", "source": "let x = 1\nx = 2\nx = 3\nx = 4\nx = 5\nprint x\n"}
+{"id": "squares_1_5", "source": "let x = 1;\nprint x;\n\nlet x = 2;\nprint x;\n\nlet x = 3;\nprint x;\n\nlet x = 4;\nprint x;\n\nlet x = 5;\nprint x;\n"}
+{"id": "squares_1_5", "source": "let x = 1;\nprint x;\nlet x = 2;\nprint x;\nlet x = 3;\nprint x;\nlet x = 4;\nprint x;\nlet x = 5;\nprint x;\n"}
+{"id": "squares_1_5", "source": "let x = 1;      -- introduce variable x\nlet x = 2;      -- reassign variable x\nlet x = 3;      -- reassign variable x\nlet x = 4;      -- reassign variable x\nlet x = 5;      -- reassign variable x\n\nprint x;       -- print 1\nprint x;       -- print 4\nprint x;       -- print 9\nprint x;       -- print 16\nprint x;       -- print 25\n"}
+{"id": "squares_1_5", "source": "let x = 1;  -- introduce variable x\nprint x;    -- print 1\nlet x = 2;  -- introduce variable x\nprint x;    -- print 4\nlet x = 3;  -- introduce variable x\nprint x;    -- print 9\nlet x = 4;  -- introduce variable x\nprint x;    -- print 16\nlet x = 5;  -- introduce variable x\nprint x;    -- print 25\n"}
+{"id": "squares_1_5", "source": "let x = 1;  -- introduce variable x\nx = x + x;  -- assign x = x^2\nprint x;    -- print square of 1\n\nlet x = 2;  -- introduce variable x\nx = x + x;  -- assign x = x^2\nprint x;    -- print square of 2\n\nlet x = 3;  -- introduce variable x\nx = x + x;  -- assign x = x^2\nprint x;    -- print square of 3\n\nlet x = 4;  -- introduce variable x\nx = x + x;  -- assign x = x^2\nprint x;    -- print square of 4\n\nlet x = 5;  -- introduce variable x\nx = x + x;  -- assign x = x^2\nprint x;    -- print square of 5\n"}
+{"id": "abs_neg7", "source": "let x = -7;\nprint absolute-value(x);\n"}
+{"id": "abs_neg7", "source": "let x = -7;\nprint |x|\n"}
+{"id": "abs_neg7", "source": "let x = -7\nprint absolute-value(x)\n"}
+{"id": "abs_neg7", "source": "let x = -7;  ;  // Define variable x\nprint x;  ;  // Output absolute value of x\n"}
+{"id": "abs_neg7", "source": "let x = -7;\nprint |x|; \n"}
+{"id": "abs_neg7", "source": "let x = -7;\nprint |x|;  -- absolute value of x\n"}
+{"id": "abs_neg7", "source": "let x = -7;\nprint x;\n"}
+{"id": "abs_neg7", "source": "let x = -7;\nprint x;\n"}
+{"id": "max_12_9", "source": "let a = 12;\nlet b = 9;\nprint(max(a, b));\n"}
+{"id": "max_12_9", "source": "let a = 12;\nlet b = 9;\nprint(max(a, b));\n"}
+{"id": "max_12_9", "source": "let a = 12;\nlet b = 9;\nprint(max(a, b));\n"}
+{"id": "max_12_9", "source": "let a = 12;\nlet b = 9;\n\nprint(max(a, b));\n"}
+{"id": "max_12_9", "source": "let a = 12\nlet b = 9\nprint(max(a, b))\n"}
+{"id": "max_12_9", "source": "let a = 12\nlet b = 9\nprint max(a, b)\n"}
+{"id": "max_12_9", "source": "let a = 12;\nlet b = 9;\nprint(max(a, b));\n"}
+{"id": "max_12_9", "source": "let a = 12;\nlet b = 9;\nprint a > b;\n"}
+{"id": "div_rem_100_7", "source": "let x = 42;  -- introduce variable x\nx = 1_000;   -- reassign x\nprint 1_000;  -- print first line\nlet y = 100;   -- introduce y\nlet z = 7;     -- introduce z\nrepeat y {   -- up-front count is 100\n    print x;  -- print 100 divided by 7\n    print z;   -- print 100 remainder on the second line\n}  -- end of loop\n"}
+{"id": "div_rem_100_7", "source": "let x = 42;              -- introduce a variable\nprint x;                -- print 42\nlet y = 100 / 7;         -- introduce a variable\nprint y;                -- print 14\nlet z = 100 % 7;         -- introduce a variable\nprint z;                -- print 2\n"}
+{"id": "div_rem_100_7", "source": "let x = 42;\nprint x;\nlet y = 100 / 7;\nprint y;\nlet z = 100 % 7;\nprint z;\n"}
+{"id": "div_rem_100_7", "source": "let x = 42;  -- introduce a variable\nprint x;     -- first line: 42\nlet y = 1_000;  -- introduce a variable\nprint y;     -- second line: 1_000\nlet z = x / 7;  -- first line: 42 / 7\nprint z;     -- second line: 6\nlet w = z % 7;  -- first line: 42 % 7\nprint w;     -- second line: 0\nlet result = w;  -- first line: 0\nprint result;  -- second line: 0\n"}
+{"id": "div_rem_100_7", "source": "let x = 1_000;  -- introduce a variable\nlet y = 7;      -- introduce a variable\n\nprint x / 7 ;  -- first line: print 100 divided by 7\nprint y % x ;  -- second line: print remainder of 100 divided by 7\n"}
+{"id": "div_rem_100_7", "source": "let x = 42\nprint x\nlet y = 1_000\nprint y\nlet z = 0xff\nprint z\nlet a = 0\nlet b = 1_000\nlet c = 0\nlet d = 0\nlet e = 0\nlet f = 0\nrepeat 100 { \n  let x = 100\n  let y = 7\n  print x\n  print y\n}\n"}
+{"id": "div_rem_100_7", "source": "let x = 100\nprint x\nlet y = 7\nprint y\nlet z = 100 / y\nprint z\nlet w = 100 % y\nprint w\n"}
+{"id": "div_rem_100_7", "source": "let x = 100;            -- introduce a variable\nlet y = 7;              -- introduce a variable\nprint x / y;            -- first line (100 divided by 7)\nprint x % y;            -- second line (100 divided by 7 remainder)\n"}
+{"id": "triangular_5", "source": "let x = 1;\nprint x;\n\nlet x = 3;\nprint x;\n\nlet x = 6;\nprint x;\n\nlet x = 10;\nprint x;\n\nlet x = 15;\nprint x;\n"}
+{"id": "triangular_5", "source": "let x = 1;\nprint x;\n\nlet x = 3;\nprint x;\n\nlet x = 6;\nprint x;\n\nlet x = 10;\nprint x;\n\nlet x = 15;\nprint x;\n"}
+{"id": "triangular_5", "source": "let n = 1;\nprint n;\nlet next = n + 1;\nprint next;\nlet next = next + 1;\nprint next;\nlet next = next + 1;\nprint next;\nlet n = next;\nprint n;\n"}
+{"id": "triangular_5", "source": "let x = 1\nprint x\nlet x = x + 1\nprint x\nlet x = x + 2\nprint x\nlet x = x + 3\nprint x\nlet x = x + 4\nprint x\n"}
+{"id": "triangular_5", "source": "let a = 1;\nlet b = a + 2;\nlet c = b + 3;\nlet d = c + 4;\nlet e = d + 5;\n\nprint a\nprint b\nprint c\nprint d\nprint e\n"}
+{"id": "triangular_5", "source": "let x = 1\nprint x\n\nlet x = x + 2\nlet x = x + 3\nlet x = x + 4\nlet x = x + 5\n\nlet x = x * 2\nlet x = x * 3\nlet x = x * 4\nlet x = x * 5\n\nprint x\n"}
+{"id": "triangular_5", "source": "let x = 1;\nprint x;  -- 1\n\nlet x = x + 1;\nprint x;  -- 3\n\nlet x = x + 2;\nprint x;  -- 6\n\nlet x = x + 3;\nprint x;  -- 10\n\nlet x = x + 4;\nprint x;  -- 15\n"}
+{"id": "triangular_5", "source": "let x = 1;\nx = 3;\nprint x;\nlet x = 6;\nx = 10;\nprint x;\nlet x = 15;\nx = 15;\nprint x;\nlet x = 21;\nx = 21;\nprint x;\n"}
+{"id": "factorial_6", "source": "let result = 1;\n\nrepeat 6 {\n  result *= 6\n}\n\nprint(result)\n"}
+{"id": "factorial_6", "source": "let x = 1;\nx = x * 6;\nprint x;\n"}
+{"id": "factorial_6", "source": "let x = 1;\nrepeat 6 { x *= x; };\nprint x;\n"}
+{"id": "factorial_6", "source": "let x = 1;\nx = x * x;  // 6 factorial\nprint x;\n"}
+{"id": "factorial_6", "source": "let x = 6;\nprint x;\n"}
+{"id": "factorial_6", "source": "let x = 1;\nx = x * 6;   -- compute 6 factorial\nprint x;     -- output 720\n"}
+{"id": "factorial_6", "source": "let result = 1;\nrepeat 6 { result *= EXPR }\n\nprint result\n"}
+{"id": "factorial_6", "source": "let result = 1;  -- compute 6 factorial\nrepeat 6 { result *= x; x = 0; }  -- compute 6 factorial\nprint result;  -- output the result\n"}
+{"id": "sum_1_100", "source": "let x = 1;\nx = x + 99;\n\nprint x;\n"}
+{"id": "sum_1_100", "source": "let x = 42;\nprint x;\n"}
+{"id": "sum_1_100", "source": "let x = 1;\nprint(x + x + x + x + x + x + x + x + x + x);  -- sum from 1 to 100\n"}
+{"id": "sum_1_100", "source": "let x = 1_000\nx\n"}
+{"id": "sum_1_100", "source": "let sum = 0;\nrepeat 100 {\n  sum += 1;\n}\nprint sum;\n"}
+{"id": "sum_1_100", "source": "let x = 100;  -- introduce a variable\nx = x + 99;  -- reassign a variable already introduced\nx = x + 98;  -- reassign a variable already introduced\n...\nx = x + 1;   -- reassign a variable already introduced\nprint x;     -- write one line of output\n"}
+{"id": "sum_1_100", "source": "let x = 1_000_000;\nx\n"}
+{"id": "sum_1_100", "source": "let x = 1\nprint x\n"}
+{"id": "sum_evens_20", "source": "let x = 2;\nprint(x);\n"}
+{"id": "sum_evens_20", "source": "let x = 2;  -- introduce variable x\nx = x + 2;  -- add 2 to x\nx = x + 4;  -- add 4 to x\nx = x + 6;  -- add 6 to x\nx = x + 8;  -- add 8 to x\nx = x + 10;  -- add 10 to x\nx = x + 12;  -- add 12 to x\nx = x + 14;  -- add 14 to x\nx = x + 16;  -- add 16 to x\nx = x + 18;  -- add 18 to x\nx = x + 20;  -- add 20 to x\n\nprint x;  -- write the result\n"}
+{"id": "sum_evens_20", "source": "let x = 2;  -- introduce variable\nx = x + 2;  -- assign x to be sum of 2 and x\nprint x;  -- output sum\n"}
+{"id": "sum_evens_20", "source": "let x = 2;\nlet x = x + 2;\nlet x = x + 2;\nlet x = x + 2;\nprint x\n"}
+{"id": "sum_evens_20", "source": "let x = 2;  -- introduce variable x\nprint x;  -- print x\n"}
+{"id": "sum_evens_20", "source": "let x = 2\nprint x\n"}
+{"id": "sum_evens_20", "source": "let sum = 0\nrepeat 20 { sum += x if x % 2 == 0 }\nprint sum\n"}
+{"id": "sum_evens_20", "source": "let x = 2;\nrepeat 10 { x += 2; print x; };\n"}
+{"id": "fib_8", "source": "let a = 1;\nlet b = 1;\n\nprint a;\nprint b;\nrepeat a { a + b; a = b; b = a; print a; }\n"}
+{"id": "fib_8", "source": "let a = 1;\nlet b = 1;\n\nprint a;\nprint b;\n\nrepeat a { \n    let c = a + b;\n    print c;\n    a = b;\n    b = c;\n} 8\n"}
+{"id": "fib_8", "source": "let a = 1; \nlet b = 1; \n\nprint a; \nprint b; \n\nfor i in 2..8 do\n  let next = a + b; \n  print next; \n  a = b; \n  b = next;\n"}
+{"id": "fib_8", "source": "let a = 1\nlet b = 1\nprint a; print b; \nlet c = a + b\nrepeat c { print c }\n"}
+{"id": "fib_8", "source": "let a = 1; \nlet b = 1; \nprint a; \nprint b; \nlet c = a + b; \nrepeat c { print c; } \nfor i from 1 to 8 do \n  if i == 1 then print a; \n  else if i == 2 then print b; \n  else if i == 3 then print c; \n  else if i == 4 then print a; \n  else if i == 5 then print b; \n  else if i == 6 then print c; \n  else if i == 7 then print a; \n  else if i == 8 then print b;\n"}
+{"id": "fib_8", "source": "let a = 1;\nlet b = 1;\n\nprint a;\nprint b;\n\nrepeat a { \n    let next = a + b;\n    a = next;\n    print next;\n}\n"}
+{"id": "fib_8", "source": "let a = 1; \nlet b = 1; \nprint a; \nprint b; \n\nrepeat a { \n  a = b; \n  b = a + b; \n  print b; \n} \nrepeat b { \n  b = a; \n  a = b + a; \n  print a; \n}\n"}
+{"id": "fib_8", "source": "let x = 1\nlet y = 1\nprint x\nlet z = x + y\nprint z\nlet w = z + y\nprint w\nlet v = w + y\nprint v\nlet u = v + y\nprint u\nlet x = u\nprint x\n"}
+{"id": "parity_1_6", "source": "let i = 1; -- introduce variable i\n\nfor i from 1 to 6:\n    print(1 if i is even else 0);\n"}
+{"id": "parity_1_6", "source": "let i = 1\nlet i = 2\nlet i = 3\nlet i = 4\nlet i = 5\nlet i = 6\n\nif i % 2 == 0 { print 1; }\nelse if i % 2 == 1 { print 0; }\nelse { print 0; }\n"}
+{"id": "parity_1_6", "source": "let i = 1\nlet i = 2\nlet i = 3\nlet i = 4\nlet i = 5\nlet i = 6\n\nprint 1\nprint 0\nprint 1\nprint 0\nprint 1\nprint 0\n"}
+{"id": "parity_1_6", "source": "let i = 1;  -- introduce variable\nlet i = 2;  -- introduce variable\nlet i = 3;  -- introduce variable\nlet i = 4;  -- introduce variable\nlet i = 5;  -- introduce variable\nlet i = 6;  -- introduce variable\n\nprint 1 if i is even else if i is even else { print 0 } repeat 2 { ... }  -- 1st repeat\n"}
+{"id": "parity_1_6", "source": "let x = 42;\nx = 1_000;\nx = 0xff;\nx = true;\nx = false;\nx = 6;\n\nprint 42;\n\nfor i in 1..6 do\n  if i % 2 == 0 then print 1 else print 0;\n\nprint 1; print 0;\n"}
+{"id": "parity_1_6", "source": "let i = 1;\nlet i = 2;\nlet i = 3;\nlet i = 4;\nlet i = 5;\nlet i = 6;\n\nprint i;  -- 1 if i is even (even) and 0 if odd (odd)\n"}
+{"id": "parity_1_6", "source": "let i = 1\nlet i = 2\nlet i = 3\nlet i = 4\nlet i = 5\nlet i = 6\n\nprint i\n"}
+{"id": "parity_1_6", "source": "let i = 1;  -- introduce variable i\nprint i;  -- print i\n\nrepeat i { 1 if i % 2 == 0 else 0; }  -- loop from 1 to 6\n"}
+{"id": "fizz0_1_15", "source": "let i = 1;  -- introduce a variable\nlet i = 2;  -- reassign a variable already introduced\nlet i = 3;  -- reassign a variable already introduced\nlet i = 4;  -- reassign a variable already introduced\nlet i = 5;  -- reassign a variable already introduced\nlet i = 6;  -- reassign a variable already introduced\nlet i = 7;  -- reassign a variable already introduced\nlet i = 8;  -- reassign a variable already introduced\nlet i = 9;  -- reassign a variable already introduced\nlet i = 10; -- reassign a variable already introduced\nlet i = 11; -- reassign a variable already introduced\nlet i = 12; -- reassign a variable already introduced\nlet i = 13; -- reassign a variable already introduced\nlet i = 14; -- reassign a variable already introduced\nlet i = 15; -- reassign a variable already introduced\n\nrepeat i { print i }\n"}
+{"id": "fizz0_1_15", "source": "let i = 1;\nrepeat 15 {\n  if i % 3 == 0 {\n    print 0;\n  } else {\n    print i;\n  }\n}\n"}
+{"id": "fizz0_1_15", "source": "let i = 1;              -- introduce variable i\nrepeat 15 {           -- repeat 15 times\n    if i % 3 == 0 {     -- if i is divisible by 3\n        print 0;       -- print 0\n    } else {           -- else\n        print i;       -- print i\n    }\n}\n"}
+{"id": "fizz0_1_15", "source": "let i = 1\nrepeat 15 { \n  if (i % 3 == 0) { \n    print 0 \n  } else { \n    print i \n  } \n}\n"}
+{"id": "fizz0_1_15", "source": "let i = 1;  -- introduce variable\nprint i;  -- print i\n\nrepeat 15 { \n  if i % 3 == 0 { \n    print 0; \n  } else { \n    print i; \n  } \n}\n"}
+{"id": "fizz0_1_15", "source": "let i = 1;\nrepeat 15 { \n  if i % 3 == 0 { \n    print 0;\n  } else { \n    print i;\n  }\n}\n"}
+{"id": "fizz0_1_15", "source": "let i = 1\nprint i\nrepeat i { print 0 if i % 3 == 0; print i otherwise }\n"}
+{"id": "fizz0_1_15", "source": "let i = 1\n    repeat i { \n        print 0 \n        if i % 3 == 0 { print i; } else { print i; } \n    } \n"}
+{"id": "mult_table_3", "source": "let r = 1\nlet c = 1\nlet result = r * c\nprint result\nrepeat 3 { \n    print result\n}\n"}
+{"id": "mult_table_3", "source": "let r = 1;  -- introduce variable\nlet c = 1;  -- introduce variable\nlet table = [];\n\nrepeat r { \n    let value = r * c;\n    table.push(value);\n    print value;\n}\n\nlet table = [];\nrepeat 3 { \n    let value = 1 * 1;\n    table.push(value);\n    print value;\n}\nlet value = 1 * 2;\nprint value;\nlet value = 1 * 3;\nprint value;\nlet value = 2 * 1;\nprint value;\nlet value = 2 * 2;\nprint value;\nlet value = 2 * 3;\nprint value;\nlet value = 3 * 1;\nprint value;\nlet value = 3 * 2;\nprint value;\nlet value = 3 * 3;\nprint value;\n"}
+{"id": "mult_table_3", "source": "let r = 1\nlet c = 2\nlet product = r * c\nprint product\n"}
+{"id": "mult_table_3", "source": "let r = 1\nlet c = 1\nlet i = 1\n\nprint r\nprint c\nprint r\nprint c\nprint r\nprint c\nprint r\nprint c\nprint r\nprint c\n"}
+{"id": "mult_table_3", "source": "let r = 1; \nlet c = 1; \n\nrepeat r { \n  repeat c { \n    print (r * c); \n  }\n}\n"}
+{"id": "mult_table_3", "source": "let r = 1\nlet c = 1\n\nrepeat r { print r * c }\n\nprint r * c\nprint r * c\nprint r * c\nprint r * c\nprint r * c\nprint r * c\nprint r * c\n"}
+{"id": "mult_table_3", "source": "let r = 1; \nlet c = 1; \n\nprint r * c;\nprint r * c;\nprint r * c;\n\nrepeat r { \n  print c * r;\n  c += 1;\n}\n"}
+{"id": "mult_table_3", "source": "let r = 1\nlet c = 1\nlet row = r\nlet col = c\n\nprint row * col\nprint row * col\nprint row * col\nprint row * col\nprint row * col\nprint row * col\nprint row * col\nprint row * col\nprint row * col\n"}
+{"id": "collatz_step_6", "source": "let n = 6;\nprint(n / 2);  -- one Collatz step\n"}
+{"id": "collatz_step_6", "source": "let n = 6;\nprint(n / 2);  -- step 1: n is even\n"}
+{"id": "collatz_step_6", "source": "let n = 6;  -- define variable n\nprint n;   -- print one Collatz step\n"}
+{"id": "collatz_step_6", "source": "let n = 6;  -- introduce variable n\n\nprint n + 1;  -- compute and print one Collatz step\n"}
+{"id": "collatz_step_6", "source": "let n = 6;\nprint n / 2 if n is even;\n"}
+{"id": "collatz_step_6", "source": "let n = 6;\n\nprint(n / 2);\n"}
+{"id": "collatz_step_6", "source": "let n = 6;\nprint n;\n"}
+{"id": "collatz_step_6", "source": "let n = 6\nprint n\n"}
+{"id": "sum_squares_10", "source": "let x = 1\nx = x + x\nx = x + x\nx = x + x\nx = x + x\nx = x + x\nx = x + x\nx = x + x\nx = x + x\nx = x + x\nprint x\n"}
+{"id": "sum_squares_10", "source": "let x = 1\nlet x = 2\nlet x = 3\nlet x = 4\nlet x = 5\nlet x = 6\nlet x = 7\nlet x = 8\nlet x = 9\nlet x = 10\nprint x\n"}
+{"id": "sum_squares_10", "source": "let x = 1\nlet x = 2\nlet x = 3\nlet x = 4\nlet x = 5\nlet x = 6\nlet x = 7\nlet x = 8\nlet x = 9\nlet x = 10\n\nprint x\n"}
+{"id": "sum_squares_10", "source": "let x = 1;\nprint x;  -- sum of squares of integers 1 through 10 is 55\n"}
+{"id": "sum_squares_10", "source": "let sum = 0\n\nrepeat 10 { \n  sum = sum + x * x\n}\n\nprint sum\n"}
+{"id": "sum_squares_10", "source": "let x = 1;\nx = x + x;\nprint x;\n"}
+{"id": "sum_squares_10", "source": "let x = 1;\nlet x = 2;\nlet x = 3;\nlet x = 4;\nlet x = 5;\nlet x = 6;\nlet x = 7;\nlet x = 8;\nlet x = 9;\nlet x = 10;\n\nprint x*x;\n"}
+{"id": "sum_squares_10", "source": "let x = 1\nlet y = 2\nlet z = 3\nlet a = 4\nlet b = 5\nlet c = 6\nlet d = 7\nlet e = 8\nlet f = 9\nlet g = 10\nlet sum = x^2 + y^2 + z^2 + a^2 + b^2 + c^2 + d^2 + e^2 + f^2 + g^2\n\nprint(sum)\n"}
+{"id": "power_2_10", "source": "let x = 2;\nprint x;\n"}
+{"id": "power_2_10", "source": "let x = 2;            -- introduce variable\nx = 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2;   -- compute 2^10\nprint x;             -- print result\n"}
+{"id": "power_2_10", "source": "let x = 2\nx = 2^10\nprint x\n"}
+{"id": "power_2_10", "source": "let x = 2\nprint x\n"}
+{"id": "power_2_10", "source": "let x = 2;              -- introduce a variable\nx = 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2 * 2;  -- assign 2^10\nprint x;\n"}
+{"id": "power_2_10", "source": "let x = 2\nx = 2^10\nprint x\n"}
+{"id": "power_2_10", "source": "let x = 2\nprint x\n"}
+{"id": "power_2_10", "source": "```prooflite\nlet x = 2;\nx = x * x * x * x * x * x * x * x * x * x;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;"}
+{"id": "odd_sum_7", "source": "let x = 1;\nprint x;\n"}
+{"id": "odd_sum_7", "source": "let x = 1;                    ; -- introduce variable x\nx = x + 2;                  ; -- add 2 to x\nrepeat 7 { x = x - 2 }      ; -- loop for 7 times\nprint x;                     ; -- print the sum\n"}
+{"id": "odd_sum_7", "source": "let x = 1;\nprint x;  -- Output: 1\nrepeat 6 { x += 2; }  -- 1 + 3 + 5 + 7 = 16\n"}
+{"id": "odd_sum_7", "source": "let x = 1;\nprint x + 3;\n"}
+{"id": "odd_sum_7", "source": "let x = 1;\nprint(x + x + x + x + x + x + x);\n"}
+{"id": "odd_sum_7", "source": "let x = 1\nprint x\n"}
+{"id": "odd_sum_7", "source": "let x = 1;\nx = x + 2;\nprint x;\n"}
+{"id": "odd_sum_7", "source": "let sum = 0;\nrepeat 7 { x = sum + x; sum = x }\nprint sum\n"}
+{"id": "alt_sum_10", "source": "let x = 1\nprint x\n"}
+{"id": "alt_sum_10", "source": "let x = 1;\nx = x + 1;\nprint x;\n"}
+{"id": "alt_sum_10", "source": "let x = 1;\nprint x;\n\nlet x = -2;\nprint x;\n\nlet x = 3;\nprint x;\n\nlet x = -4;\nprint x;\n\nlet x = 5;\nprint x;\n\nlet x = -6;\nprint x;\n\nlet x = 7;\nprint x;\n\nlet x = -8;\nprint x;\n\nlet x = 9;\nprint x;\n\nlet x = -10;\nprint x;\n"}
+{"id": "alt_sum_10", "source": "let x = 1;\nprint x;\n"}
+{"id": "alt_sum_10", "source": "let x = 1;  -- introduce variable\nx = 1;     -- reassign variable\nprint x;   -- output 1\n\nrepeat -10 { \n  let y = x + 1; \n  x = y; \n  print y; \n}\n"}
+{"id": "alt_sum_10", "source": "let x = 1;\nprint x;\nlet x = 10;\nprint x;\nlet x = x - 1;\nprint x;\nlet x = x - 2;\nprint x;\nlet x = x - 3;\nprint x;\nlet x = x - 4;\nprint x;\nlet x = x - 5;\nprint x;\nlet x = x - 6;\nprint x;\nlet x = x - 7;\nprint x;\nlet x = x - 8;\nprint x;\nlet x = x - 9;\nprint x;\nlet x = x - 10;\nprint x;\n"}
+{"id": "alt_sum_10", "source": "let a = 1;\nprint a;\n\nlet b = -2;\nprint b;\n\nlet c = 3;\nprint c;\n\nlet d = -4;\nprint d;\n\nlet e = 5;\nprint e;\n\nlet f = -6;\nprint f;\n\nlet g = 7;\nprint g;\n\nlet h = -8;\nprint h;\n\nlet i = 9;\nprint i;\n\nlet j = -10;\nprint j;\n"}
+{"id": "alt_sum_10", "source": "let x = 1;\nx = x - 2;\nx = x + 3;\nx = x - 4;\nx = x + 5;\nx = x - 6;\nx = x + 7;\nx = x - 8;\nx = x + 9;\nx = x - 10;\nprint x;\n"}
+{"id": "digit_sum_1234", "source": "let x = 1234\nprint x\n"}
+{"id": "digit_sum_1234", "source": "let x = 1234;\nprint x;\n"}
+{"id": "digit_sum_1234", "source": "let x = 1234;\nprint x;\n"}
+{"id": "digit_sum_1234", "source": "let x = 1234;  -- introduce a variable\nx = 1 + 2 + 3 + 4;  -- reassign a variable already introduced\nprint x;  -- write one line of output\n"}
+{"id": "digit_sum_1234", "source": "let x = 1234\nprint x\n"}
+{"id": "digit_sum_1234", "source": "let x = 1234\nprint x\n"}
+{"id": "digit_sum_1234", "source": "let x = 1234;\nprint x;\n"}
+{"id": "digit_sum_1234", "source": "let x = 1234\nx = 1 + 2 + 3 + 4\nprint x\n"}
+{"id": "reverse_123", "source": "let x = 123\nx = 123;  -- reassign x to 123 already introduced\nprint x;  -- print 123 (one line)\n"}
+{"id": "reverse_123", "source": "let x = 123\nprint x\n"}
+{"id": "reverse_123", "source": "let x = 123;\nprint x;\n"}
+{"id": "reverse_123", "source": "let x = 123\nprint x\n"}
+{"id": "reverse_123", "source": "let x = 123;\nprint x;\n"}
+{"id": "reverse_123", "source": "let x = 123\nx = 123\nprint x\n"}
+{"id": "reverse_123", "source": "let x = 123\nprint x\n"}
+{"id": "reverse_123", "source": "let x = 123;\nprint x;\n"}
+{"id": "is_prime_7", "source": "let n = 7;  -- introduce a variable\nprint if n is prime 1 0;  -- prints 1 if prime, 0 otherwise\n"}
+{"id": "is_prime_7", "source": "let n = 7;\nprint(1 if n is prime else 0);\n"}
+{"id": "is_prime_7", "source": "let n = 7;\nprint (if n % 2 == 0 { 1 } else { 0 });\n"}
+{"id": "is_prime_7", "source": "```prooflite\nlet n = 7;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;"}
+{"id": "is_prime_7", "source": "let n = 7;\nprint(1 if n is prime else 0);\n"}
+{"id": "is_prime_7", "source": "let n = 7;  -- set variable n to 7\nprint 1 if n is prime else 0;  -- prints 1 if n is prime, 0 otherwise\n"}
+{"id": "is_prime_7", "source": "let n = 7;\nprint(1 if n is prime else 0);\n"}
+{"id": "is_prime_7", "source": "let n = 7;\nprint(1 if n is prime else 0)\n"}
+{"id": "is_prime_9", "source": "let n = 9;\nprint (if n == true { print 1 } else if n == false { print 0 } else { print 0 })\n"}
+{"id": "is_prime_9", "source": "let n = 9;\nprint(1 if n is prime and 0 otherwise)\n"}
+{"id": "is_prime_9", "source": "```prooflite\nlet n = 9;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;  ;"}
+{"id": "is_prime_9", "source": "let n = 9;\nif n == 1 { print 1; } else if n == 0 { print 0; } else { print 0; } ; \n"}
+{"id": "is_prime_9", "source": "let n = 9;\nprint(1 if n is prime else 0);\n"}
+{"id": "is_prime_9", "source": "let n = 9;  ;  // define n\nprint if n is prime 1 otherwise 0;  ;  // print the result\n"}
+{"id": "is_prime_9", "source": "let n = 9;\nprint (if n is prime { 1 } else { 0 });\n"}
+{"id": "is_prime_9", "source": "let n = 9;\nif n { print 1; } else { print 0; }\n"}
+{"id": "cube_sum_5", "source": "let x = 1;\nx = x + x * x;\nprint x;\n"}
+{"id": "cube_sum_5", "source": "let x = 1;  -- introduce variable\nlet x = x + x;  -- assign x with x + x\nlet x = x + x;  -- assign x with x + x\nlet x = x + x;  -- assign x with x + x\nlet x = x + x;  -- assign x with x + x\nprint x;  -- print the result\n"}
+{"id": "cube_sum_5", "source": "let x = 1;          -- introduce variable x\nlet x = 2;          -- reassign\nlet x = 3;          -- reassign\nlet x = 4;          -- reassign\nlet x = 5;          -- reassign\nprint x;            -- print the sum\n"}
+{"id": "cube_sum_5", "source": "let x = 1;\nx = x + x;\nx = x + x;\nx = x + x;\nx = x + x;\nprint x;\n"}
+{"id": "cube_sum_5", "source": "let x = 1; \nx = x + x + x; \nx = x + x + x + x; \nx = x + x; \nprint x;\n"}
+{"id": "cube_sum_5", "source": "let x = 1\nx = x + x\nx = x + x\nx = x + x\nx = x + x\nprint x\n"}
+{"id": "cube_sum_5", "source": "let x = 1\nx = x + x\nx = x + x\nx = x + x\nx = x + x\nprint x\n"}
+{"id": "cube_sum_5", "source": "let x = 1;                  -- introduce variable x\nx = x + x + x;             -- assign x = x + x + x\nprint x;                   -- output the sum of cubes of integers 1 through 5\n"}
+{"id": "popcount_13", "source": "let x = 13;\nprint x;\n"}
+{"id": "popcount_13", "source": "let x = 13;       -- introduce variable x\nx = 13;            -- reassign variable already introduced\nprint x;           -- print the number of 1 bits in the binary representation of 13\n"}
+{"id": "popcount_13", "source": "let x = 13;                -- introduce variable\nprint x;                  -- output 13\n"}
+{"id": "popcount_13", "source": "let x = 13;\nprint x;\n"}
+{"id": "popcount_13", "source": "let x = 13;\nprint x;\n"}
+{"id": "popcount_13", "source": "let x = 13\nprint x\n"}
+{"id": "popcount_13", "source": "let x = 13;\nprint x;\n"}
+{"id": "popcount_13", "source": "let x = 13\nprint x\n"}
+{"id": "collatz_len_6", "source": "let x = 6;\nx = 1;\nprint 0;\n"}
+{"id": "collatz_len_6", "source": "let x = 6;\nprint x;\n"}
+{"id": "collatz_len_6", "source": "let x = 6\nprint x\n"}
+{"id": "collatz_len_6", "source": "let x = 6;\nprint x;\n"}
+{"id": "collatz_len_6", "source": "let x = 6;\nprint x;\n\n; \nrepeat 6 { \n  x = x - 1; \n} \n; \n"}
+{"id": "collatz_len_6", "source": "let x = 6;\nprint x;\n"}
+{"id": "collatz_len_6", "source": "let x = 6\nx = 1\nprint x\n"}
+{"id": "collatz_len_6", "source": "let x = 6\nx = 1\nprint 0\n"}
+{"id": "fib_12", "source": "let a = 1\nlet b = 1\nprint a\n\nlet c = a + b\nprint c\n\nlet d = c + b\nprint d\n\nrepeat a { \n  print c\n  c = d\n  d = a\n}\nrepeat d { \n  print a\n  a = d\n  d = c\n}\n"}
+{"id": "fib_12", "source": "let a = 1\nlet b = 1\nlet c = a + b\n\nprint a\nprint b\nprint c\n\nrepeat 12 {\n  let x = a + b\n  print x\n  a = x\n  b = x\n}\n"}
+{"id": "fib_12", "source": "let a = 1\nlet b = 1\nprint a\nprint b\nlet c = a + b\nrepeat c { print c }\n"}
+{"id": "fib_12", "source": "let a = 1\nlet b = 1\nprint a\nprint b\nrepeat a { \n  let next = b + a\n  print next\n  let a = next\n  let b = next\n}\n"}
+{"id": "fib_12", "source": "let a = 1\nlet b = 1\nprint a\n\nlet c = a + b\nprint c\n\nlet d = b\nprint d\n\nlet e = a + d\nprint e\n\nlet f = b + d\nprint f\n\nlet g = a + f\nprint g\n\nlet h = d + f\nprint h\n\nlet i = b + h\nprint i\n\nlet j = a + h\nprint j\n\nlet k = d + i\nprint k\n\nlet l = e + k\nprint l\n\nlet m = f + k\nprint m\n\nrepeat m { print (a + b) }\n"}
+{"id": "fib_12", "source": "let a = 1;\nlet b = 1;\nprint a;\nprint b;\n\nrepeat 12 {\n    let c = a + b;\n    a = b;\n    b = c;\n    print c;\n}\n"}
+{"id": "fib_12", "source": "let a = 1; let b = 1; let c = a + b; print c; \nrepeat a { print a; let a = b; let b = c; }\n"}
+{"id": "fib_12", "source": "let a = 1;\nlet b = 1;\n\nprint a;\nprint b;\n\nrepeat 12 {\n    a += b;\n    print a;\n}\n"}
