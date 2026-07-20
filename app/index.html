@@ -248,7 +248,13 @@ button "next" { light = light + 1; if light > 2 { light = 0; } }`,
 };
 
 async function boot() {
-  const { instance } = await WebAssembly.instantiateStreaming(fetch("appshell.wasm"));
+  // Single-file build: build.sh swaps the marker for the wasm as base64, so
+  // the whole product is ONE self-contained .html (works from file:// too).
+  // Unbuilt (the marker intact), fall back to fetching next to the page.
+  const B64 = "__WASM_B64__";
+  const { instance } = B64.startsWith("__")
+    ? await WebAssembly.instantiateStreaming(fetch("appshell.wasm"))
+    : await WebAssembly.instantiate(Uint8Array.from(atob(B64), (c) => c.charCodeAt(0)));
   wasm = instance.exports; mem = wasm.memory;
   const sel = $("examples");
   for (const name of Object.keys(EXAMPLES)) sel.add(new Option(name, name));

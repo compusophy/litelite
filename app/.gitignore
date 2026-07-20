@@ -1,3 +1,7 @@
 /target
 appshell.wasm
 Cargo.lock
+dist/
+.vercel/
+
+.vercel

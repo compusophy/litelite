@@ -8,11 +8,17 @@ no network calls: one Rust cdylib with a hand-rolled extern "C" ABI
 
 ## Run it
 
+**Live: <https://litelite.vercel.app>** — the single-file build, deployed.
+
 ```sh
-./build.sh                          # cargo build + copy appshell.wasm here
-python -m http.server -d . 8080     # wasm needs http, not file://
-# -> http://localhost:8080
+./build.sh                          # -> appshell.wasm (dev) + dist/index.html
+python -m http.server -d . 8080     # dev loop (fetches the wasm over http)
+# or just open dist/index.html — the single file works from file:// too
+vercel deploy dist --prod           # ship it (project: litelite)
 ```
+
+`dist/index.html` is the whole product in one ~154 KB file: the applite
+compiler/verifier/runtime as wasm, base64-inlined. No assets, no requests.
 
 ## The vibe-coding loop (keyless by design)
 
