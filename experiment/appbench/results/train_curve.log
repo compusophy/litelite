@@ -1,0 +1,7 @@
+cold start: 120/120 corpus programs admitted (histogram={'ok': 120})
+round 0: histogram={'ok': 533, 'compile': 55, 'gate': 52} admitted=288 distinct_nkeys=186 fuel[min,max]=(0, 0)
+round 1: histogram={'ok': 587, 'compile': 23, 'gate': 30} admitted=283 distinct_nkeys=174 fuel[min,max]=(0, 0)
+round 2: histogram={'ok': 607, 'compile': 24, 'gate': 9} admitted=328 distinct_nkeys=190 fuel[min,max]=(0, 0)
+round 3: histogram={'ok': 611, 'compile': 21, 'gate': 8} admitted=312 distinct_nkeys=184 fuel[min,max]=(0, 0)
+round 4: histogram={'ok': 628, 'gate': 7, 'compile': 5} admitted=343 distinct_nkeys=198 fuel[min,max]=(0, 0)
+round 5: histogram={'ok': 632, 'compile': 6, 'gate': 2} admitted=330 distinct_nkeys=188 fuel[min,max]=(0, 0)

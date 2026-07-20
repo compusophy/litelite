@@ -1,0 +1,128 @@
+{"id": "h_basketball", "source": "state s = 0;\nlabel s;\nbutton \"+2\" { s = s + 2; }\nbutton \"+3\" { s = s + 3; }"}
+{"id": "h_basketball", "source": "state s = 0;\ncol {\n  label s;\n  button \"+2\" { s = s + 2; }\n  button \"+3\" { s = s + 3; }\n}"}
+{"id": "h_basketball", "source": "state s = 0;\ncol {\n  label s;\n  button \"+2\" { s = s + 2; }\n  button \"+3\" { s = s + 3; }\n}"}
+{"id": "h_basketball", "source": "state s = 0;\ncol {\n  label s;\n  button \"+2\" { s = s + 2; }\n  button \"+3\" { s = s + 3; }\n}"}
+{"id": "h_basketball", "source": "state s = 0;\nlabel s;\nbutton \"+2\" { s = s + 2; }\nbutton \"+3\" { s = s + 3; }"}
+{"id": "h_basketball", "source": "state s = 0;\ncol {\n  label s;\n  button \"+2\" { s = s + 2; }\n  button \"+3\" { s = s + 3; }\n}"}
+{"id": "h_basketball", "source": "state s = 0;\nlabel s;\nbutton \"+2\" { s = s + 2; }\nbutton \"+3\" { s = s + 3; }"}
+{"id": "h_basketball", "source": "state s = 0;\ncol {\n  label s;\n  button \"+2\" { s = s + 2; }\n  button \"+3\" { s = s + 3; }\n}"}
+{"id": "h_elevator", "source": "state count = 1;\nlabel count;\nbutton \"up\" { count = count + 1; }\nbutton \"down\" { if count > 1 { count = count - 1; } }"}
+{"id": "h_elevator", "source": "state count = 1;\nlabel count;\nbutton \"up\" { count = count + 1; }\nbutton \"down\" { if count > 1 { count = count - 1; } }"}
+{"id": "h_elevator", "source": "state n = 1;\nlabel n;\nbutton \"up\" { n = n + 1; }\nbutton \"down\" { if n > 1 { n = n - 1; } }"}
+{"id": "h_elevator", "source": "state n = 1;\ncol {\n  label n;\n  button \"up\" { n = n + 1; }\n  button \"down\" { if n > 1 { n = n - 1; } }\n}"}
+{"id": "h_elevator", "source": "state count = 1;\ncol {\n  label count;\n  row {\n    button \"up\" { count = count + 1; }\n    button \"down\" { if count > 1 { count = count - 1; } }\n  }\n}"}
+{"id": "h_elevator", "source": "state n = 1;\ncol {\n  label n;\n  row {\n    button \"up\" { n = n + 1; }\n    button \"down\" { if n > 1 { n = n - 1; } }\n  }\n}"}
+{"id": "h_elevator", "source": "state count = 1;\ncol {\n  label count;\n  button \"up\" { count = count + 1; }\n  button \"down\" { if count > 1 { count = count - 1; } }\n}"}
+{"id": "h_elevator", "source": "state n = 1;\nlabel n;\nbutton \"up\" { n = n + 1; }\nbutton \"down\" { if n > 1 { n = n - 1; } }"}
+{"id": "h_like_dislike", "source": "state n = 0;\nstate m = 0;\ncol {\n  row {\n    button \"like\" { n = n + 1; }\n    button \"dislike\" { m = m + 1; }\n  }\n  label \"Likes: \" + n;\n  label \"Dislikes: \" + m;\n}"}
+{"id": "h_like_dislike", "source": "state likes = 0;\nstate dislikes = 0;\ncol {\n  row {\n    button \"like\" { likes = likes + 1; }\n    button \"dislike\" { dislikes = dislikes + 1; }\n  }\n  label \"Likes: \" + likes;\n  label \"Dislikes: \" + dislikes;\n}"}
+{"id": "h_like_dislike", "source": "state likes = 0;\nstate dislikes = 0;\nbutton \"like\" { likes = likes + 1; }\nbutton \"dislike\" { dislikes = dislikes + 1; }\nlabel \"Likes: \" + likes;\nlabel \"Dislikes: \" + dislikes;"}
+{"id": "h_like_dislike", "source": "state likes = 0;\nstate dislikes = 0;\ncol {\n  button \"like\" { likes = likes + 1; }\n  button \"dislike\" { dislikes = dislikes + 1; }\n  label \"Likes: \" + likes;\n  label \"Dislikes: \" + dislikes;\n}"}
+{"id": "h_like_dislike", "source": "state n = 0;\nstate m = 0;\ncol {\n  row {\n    button \"like\" { n = n + 1; }\n    button \"dislike\" { m = m + 1; }\n  }\n  label \"Likes: \" + n;\n  label \"Dislikes: \" + m;\n}"}
+{"id": "h_like_dislike", "source": "state l = 0;\nstate d = 0;\ncol {\n  button \"like\" { l = l + 1; }\n  button \"dislike\" { d = d + 1; }\n  label \"Likes: \" + l;\n  label \"Dislikes: \" + d;\n}"}
+{"id": "h_like_dislike", "source": "state likes = 0;\nstate dislikes = 0;\ncol {\n  row {\n    button \"like\" { likes = likes + 1; }\n    button \"dislike\" { dislikes = dislikes + 1; }\n  }\n  label \"Likes: \" + likes;\n  label \"Dislikes: \" + dislikes;\n}"}
+{"id": "h_like_dislike", "source": "state like = 0;\nstate dislike = 0;\ncol {\n  row {\n    button \"like\" { like = like + 1; }\n    button \"dislike\" { dislike = dislike + 1; }\n  }\n  label \"Likes: \" + like;\n  label \"Dislikes: \" + dislike;\n}"}
+{"id": "h_dark_mode", "source": "state mode = false;\nbutton \"dark\" { mode = true; }\nbutton \"light\" { mode = false; }\nif mode { label \"DARK MODE\"; }"}
+{"id": "h_dark_mode", "source": "state dark = false;\ncol {\n  button \"dark\" { dark = true; }\n  button \"light\" { dark = false; }\n  if dark { label \"DARK MODE\"; }\n}"}
+{"id": "h_dark_mode", "source": "state light = false;\nstate dark = false;\ncol {\n  button \"dark\" { light = true; }\n  button \"light\" { light = false; }\n  if light { label \"DARK MODE\"; }\n}"}
+{"id": "h_dark_mode", "source": "state mode = \"light\";\ncol {\n  button \"dark\" { mode = \"dark\"; }\n  button \"light\" { mode = \"light\"; }\n  if mode == \"dark\" { label \"DARK MODE\"; }\n}"}
+{"id": "h_dark_mode", "source": "state mode = \"light\";\nbutton \"dark\" { mode = \"dark\"; }\nbutton \"light\" { mode = \"light\"; }\nif mode == \"dark\" { label \"DARK MODE\"; }"}
+{"id": "h_dark_mode", "source": "state dark = false;\ncol {\n  button \"dark\" { dark = true; }\n  button \"light\" { dark = false; }\n  if dark { label \"DARK MODE\"; }\n}"}
+{"id": "h_dark_mode", "source": "state d = false;\ncol {\n  row {\n    button \"dark\" { d = true; }\n    button \"light\" { d = false; }\n  }\n  if d { label \"DARK MODE\"; }\n}"}
+{"id": "h_dark_mode", "source": "state d = false;\ncol {\n  button \"dark\" { d = true; }\n  button \"light\" { d = false; }\n  if d { label \"DARK MODE\"; }\n}"}
+{"id": "h_half", "source": "state n = 64;\nlabel n;\nbutton \"half\" { n = n / 2; }"}
+{"id": "h_half", "source": "state count = 64;\ncol {\n  label count;\n  button \"half\" { count = count / 2; }\n}"}
+{"id": "h_half", "source": "state count = 64;\ncol {\n  label count;\n  button \"half\" { count = count / 2; }\n}"}
+{"id": "h_half", "source": "state n = 64;\ncol {\n  label n;\n  button \"half\" { n = n / 2; }\n}"}
+{"id": "h_half", "source": "state n = 64;\nlabel n;\nbutton \"half\" { n = n / 2; }"}
+{"id": "h_half", "source": "state n = 64;\ncol {\n  label n;\n  button \"half\" { n = n / 2; }\n}"}
+{"id": "h_half", "source": "state n = 64;\ncol {\n  label n;\n  button \"half\" { n = n / 2; }\n}"}
+{"id": "h_half", "source": "state n = 64;\ncol {\n  label n;\n  button \"half\" { n = n / 2; }\n}"}
+{"id": "h_goal_progress", "source": "state count = 0;\nlabel count;\nbutton \"+25\" { count = count + 25; }\nif count >= 100 { label \"complete\"; }"}
+{"id": "h_goal_progress", "source": "state n = 0;\nlabel n;\nbutton \"+25\" { n = n + 25; }\nif n >= 100 { label \"complete\"; }"}
+{"id": "h_goal_progress", "source": "state count = 0;\nlabel count;\nbutton \"+25\" { count = count + 25; }\nif count >= 100 { label \"complete\"; }"}
+{"id": "h_goal_progress", "source": "state n = 0;\ncol {\n  label n;\n  button \"+25\" { n = n + 25; }\n  if n >= 100 { label \"complete\"; }\n}"}
+{"id": "h_goal_progress", "source": "state n = 0;\ncol {\n  label n;\n  button \"+25\" { n = n + 25; }\n  if n >= 100 { label \"complete\"; }\n}"}
+{"id": "h_goal_progress", "source": "state count = 0;\ncol {\n  label count;\n  button \"+25\" { count = count + 25; }\n  if count >= 100 { label \"complete\"; }\n}"}
+{"id": "h_goal_progress", "source": "state n = 0;\ncol {\n  label n;\n  button \"+25\" { n = n + 25; }\n  if n >= 100 { label \"complete\"; }\n}"}
+{"id": "h_goal_progress", "source": "state n = 0;\ncol {\n  label n;\n  button \"+25\" { n = n + 25; }\n  if n >= 100 { label \"complete\"; }\n}"}
+{"id": "h_name_tag", "source": "state s = \"\";\ninput s;\nlabel \"NAME: \" + s;"}
+{"id": "h_name_tag", "source": "state name = \"\";\ncol {\n  input name;\n  label \"NAME: \" + name;\n}"}
+{"id": "h_name_tag", "source": "state n = \"\";\ninput n;\nlabel \"NAME: \" + n;"}
+{"id": "h_name_tag", "source": "state name = \"\";\ncol {\n  input name;\n  label \"NAME: \" + name;\n}"}
+{"id": "h_name_tag", "source": "state s = \"\";\ninput s;\nlabel \"NAME: \" + s;"}
+{"id": "h_name_tag", "source": "state name = \"\";\ninput name;\nlabel \"NAME: \" + name;"}
+{"id": "h_name_tag", "source": "state name = \"\";\ninput name;\nlabel \"NAME: \" + name;"}
+{"id": "h_name_tag", "source": "state t = \"\";\ninput t;\nlabel \"NAME: \" + t;"}
+{"id": "h_mode_ab", "source": "state on = false;\ncol {\n  button \"switch\" { if on { on = false; } else { on = true; } }\n  if on { label \"mode A\"; } else { label \"mode B\"; }\n}"}
+{"id": "h_mode_ab", "source": "state s = \"mode A\";\ncol {\n  button \"switch\" { if s == \"mode A\" { s = \"mode B\"; } else { s = \"mode A\"; } }\n  label s;\n}"}
+{"id": "h_mode_ab", "source": "state on = false;\nbutton \"switch\" { if on { on = false; } else { on = true; } }\nif on { label \"mode A\"; } else { label \"mode B\"; }"}
+{"id": "h_mode_ab", "source": "state mode = \"mode A\";\ncol {\n  button \"switch\" { if mode == \"mode A\" { mode = \"mode B\"; } else { mode = \"mode A\"; } }\n  if mode == \"mode A\" { label \"mode A\"; } else { label \"mode B\"; }\n}"}
+{"id": "h_mode_ab", "source": "state on = false;\ncol {\n  button \"switch\" { if on { on = false; } else { on = true; } }\n  if on { label \"mode A\"; } else { label \"mode B\"; }\n}"}
+{"id": "h_mode_ab", "source": "state t = \"mode A\";\ncol {\n  button \"switch\" { if t == \"mode A\" { t = \"mode B\"; } else { t = \"mode A\"; } }\n  label t;\n}"}
+{"id": "h_mode_ab", "source": "state t = \"mode A\";\ncol {\n  button \"switch\" { if t == \"mode A\" { t = \"mode B\"; } else { t = \"mode A\"; } }\n  label t;\n}"}
+{"id": "h_mode_ab", "source": "state on = false;\ncol {\n  button \"switch\" { if on { on = false; } else { on = true; } }\n  if on { label \"mode A\"; } else { label \"mode B\"; }\n}"}
+{"id": "h_while_under_ten", "source": "state n = 0;\nlabel n;\nbutton \"+4\" { if n < 10 { n = n + 4; } }"}
+{"id": "h_while_under_ten", "source": "state n = 0;\ncol {\n  label n;\n  button \"+4\" { if n < 10 { n = n + 4; } }\n}"}
+{"id": "h_while_under_ten", "source": "state count = 0;\ncol {\n  label count;\n  button \"+4\" { if count < 10 { count = count + 4; } }\n}"}
+{"id": "h_while_under_ten", "source": "state count = 0;\ncol {\n  label count;\n  button \"+4\" { if count < 10 { count = count + 4; } }\n}"}
+{"id": "h_while_under_ten", "source": "state n = 0;\ncol {\n  label n;\n  button \"+4\" { if n < 10 { n = n + 4; } }\n}"}
+{"id": "h_while_under_ten", "source": "state n = 0;\ncol {\n  label n;\n  button \"+4\" { if n < 10 { n = n + 4; } }\n}"}
+{"id": "h_while_under_ten", "source": "state count = 0;\ncol {\n  label count;\n  button \"+4\" { if count < 10 { count = count + 4; } }\n}"}
+{"id": "h_while_under_ten", "source": "state n = 0;\ncol {\n  label n;\n  button \"+4\" { if n < 10 { n = n + 4; } }\n}"}
+{"id": "h_sum_three", "source": "state total = 0;\ncol {\n  row {\n    button \"a+\" { total = total + 1; }\n    button \"b+\" { total = total + 1; }\n    button \"c+\" { total = total + 1; }\n  }\n  label total;\n}"}
+{"id": "h_sum_three", "source": "state total = 0;\ncol {\n  row {\n    button \"a+\" { total = total + 1; }\n    button \"b+\" { total = total + 1; }\n    button \"c+\" { total = total + 1; }\n  }\n  label total;\n}"}
+{"id": "h_sum_three", "source": "state sum = 0;\ncol {\n  row {\n    button \"a+\" { sum = sum + 1; }\n    button \"b+\" { sum = sum + 1; }\n    button \"c+\" { sum = sum + 1; }\n  }\n  label sum;\n}"}
+{"id": "h_sum_three", "source": "state a = 0;\nstate b = 0;\nstate c = 0;\ncol {\n  row {\n    button \"a+\" { a = a + 1; }\n    button \"b+\" { b = b + 1; }\n    button \"c+\" { c = c + 1; }\n  }\n  label a + b + c;\n}"}
+{"id": "h_sum_three", "source": "state s = 0;\ncol {\n  row {\n    button \"a+\" { s = s + 1; }\n    button \"b+\" { s = s + 1; }\n    button \"c+\" { s = s + 1; }\n  }\n  label s;\n}"}
+{"id": "h_sum_three", "source": "state sum = 0;\ncol {\n  row {\n    button \"a+\" { sum = sum + 1; }\n    button \"b+\" { sum = sum + 1; }\n    button \"c+\" { sum = sum + 1; }\n  }\n  label sum;\n}"}
+{"id": "h_sum_three", "source": "state s = 0;\nbutton \"a+\" { s = s + 1; }\nbutton \"b+\" { s = s + 1; }\nbutton \"c+\" { s = s + 1; }\nlabel s;"}
+{"id": "h_sum_three", "source": "state total = 0;\nbutton \"a+\" { total = total + 1; }\nbutton \"b+\" { total = total + 1; }\nbutton \"c+\" { total = total + 1; }\nlabel total;"}
+{"id": "h_blank_check", "source": "state t = \"\";\ncol {\n  input t;\n  if t == \"\" { label \"type something\"; }\n}"}
+{"id": "h_blank_check", "source": "state t = \"\";\ninput t;\nwhile t == \"\" { label t; }"}
+{"id": "h_blank_check", "source": "state t = \"\";\ncol {\n  input t;\n  label t;\n}"}
+{"id": "h_blank_check", "source": "state t = \"\";\ncol {\n  input t;\n  label \"type something\";\n  if t == \"\" { label \"type something\"; }\n}"}
+{"id": "h_blank_check", "source": "state t = \"\";\ncol {\n  input t;\n  if t == \"\" { label \"type something\"; }\n}"}
+{"id": "h_blank_check", "source": "state t = \"\";\ncol {\n  input t;\n  label \"type something\";\n  if t == \"\" { label t; } else { label \"you typed: \" + t; }\n}"}
+{"id": "h_blank_check", "source": "state t = \"\";\ncol {\n  input t;\n  if t == \"\" { label \"type something\"; }\n}"}
+{"id": "h_blank_check", "source": "state t = \"\";\ninput t;\nlabel \"type something\";\nif t == \"\" { label \"empty\"; }"}
+{"id": "h_twice_plus_one", "source": "state n = 0;\nlabel n;\nbutton \"step\" { n = 2 * n + 1; }"}
+{"id": "h_twice_plus_one", "source": "state n = 0;\ncol {\n  label n;\n  button \"step\" { n = n * 2 + 1; }\n}"}
+{"id": "h_twice_plus_one", "source": "state n = 0;\ncol {\n  label n;\n  button \"step\" { n = 2 * n + 1; }\n}"}
+{"id": "h_twice_plus_one", "source": "state n = 0;\ncol {\n  label n;\n  button \"step\" { n = 2 * n + 1; }\n}"}
+{"id": "h_twice_plus_one", "source": "state count = 0;\ncol {\n  label count;\n  button \"step\" { count = count * 2 + 1; }\n}"}
+{"id": "h_twice_plus_one", "source": "state count = 0;\ncol {\n  label count;\n  button \"step\" { count = count * 2 + 1; }\n}"}
+{"id": "h_twice_plus_one", "source": "state n = 0;\ncol {\n  label n;\n  button \"step\" { n = n * 2 + 1; }\n}"}
+{"id": "h_twice_plus_one", "source": "state n = 0;\ncol {\n  label n;\n  button \"step\" { n = 2 * n + 1; }\n}"}
+{"id": "h_temperature", "source": "state c = 20;\ncol {\n  label c;\n  button \"warmer\" { c = c + 1; }\n  button \"cooler\" { c = c - 1; }\n}"}
+{"id": "h_temperature", "source": "state t = 20;\nlabel t\u00b0;\nbutton \"warmer\" { t = t + 1; }\nbutton \"cooler\" { t = t - 1; }"}
+{"id": "h_temperature", "source": "state s = 20;\ncol {\n  label s;\n  row {\n    button \"warmer\" { s = s + 1; }\n    button \"cooler\" { s = s - 1; }\n  }\n}"}
+{"id": "h_temperature", "source": "state temp = 20;\ncol {\n  label temp;\n  button \"warmer\" { temp = temp + 1; }\n  button \"cooler\" { temp = temp - 1; }\n}"}
+{"id": "h_temperature", "source": "state t = 20;\nlabel t + \"\u00b0\";\nbutton \"warmer\" { t = t + 1; }\nbutton \"cooler\" { t = t - 1; }"}
+{"id": "h_temperature", "source": "state s = 20;\ncol {\n  label s;\n  button \"warmer\" { s = s + 1; }\n  button \"cooler\" { s = s - 1; }\n}"}
+{"id": "h_temperature", "source": "state t = 20;\ncol {\n  label t;\n  row {\n    button \"warmer\" { t = t + 1; }\n    button \"cooler\" { t = t - 1; }\n  }\n}"}
+{"id": "h_temperature", "source": "state c = 20;\ncol {\n  label c;\n  row {\n    button \"warmer\" { c = c + 1; }\n    button \"cooler\" { c = c - 1; }\n  }\n}"}
+{"id": "h_fruit_tallies", "source": "state a = 0;\nstate b = 0;\nbutton \"add apple\" { a = a + 1; }\nbutton \"add pear\" { b = b + 1; }\nlabel \"Apples: \" + a;\nlabel \"Pears: \" + b;"}
+{"id": "h_fruit_tallies", "source": "state a = 0;\nstate b = 0;\ncol {\n  row {\n    button \"add apple\" { a = a + 1; }\n    button \"add pear\" { b = b + 1; }\n  }\n  label \"Apples: \" + a;\n  label \"Pears: \" + b;\n}"}
+{"id": "h_fruit_tallies", "source": "state count = 0;\nstate total = 0;\ncol {\n  button \"add apple\" { count = count + 1; }\n  button \"add pear\" { total = total + 1; }\n  label \"Apples: \" + count;\n  label \"Pears: \" + total;\n}"}
+{"id": "h_fruit_tallies", "source": "state a = 0;\nstate b = 0;\ncol {\n  row {\n    button \"add apple\" { a = a + 1; }\n    button \"add pear\" { b = b + 1; }\n  }\n  label \"Apples: \" + a;\n  label \"Pears: \" + b;\n}"}
+{"id": "h_fruit_tallies", "source": "state a = 0;\nstate b = 0;\ncol {\n  row {\n    button \"add apple\" { a = a + 1; }\n    button \"add pear\" { b = b + 1; }\n  }\n  label \"Apples: \" + a;\n  label \"Pears: \" + b;\n}"}
+{"id": "h_fruit_tallies", "source": "state a = 0;\nstate b = 0;\ncol {\n  button \"add apple\" { a = a + 1; }\n  button \"add pear\" { b = b + 1; }\n  label \"Apples: \" + a;\n  label \"Pears: \" + b;\n}"}
+{"id": "h_fruit_tallies", "source": "state n = 0;\nstate m = 0;\ncol {\n  row {\n    button \"add apple\" { n = n + 1; }\n    button \"add pear\" { m = m + 1; }\n    label \"Apples: \" + n;\n  }\n  row {\n    label \"Pears: \" + m;\n  }\n}"}
+{"id": "h_fruit_tallies", "source": "state a = 0;\nstate b = 0;\ncol {\n  row {\n    button \"add apple\" { a = a + 1; }\n    button \"add pear\" { b = b + 1; }\n  }\n  label \"Apples: \" + a;\n  label \"Pears: \" + b;\n}"}
+{"id": "h_secret_code", "source": "state count = 0;\nbutton \"unlock\" { if count < 3 { count = count + 1; } else { count = 0; } }\nif count < 3 { label \"OPEN\"; }"}
+{"id": "h_secret_code", "source": "state count = 0;\nbutton \"unlock\" { count = count + 1; }\nif count == 3 { label \"OPEN\"; }"}
+{"id": "h_secret_code", "source": "state u = 0;\nbutton \"unlock\" { u = u + 1; if u == 3 { state s = \"OPEN\"; } }\nif u == 0 { label \"locked\"; }"}
+{"id": "h_secret_code", "source": "state u = false;\ncol {\n  button \"unlock\" { if u == false { u = true; } }\n  if u == true { label \"OPEN\"; }\n}"}
+{"id": "h_secret_code", "source": "state count = 0;\ncol {\n  button \"unlock\" { count = count + 1; }\n  if count == 3 { label \"OPEN\"; }\n}"}
+{"id": "h_secret_code", "source": "state count = 0;\nbutton \"unlock\" { if count < 3 { count = count + 1; } }\nif count < 3 { label \"OPEN\"; }"}
+{"id": "h_secret_code", "source": "state count = 0;\nbutton \"unlock\" { count = count + 1; }\nif count == 3 { label \"OPEN\"; }"}
+{"id": "h_secret_code", "source": "state t = 0;\nbutton \"unlock\" { t = t + 1; if t == 3 { t = 0; } }\nif t == 0 { label \"OPEN\"; }"}
+{"id": "h_wipe", "source": "state t = \"\";\ncol {\n  input t;\n  label t;\n  button \"clear\" { t = \"\"; }\n}"}
+{"id": "h_wipe", "source": "state t = \"\";\ncol {\n  input t;\n  button \"clear\" { t = \"\"; }\n  label t;\n}"}
+{"id": "h_wipe", "source": "state t = \"\";\ncol {\n  input t;\n  button \"clear\" { t = \"\"; }\n  label t;\n}"}
+{"id": "h_wipe", "source": "state t = \"\";\ncol {\n  input t;\n  button \"clear\" { t = \"\"; }\n  label t;\n}"}
+{"id": "h_wipe", "source": "state t = \"\";\ncol {\n  input t;\n  button \"clear\" { t = \"\"; }\n  label t;\n}"}
+{"id": "h_wipe", "source": "state s = \"\";\ncol {\n  input s;\n  button \"clear\" { s = \"\"; }\n  label s;\n}"}
+{"id": "h_wipe", "source": "state t = \"\";\nlabel t;\nbutton \"clear\" { t = \"\"; }"}
+{"id": "h_wipe", "source": "state s = \"\";\ncol {\n  input s;\n  button \"clear\" { s = \"\"; }\n  label s;\n}"}

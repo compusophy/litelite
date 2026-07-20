@@ -131,8 +131,13 @@ lesson "loop breadth, not one subsystem — rustlite=toys" is remembered here.
   means halts-every-event / faults-roll-back / memory-bounded, by
   construction. The language landed at 1,999 of 2,000 LOC — the cap fired
   and was answered by shrinking (hex literals died for it). Consumer: the
-  app-building app; the M6 trainer is its keyless generator path
-  (spec-conditioned reward, per §5.8's lesson).
+  app-building app. SAME DAY, the generator arm closed the loop: `a8`
+  (experiment/appbench) rewards BEHAVIOR — event scripts with assertions,
+  §5.8's lesson as day-one design — and one hour of keyless self-play took
+  Qwen3-0.6B from 0/16 (all 128 attempts compile-fail; the language did not
+  exist) to 16/16 behavioral pass@8 on held-out app specs. Describe → a
+  local model writes it → the verifier proves it total → scripts prove it
+  behaves → the shell runs it. The whole stack, no keys anywhere.
 
 ## Post-genesis lessons
 
