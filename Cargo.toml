@@ -10,6 +10,7 @@ members = [
     "crates/modlite",
     "crates/stratlite",
     "crates/backtestlite",
+    "crates/applite",
 ]
 # Plain `cargo test` / `cargo check` at the root must cover EVERY crate, not
 # just the facade's dependency graph — prooflite is a member the facade does

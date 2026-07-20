@@ -1,0 +1,17 @@
+[package]
+name = "applite"
+description = "A total, fuel-bounded UI-app language on the litelite kit: state, widgets, and event handlers that provably halt, with atomic rollback on any fault."
+keywords = ["language", "interpreter", "sandbox", "fuel", "ui"]
+categories = ["compilers", "parser-implementations"]
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+readme.workspace = true
+
+[dependencies]
+diaglite.workspace = true
+lexlite.workspace = true
+parselite.workspace = true
+fuellite.workspace = true
