@@ -10,3 +10,4 @@ train/.venv/
 train/pools/
 train/checkpoints_prooflite/
 train/checkpoints_solve/
+train/checkpoints_apps/
