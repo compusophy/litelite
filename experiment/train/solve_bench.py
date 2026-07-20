@@ -34,9 +34,10 @@ def main() -> None:
     problems = [json.loads(l) for l in open(problems_path, encoding="utf-8") if l.strip()]
     with open(out, "w", encoding="utf-8", newline="\n") as f:
         for p in problems:
-            # "Write a program that {spec}. Emit ONE prooflite program..." — the
-            # exact _prompt shape the model was trained on, now with a SPECIFIC task.
-            for completion in policy.sample(f"a program that {p['spec']}", k):
+            # The exact _prompt shape the model was trained on, now with a
+            # SPECIFIC task. PREFIX env: "a program that" (default) / "an app that".
+            prefix = os.environ.get("PREFIX", "a program that")
+            for completion in policy.sample(f"{prefix} {p['spec']}", k):
                 f.write(json.dumps({"id": p["id"], "source": extract_source(completion)}) + "\n")
     print(f"{out}: {len(problems) * k} solutions ({len(problems)} problems x {k}) from {model}")
 

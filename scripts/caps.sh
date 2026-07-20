@@ -43,14 +43,16 @@ if [ -d experiment/src ]; then
   fi
 fi
 
-if [ -d experiment/proofbench/src ]; then
-  n=$(find experiment/proofbench/src -name '*.rs' -print0 | xargs -0 cat | wc -l)
-  printf '%-22s %6d LOC (cap %d)\n' "experiment/proofbench/" "$n" "$EXP_CAP"
-  if [ "$n" -gt "$EXP_CAP" ]; then
-    echo "FAIL: experiment/proofbench/ exceeds its cap"
-    fail=1
+for bench in proofbench appbench; do
+  if [ -d "experiment/$bench/src" ]; then
+    n=$(find "experiment/$bench/src" -name '*.rs' -print0 | xargs -0 cat | wc -l)
+    printf '%-22s %6d LOC (cap %d)\n' "experiment/$bench/" "$n" "$EXP_CAP"
+    if [ "$n" -gt "$EXP_CAP" ]; then
+      echo "FAIL: experiment/$bench/ exceeds its cap"
+      fail=1
+    fi
   fi
-fi
+done
 
 if [ -d app/src ]; then
   # The vibe-coding shell is a THIN boundary by design: applite does the

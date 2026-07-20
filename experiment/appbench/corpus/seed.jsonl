@@ -1,0 +1,120 @@
+{"id": "cs0n0", "style_idx": 0, "source": "state n = 0;\nlabel n;\nbutton \"+\" { n = n + 1; }"}
+{"id": "cs0n1", "style_idx": 0, "source": "state count = 0;\nlabel count;\nbutton \"+\" { count = count + 1; }"}
+{"id": "cs0n2", "style_idx": 0, "source": "state n = 0;\ncol {\n  label n;\n  button \"+\" { n = n + 1; }\n}"}
+{"id": "cs1n0", "style_idx": 1, "source": "state n = 10;\nlabel n;\nbutton \"-\" { n = n - 1; }"}
+{"id": "cs1n1", "style_idx": 1, "source": "state count = 10;\nlabel count;\nbutton \"-\" { count = count - 1; }"}
+{"id": "cs1n2", "style_idx": 1, "source": "state n = 10;\ncol {\n  label n;\n  button \"-\" { n = n - 1; }\n}"}
+{"id": "cs2n0", "style_idx": 2, "source": "state n = 0;\nlabel n;\nbutton \"+5\" { n = n + 5; }"}
+{"id": "cs2n1", "style_idx": 2, "source": "state count = 0;\nlabel count;\nbutton \"+5\" { count = count + 5; }"}
+{"id": "cs2n2", "style_idx": 2, "source": "state n = 0;\ncol {\n  label n;\n  button \"+5\" { n = n + 5; }\n}"}
+{"id": "cs3n0", "style_idx": 3, "source": "state n = 3;\nlabel n;\nrow {\n  button \"up\" { n = n + 1; }\n  button \"down\" { n = n - 1; }\n}"}
+{"id": "cs3n1", "style_idx": 3, "source": "state count = 3;\nlabel count;\nrow {\n  button \"up\" { count = count + 1; }\n  button \"down\" { count = count - 1; }\n}"}
+{"id": "cs3n2", "style_idx": 3, "source": "state n = 3;\ncol {\n  label n;\n  row {\n    button \"up\" { n = n + 1; }\n    button \"down\" { n = n - 1; }\n  }\n}"}
+{"id": "cs4n0", "style_idx": 4, "source": "state n = 0;\nlabel n;\nbutton \"+\" { n = n + 1; }\nbutton \"reset\" { n = 0; }"}
+{"id": "cs4n1", "style_idx": 4, "source": "state count = 0;\nlabel count;\nbutton \"+\" { count = count + 1; }\nbutton \"reset\" { count = 0; }"}
+{"id": "cs4n2", "style_idx": 4, "source": "state n = 0;\ncol {\n  label n;\n  button \"+\" { n = n + 1; }\n  button \"reset\" { n = 0; }\n}"}
+{"id": "cs5n0", "style_idx": 5, "source": "state n = 1;\nlabel n;\nbutton \"double\" { n = n * 2; }"}
+{"id": "cs5n1", "style_idx": 5, "source": "state count = 1;\nlabel count;\nbutton \"double\" { count = count * 2; }"}
+{"id": "cs5n2", "style_idx": 5, "source": "state n = 1;\ncol {\n  label n;\n  button \"double\" { n = n * 2; }\n}"}
+{"id": "cs6n0", "style_idx": 6, "source": "state on = false;\nbutton \"toggle\" { if on { on = false; } else { on = true; } }\nif on { label \"hello\"; }"}
+{"id": "cs6n1", "style_idx": 6, "source": "state active = false;\nbutton \"toggle\" { if active { active = false; } else { active = true; } }\nif active { label \"hello\"; }"}
+{"id": "cs6n2", "style_idx": 6, "source": "state on = false;\ncol {\n  button \"toggle\" { if on { on = false; } else { on = true; } }\n  if on { label \"hello\"; }\n}"}
+{"id": "cs7n0", "style_idx": 7, "source": "state shown = false;\nbutton \"reveal\" { shown = true; }\nif shown { label \"secret\"; }"}
+{"id": "cs7n1", "style_idx": 7, "source": "state revealed = false;\nbutton \"reveal\" { revealed = true; }\nif revealed { label \"secret\"; }"}
+{"id": "cs7n2", "style_idx": 7, "source": "state shown = false;\ncol {\n  button \"reveal\" { shown = true; }\n  if shown { label \"secret\"; }\n}"}
+{"id": "cs8n0", "style_idx": 8, "source": "state name = \"\";\ninput name;\nlabel \"Hello, \" + name + \"!\";"}
+{"id": "cs8n1", "style_idx": 8, "source": "state who = \"\";\ninput who;\nlabel \"Hello, \" + who + \"!\";"}
+{"id": "cs8n2", "style_idx": 8, "source": "state name = \"\";\ncol {\n  input name;\n  label \"Hello, \" + name + \"!\";\n}"}
+{"id": "cs9n0", "style_idx": 9, "source": "state s = \"\";\ninput s;\nlabel s;"}
+{"id": "cs9n1", "style_idx": 9, "source": "state value = \"\";\ninput value;\nlabel value;"}
+{"id": "cs9n2", "style_idx": 9, "source": "state s = \"\";\ncol {\n  input s;\n  label s;\n}"}
+{"id": "cs10n0", "style_idx": 10, "source": "state s = \"\";\ninput s;\nlabel \"You said: \" + s;"}
+{"id": "cs10n1", "style_idx": 10, "source": "state value = \"\";\ninput value;\nlabel \"You said: \" + value;"}
+{"id": "cs10n2", "style_idx": 10, "source": "state s = \"\";\ncol {\n  input s;\n  label \"You said: \" + s;\n}"}
+{"id": "cs11n0", "style_idx": 11, "source": "state t = 0;\nlabel t;\nbutton \"add 2\" { t = t + 2; }\nbutton \"add 3\" { t = t + 3; }"}
+{"id": "cs11n1", "style_idx": 11, "source": "state total = 0;\nlabel total;\nbutton \"add 2\" { total = total + 2; }\nbutton \"add 3\" { total = total + 3; }"}
+{"id": "cs11n2", "style_idx": 11, "source": "state t = 0;\ncol {\n  label t;\n  button \"add 2\" { t = t + 2; }\n  button \"add 3\" { t = t + 3; }\n}"}
+{"id": "cs12n0", "style_idx": 12, "source": "state t = 0;\nlabel \"Total: $\" + t;\nbutton \"+10\" { t = t + 10; }"}
+{"id": "cs12n1", "style_idx": 12, "source": "state total = 0;\nlabel \"Total: $\" + total;\nbutton \"+10\" { total = total + 10; }"}
+{"id": "cs12n2", "style_idx": 12, "source": "state t = 0;\ncol {\n  label \"Total: $\" + t;\n  button \"+10\" { t = t + 10; }\n}"}
+{"id": "cs13n0", "style_idx": 13, "source": "state n = 0;\nlabel n;\nbutton \"+1\" { n = n + 1; }\nif n % 2 == 0 { label \"even\"; } else { label \"odd\"; }"}
+{"id": "cs13n1", "style_idx": 13, "source": "state count = 0;\nlabel count;\nbutton \"+1\" { count = count + 1; }\nif count % 2 == 0 { label \"even\"; } else { label \"odd\"; }"}
+{"id": "cs13n2", "style_idx": 13, "source": "state n = 0;\ncol {\n  label n;\n  button \"+1\" { n = n + 1; }\n  if n % 2 == 0 { label \"even\"; } else { label \"odd\"; }\n}"}
+{"id": "cs14n0", "style_idx": 14, "source": "state n = 0;\nlabel n;\nbutton \"+\" { if n < 3 { n = n + 1; } }"}
+{"id": "cs14n1", "style_idx": 14, "source": "state count = 0;\nlabel count;\nbutton \"+\" { if count < 3 { count = count + 1; } }"}
+{"id": "cs14n2", "style_idx": 14, "source": "state n = 0;\ncol {\n  label n;\n  button \"+\" { if n < 3 { n = n + 1; } }\n}"}
+{"id": "cs15n0", "style_idx": 15, "source": "state n = 1;\nlabel n;\nbutton \"-\" { if n > 0 { n = n - 1; } }"}
+{"id": "cs15n1", "style_idx": 15, "source": "state count = 1;\nlabel count;\nbutton \"-\" { if count > 0 { count = count - 1; } }"}
+{"id": "cs15n2", "style_idx": 15, "source": "state n = 1;\ncol {\n  label n;\n  button \"-\" { if n > 0 { n = n - 1; } }\n}"}
+{"id": "cs16n0", "style_idx": 16, "source": "state a = 0;\nstate b = 0;\nlabel a;\nlabel b;\nbutton \"a+\" { a = a + 1; }\nbutton \"b+\" { b = b + 1; }"}
+{"id": "cs16n1", "style_idx": 16, "source": "state first = 0;\nstate second = 0;\nlabel first;\nlabel second;\nbutton \"a+\" { first = first + 1; }\nbutton \"b+\" { second = second + 1; }"}
+{"id": "cs16n2", "style_idx": 16, "source": "state a = 0;\nstate b = 0;\ncol {\n  label a;\n  label b;\n  button \"a+\" { a = a + 1; }\n  button \"b+\" { b = b + 1; }\n}"}
+{"id": "cs17n0", "style_idx": 17, "source": "state m = 0;\nbutton \"mode\" { m = m + 1; if m > 2 { m = 0; } }\nif m == 0 { label \"red\"; } else if m == 1 { label \"green\"; } else { label \"blue\"; }"}
+{"id": "cs17n1", "style_idx": 17, "source": "state mode_n = 0;\nbutton \"mode\" { mode_n = mode_n + 1; if mode_n > 2 { mode_n = 0; } }\nif mode_n == 0 { label \"red\"; } else if mode_n == 1 { label \"green\"; } else { label \"blue\"; }"}
+{"id": "cs17n2", "style_idx": 17, "source": "state m = 0;\ncol {\n  button \"mode\" { m = m + 1; if m > 2 { m = 0; } }\n  if m == 0 { label \"red\"; } else if m == 1 { label \"green\"; } else { label \"blue\"; }\n}"}
+{"id": "cs18n0", "style_idx": 18, "source": "state s = 0;\nlabel \"Score: \" + s;\nbutton \"goal\" { s = s + 1; }"}
+{"id": "cs18n1", "style_idx": 18, "source": "state value = 0;\nlabel \"Score: \" + value;\nbutton \"goal\" { value = value + 1; }"}
+{"id": "cs18n2", "style_idx": 18, "source": "state s = 0;\ncol {\n  label \"Score: \" + s;\n  button \"goal\" { s = s + 1; }\n}"}
+{"id": "cs19n0", "style_idx": 19, "source": "state n = 5;\nlabel n;\nbutton \"tick\" { if n > 0 { n = n - 1; } }\nif n == 0 { label \"done\"; }"}
+{"id": "cs19n1", "style_idx": 19, "source": "state count = 5;\nlabel count;\nbutton \"tick\" { if count > 0 { count = count - 1; } }\nif count == 0 { label \"done\"; }"}
+{"id": "cs19n2", "style_idx": 19, "source": "state n = 5;\ncol {\n  label n;\n  button \"tick\" { if n > 0 { n = n - 1; } }\n  if n == 0 { label \"done\"; }\n}"}
+{"id": "cs20n0", "style_idx": 20, "source": "state lit = false;\nrow {\n  button \"on\" { lit = true; }\n  button \"off\" { lit = false; }\n}\nif lit { label \"LIGHT ON\"; }"}
+{"id": "cs20n1", "style_idx": 20, "source": "state is_on = false;\nrow {\n  button \"on\" { is_on = true; }\n  button \"off\" { is_on = false; }\n}\nif is_on { label \"LIGHT ON\"; }"}
+{"id": "cs20n2", "style_idx": 20, "source": "state lit = false;\ncol {\n  row {\n    button \"on\" { lit = true; }\n    button \"off\" { lit = false; }\n  }\n  if lit { label \"LIGHT ON\"; }\n}"}
+{"id": "cs21n0", "style_idx": 21, "source": "state n = 50;\nlabel n;\nrow {\n  button \"+10\" { n = n + 10; }\n  button \"-10\" { n = n - 10; }\n}"}
+{"id": "cs21n1", "style_idx": 21, "source": "state count = 50;\nlabel count;\nrow {\n  button \"+10\" { count = count + 10; }\n  button \"-10\" { count = count - 10; }\n}"}
+{"id": "cs21n2", "style_idx": 21, "source": "state n = 50;\ncol {\n  label n;\n  row {\n    button \"+10\" { n = n + 10; }\n    button \"-10\" { n = n - 10; }\n  }\n}"}
+{"id": "cs22n0", "style_idx": 22, "source": "state n = 2;\nlabel n;\nbutton \"triple\" { n = n * 3; }"}
+{"id": "cs22n1", "style_idx": 22, "source": "state count = 2;\nlabel count;\nbutton \"triple\" { count = count * 3; }"}
+{"id": "cs22n2", "style_idx": 22, "source": "state n = 2;\ncol {\n  label n;\n  button \"triple\" { n = n * 3; }\n}"}
+{"id": "cs23n0", "style_idx": 23, "source": "state a = 0;\nstate b = 0;\nrow {\n  button \"left+\" { a = a + 1; }\n  button \"right+\" { b = b + 1; }\n}\nlabel a + b;"}
+{"id": "cs23n1", "style_idx": 23, "source": "state first = 0;\nstate second = 0;\nrow {\n  button \"left+\" { first = first + 1; }\n  button \"right+\" { second = second + 1; }\n}\nlabel first + second;"}
+{"id": "cs23n2", "style_idx": 23, "source": "state a = 0;\nstate b = 0;\ncol {\n  row {\n    button \"left+\" { a = a + 1; }\n    button \"right+\" { b = b + 1; }\n  }\n  label a + b;\n}"}
+{"id": "cs24n0", "style_idx": 24, "source": "state name = \"\";\ninput name;\nif name == \"\" { label \"Hello, stranger\"; } else { label \"Hello, \" + name; }"}
+{"id": "cs24n1", "style_idx": 24, "source": "state who = \"\";\ninput who;\nif who == \"\" { label \"Hello, stranger\"; } else { label \"Hello, \" + who; }"}
+{"id": "cs24n2", "style_idx": 24, "source": "state name = \"\";\ncol {\n  input name;\n  if name == \"\" { label \"Hello, stranger\"; } else { label \"Hello, \" + name; }\n}"}
+{"id": "cs25n0", "style_idx": 25, "source": "state n = 0;\nlabel n;\nbutton \"+3\" { n = n + 3; }\nif n >= 10 { label \"big\"; }"}
+{"id": "cs25n1", "style_idx": 25, "source": "state count = 0;\nlabel count;\nbutton \"+3\" { count = count + 3; }\nif count >= 10 { label \"big\"; }"}
+{"id": "cs25n2", "style_idx": 25, "source": "state n = 0;\ncol {\n  label n;\n  button \"+3\" { n = n + 3; }\n  if n >= 10 { label \"big\"; }\n}"}
+{"id": "cs26n0", "style_idx": 26, "source": "state y = 0;\nstate n = 0;\nrow {\n  button \"yes\" { y = y + 1; }\n  button \"no\" { n = n + 1; }\n}\nlabel \"Yes: \" + y;\nlabel \"No: \" + n;"}
+{"id": "cs26n1", "style_idx": 26, "source": "state yes_n = 0;\nstate count = 0;\nrow {\n  button \"yes\" { yes_n = yes_n + 1; }\n  button \"no\" { count = count + 1; }\n}\nlabel \"Yes: \" + yes_n;\nlabel \"No: \" + count;"}
+{"id": "cs26n2", "style_idx": 26, "source": "state y = 0;\nstate n = 0;\ncol {\n  row {\n    button \"yes\" { y = y + 1; }\n    button \"no\" { n = n + 1; }\n  }\n  label \"Yes: \" + y;\n  label \"No: \" + n;\n}"}
+{"id": "cs27n0", "style_idx": 27, "source": "state n = 0;\nlabel n;\nbutton \"+\" { n = n + 1; }\nif n >= 5 { label \"limit reached\"; }"}
+{"id": "cs27n1", "style_idx": 27, "source": "state count = 0;\nlabel count;\nbutton \"+\" { count = count + 1; }\nif count >= 5 { label \"limit reached\"; }"}
+{"id": "cs27n2", "style_idx": 27, "source": "state n = 0;\ncol {\n  label n;\n  button \"+\" { n = n + 1; }\n  if n >= 5 { label \"limit reached\"; }\n}"}
+{"id": "cs28n0", "style_idx": 28, "source": "state n = 0;\nlabel n;\nbutton \"next even\" { n = n + 2; }"}
+{"id": "cs28n1", "style_idx": 28, "source": "state count = 0;\nlabel count;\nbutton \"next even\" { count = count + 2; }"}
+{"id": "cs28n2", "style_idx": 28, "source": "state n = 0;\ncol {\n  label n;\n  button \"next even\" { n = n + 2; }\n}"}
+{"id": "cs29n0", "style_idx": 29, "source": "state s = \"\";\ninput s;\nif s == \"\" { label \"empty\"; }"}
+{"id": "cs29n1", "style_idx": 29, "source": "state value = \"\";\ninput value;\nif value == \"\" { label \"empty\"; }"}
+{"id": "cs29n2", "style_idx": 29, "source": "state s = \"\";\ncol {\n  input s;\n  if s == \"\" { label \"empty\"; }\n}"}
+{"id": "cs30n0", "style_idx": 30, "source": "state n = 1;\nstate vis = true;\nbutton \"toggle\" { if vis { vis = false; } else { vis = true; } }\nif vis { label n; }"}
+{"id": "cs30n1", "style_idx": 30, "source": "state count = 1;\nstate visible = true;\nbutton \"toggle\" { if visible { visible = false; } else { visible = true; } }\nif visible { label count; }"}
+{"id": "cs30n2", "style_idx": 30, "source": "state n = 1;\nstate vis = true;\ncol {\n  button \"toggle\" { if vis { vis = false; } else { vis = true; } }\n  if vis { label n; }\n}"}
+{"id": "cs31n0", "style_idx": 31, "source": "state n = 1;\nlabel n;\nbutton \"double\" { n = n * 2; }\nif n > 8 { label \"too big\"; }"}
+{"id": "cs31n1", "style_idx": 31, "source": "state count = 1;\nlabel count;\nbutton \"double\" { count = count * 2; }\nif count > 8 { label \"too big\"; }"}
+{"id": "cs31n2", "style_idx": 31, "source": "state n = 1;\ncol {\n  label n;\n  button \"double\" { n = n * 2; }\n  if n > 8 { label \"too big\"; }\n}"}
+{"id": "cs32n0", "style_idx": 32, "source": "state n = 100;\nlabel n;\nbutton \"spend 25\" { n = n - 25; }"}
+{"id": "cs32n1", "style_idx": 32, "source": "state count = 100;\nlabel count;\nbutton \"spend 25\" { count = count - 25; }"}
+{"id": "cs32n2", "style_idx": 32, "source": "state n = 100;\ncol {\n  label n;\n  button \"spend 25\" { n = n - 25; }\n}"}
+{"id": "cs33n0", "style_idx": 33, "source": "state n = 0;\nbutton \"+1\" { n = n + 1; }\nlabel n % 3;"}
+{"id": "cs33n1", "style_idx": 33, "source": "state count = 0;\nbutton \"+1\" { count = count + 1; }\nlabel count % 3;"}
+{"id": "cs33n2", "style_idx": 33, "source": "state n = 0;\ncol {\n  button \"+1\" { n = n + 1; }\n  label n % 3;\n}"}
+{"id": "cs34n0", "style_idx": 34, "source": "state started = false;\nif started { label \"Let's go\"; } else { label \"Welcome\"; }\nbutton \"start\" { started = true; }"}
+{"id": "cs34n1", "style_idx": 34, "source": "state begun = false;\nif begun { label \"Let's go\"; } else { label \"Welcome\"; }\nbutton \"start\" { begun = true; }"}
+{"id": "cs34n2", "style_idx": 34, "source": "state started = false;\ncol {\n  if started { label \"Let's go\"; } else { label \"Welcome\"; }\n  button \"start\" { started = true; }\n}"}
+{"id": "cs35n0", "style_idx": 35, "source": "state s = 0;\nlabel s;\nrow {\n  button \"correct\" { s = s + 1; }\n  button \"wrong\" { if s > 0 { s = s - 1; } }\n}"}
+{"id": "cs35n1", "style_idx": 35, "source": "state value = 0;\nlabel value;\nrow {\n  button \"correct\" { value = value + 1; }\n  button \"wrong\" { if value > 0 { value = value - 1; } }\n}"}
+{"id": "cs35n2", "style_idx": 35, "source": "state s = 0;\ncol {\n  label s;\n  row {\n    button \"correct\" { s = s + 1; }\n    button \"wrong\" { if s > 0 { s = s - 1; } }\n  }\n}"}
+{"id": "cs36n0", "style_idx": 36, "source": "state t = 0;\nlabel t + \"s\";\nbutton \"tick\" { t = t + 1; }"}
+{"id": "cs36n1", "style_idx": 36, "source": "state total = 0;\nlabel total + \"s\";\nbutton \"tick\" { total = total + 1; }"}
+{"id": "cs36n2", "style_idx": 36, "source": "state t = 0;\ncol {\n  label t + \"s\";\n  button \"tick\" { t = t + 1; }\n}"}
+{"id": "cs37n0", "style_idx": 37, "source": "state t = 0;\nlabel t;\nbutton \"small +1\" { t = t + 1; }\nbutton \"large +100\" { t = t + 100; }"}
+{"id": "cs37n1", "style_idx": 37, "source": "state total = 0;\nlabel total;\nbutton \"small +1\" { total = total + 1; }\nbutton \"large +100\" { total = total + 100; }"}
+{"id": "cs37n2", "style_idx": 37, "source": "state t = 0;\ncol {\n  label t;\n  button \"small +1\" { t = t + 1; }\n  button \"large +100\" { t = t + 100; }\n}"}
+{"id": "cs38n0", "style_idx": 38, "source": "state f = \"\";\nstate l = \"\";\ninput f;\ninput l;\nlabel f + \" \" + l;"}
+{"id": "cs38n1", "style_idx": 38, "source": "state level = \"\";\nstate left_n = \"\";\ninput level;\ninput left_n;\nlabel level + \" \" + left_n;"}
+{"id": "cs38n2", "style_idx": 38, "source": "state f = \"\";\nstate l = \"\";\ncol {\n  input f;\n  input l;\n  label f + \" \" + l;\n}"}
+{"id": "cs39n0", "style_idx": 39, "source": "state n = 3;\nif n > 0 { label n; } else { label \"none left\"; }\nbutton \"-\" { if n > 0 { n = n - 1; } }"}
+{"id": "cs39n1", "style_idx": 39, "source": "state count = 3;\nif count > 0 { label count; } else { label \"none left\"; }\nbutton \"-\" { if count > 0 { count = count - 1; } }"}
+{"id": "cs39n2", "style_idx": 39, "source": "state n = 3;\ncol {\n  if n > 0 { label n; } else { label \"none left\"; }\n  button \"-\" { if n > 0 { n = n - 1; } }\n}"}

@@ -1,0 +1,19 @@
+# M7's generator arm: the applite reward tool. Speaks the SAME CLI protocol
+# as s5/p6 (card/styles/reward/eval + the spec-conditioned trainstyles/
+# solvereward) so the language-parametric trainer runs unchanged — point it
+# here and it fine-tunes an applite generator. The top rung is BEHAVIORAL:
+# a task's event script runs against the generated app and its assertions
+# must hold (§5.8's lesson applied: reward the spec, not a shape).
+# Outside the kit workspace (own [workspace]); its own cap counter in caps.sh.
+[workspace]
+
+[package]
+name = "a8"
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.85"
+publish = false
+
+[dependencies]
+serde_json = "1"
+applite = { path = "../../crates/applite" }
