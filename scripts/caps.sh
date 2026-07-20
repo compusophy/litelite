@@ -60,8 +60,9 @@ if [ -d app/src ]; then
   # bloat is still bloat.
   n=$(find app/src -name '*.rs' -print0 | xargs -0 cat | wc -l)
   h=$(tr -d '\r' <app/index.html | wc -l)
-  printf '%-22s %6d LOC (cap %d)  + index.html %d (cap %d)\n' "app/" "$n" 500 "$h" 400
-  if [ "$n" -gt 500 ] || [ "$h" -gt 400 ]; then
+  p=$(find app -maxdepth 1 -name '*.py' -print0 | xargs -0 cat | wc -l)
+  printf '%-22s %6d LOC (cap %d)  + index.html %d (cap %d) + py %d (cap %d)\n' "app/" "$n" 500 "$h" 400 "$p" 150
+  if [ "$n" -gt 500 ] || [ "$h" -gt 400 ] || [ "$p" -gt 150 ]; then
     echo "FAIL: app/ exceeds its cap — the shell is a boundary, not a home"
     fail=1
   fi

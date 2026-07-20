@@ -34,6 +34,13 @@
     background: #1f2430; color: var(--ink); border: 1px solid var(--edge);
     border-radius: 6px; padding: 6px 8px; font-size: 13px;
   }
+  input.idea {
+    flex: 1; min-width: 120px; max-width: 420px; background: #12151c;
+    color: var(--ink); border: 1px solid var(--edge); border-radius: 6px;
+    padding: 6px 10px; font-size: 13px; outline: none;
+  }
+  input.idea:focus { border-color: var(--ok); }
+  button.ui.gen { background: var(--ok); color: #0b0e14; border: none; font-weight: 600; }
   main { flex: 1; display: flex; min-height: 0; }
   #left { flex: 1; display: flex; flex-direction: column; border-right: 1px solid var(--edge); min-width: 0; }
   #src {
@@ -74,6 +81,8 @@
 <header>
   <h1><span>applite</span> vibe shell</h1>
   <div class="sub">describe it → verify it → run it&nbsp;·&nbsp;every app provably halts</div>
+  <input id="idea" class="idea" placeholder="an app that… (local model writes it)" title="Describe an app; the LOCAL fine-tune generates candidates and the verifier keeps the first that passes">
+  <button id="gen" class="ui gen" title="Needs the local generator: python serve.py">generate</button>
   <div class="grow"></div>
   <select id="examples" class="ui" title="examples"></select>
   <button id="copy" class="ui" title="Copies the language card + your idea as a prompt for any LLM">copy prompt</button>
@@ -156,6 +165,42 @@ function run() {
   }
 }
 
+// The generate->verify->keep loop, in the page: the LOCAL fine-tune (see
+// serve.py) samples candidates; THIS page's wasm verifier is the selector —
+// the first candidate that compiles and checks becomes the live app.
+async function generate() {
+  const spec = $("idea").value.trim();
+  if (!spec) { $("idea").focus(); return; }
+  statusLine("generating locally…");
+  let cands;
+  try {
+    const res = await fetch("http://localhost:8765/generate", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ spec, k: 4 }),
+    });
+    cands = (await res.json()).candidates;
+  } catch {
+    statusLine('<b class="bad">local generator offline</b> — start it with `python serve.py`, or use copy prompt with any LLM');
+    return;
+  }
+  let firstDiag = null;
+  for (let i = 0; i < cands.length; i++) {
+    const s = writeStr(cands[i]);
+    const code = wasm.compile_src(s[0], s[1]);
+    freeStr(s);
+    if (code === 0) {
+      $("src").value = cands[i];
+      hideDiag(); render(JSON.parse(takeOut()));
+      statusLine(`<b class="ok">verified</b> — candidate ${i + 1} of ${cands.length} passed (${i} rejected); it halts on every event, faults roll back`);
+      return;
+    }
+    if (firstDiag === null) firstDiag = takeOut();
+  }
+  $("src").value = cands[0] ?? "";
+  showDiag(firstDiag ?? "no candidates");
+  statusLine(`<b class="bad">all ${cands.length} candidates rejected</b> — the verifier refused every one; first rejection shown, edit and rerun`);
+}
+
 const EXAMPLES = {
   "counter": `state count = 0;
 
@@ -209,6 +254,8 @@ async function boot() {
   for (const name of Object.keys(EXAMPLES)) sel.add(new Option(name, name));
   sel.onchange = () => { $("src").value = EXAMPLES[sel.value]; run(); };
   $("run").onclick = run;
+  $("gen").onclick = generate;
+  $("idea").addEventListener("keydown", (e) => { if (e.key === "Enter") generate(); });
   $("copy").onclick = async () => {
     wasm.card();
     const idea = prompt("Describe the app you want:", "a counter with three buttons") ?? "";

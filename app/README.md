@@ -16,10 +16,27 @@ python -m http.server -d . 8080     # wasm needs http, not file://
 
 ## The vibe-coding loop (keyless by design)
 
+**Fully local (the generate button):** start the generator —
+
+```sh
+../experiment/train/.venv/Scripts/python.exe serve.py   # loads the C5 fine-tune, port 8765
+```
+
+— then type an idea in the header box and hit **generate**. The fine-tune
+(trained against the a8 behavioral reward, `experiment/appbench`) samples 4
+candidates; THIS PAGE's wasm verifier is the selector — the first candidate
+that compiles and checks becomes the live app, and the status bar reports
+how many were rejected. Generate → verify → keep, visible in the UI. No
+cloud, no key, ~1.4 GB of local model. (The model satisfies specs
+literally — name your button labels and displayed strings; nuance like
+"only after typing" can be missed while still verifying valid.)
+
+**Via any LLM (copy prompt):**
+
 1. **copy prompt** — puts the applite language card (`applite::REFERENCE`,
    served verbatim from the wasm, so prompt and verifier cannot drift) plus
    your app idea on the clipboard.
-2. Paste into ANY LLM — a frontier chat or the local fine-tune pipeline.
+2. Paste into ANY LLM.
 3. Paste the program it writes back into the editor. **verify + run.**
 4. If the verifier rejects it, the caret-rendered error is right there —
    paste it back to the model, or fix it yourself. Rejection is the product
