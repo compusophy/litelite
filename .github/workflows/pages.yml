@@ -1,0 +1,38 @@
+name: pages
+
+# The live shell: build applite to wasm and publish app/ as the GitHub Pages
+# site. Static only — the "generate" button degrades to a status hint
+# pointing at serve.py, and the copy-prompt path works fully in the browser.
+on:
+  push:
+    branches: [main]
+    paths: ["app/**", "crates/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - run: bash app/build.sh
+      - run: mkdir dist && cp app/index.html app/appshell.wasm dist/
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - id: deployment
+        uses: actions/deploy-pages@v4

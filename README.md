@@ -93,10 +93,16 @@ line 1, col 1
 
 ## The product: a vibe-coding shell where nothing unverified runs
 
+**Live demo: [phi.chat/litelite](https://phi.chat/litelite/)** — paste an
+applite program (or copy-prompt any LLM into writing one) and it verifies
+and runs in your tab.
+
 `app/` is an app-building app on the kit: describe an app in a sentence, a
 **local 0.6B fine-tune** writes candidate `applite` programs, and the page's
 own wasm verifier keeps the first one that passes — then runs it live.
-Generate → verify → keep, visible in the UI, no cloud, no API key.
+Generate → verify → keep, visible in the UI, no cloud, no API key (the
+generate button needs the local `serve.py`; the hosted demo covers the
+paste + copy-prompt loop).
 
 ```sh
 cd app && ./build.sh && python -m http.server -d . 8080   # the shell
