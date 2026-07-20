@@ -42,6 +42,11 @@
   input.idea:focus { border-color: var(--ok); }
   button.ui.gen { background: var(--ok); color: #0b0e14; border: none; font-weight: 600; }
   main { flex: 1; display: flex; min-height: 0; }
+  @media (max-width: 760px) {
+    header { flex-wrap: wrap; }
+    main { flex-direction: column; }
+    #left { border-right: none; border-bottom: 1px solid var(--edge); min-height: 40%; }
+  }
   #left { flex: 1; display: flex; flex-direction: column; border-right: 1px solid var(--edge); min-width: 0; }
   #src {
     flex: 1; background: var(--bg); color: var(--ink); border: none; resize: none;
@@ -86,6 +91,7 @@
   <div class="grow"></div>
   <select id="examples" class="ui" title="examples"></select>
   <button id="copy" class="ui" title="Copies the language card + your idea as a prompt for any LLM">copy prompt</button>
+  <button id="share" class="ui" title="Copies a link that opens this exact program, verified and running">share</button>
   <button id="run" class="ui primary" title="Ctrl+Enter">verify + run</button>
 </header>
 <main>
@@ -247,6 +253,14 @@ else { label "YELLOW — hurry"; }
 button "next" { light = light + 1; if light > 2 { light = 0; } }`,
 };
 
+// Share links: the program itself rides the URL hash (base64url of UTF-8) —
+// no backend, no storage; a link IS the app, verified on arrival.
+const b64u = (s) => btoa(String.fromCharCode(...enc.encode(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+function unb64u(h) {
+  const b = atob(h.replace(/-/g, "+").replace(/_/g, "/"));
+  return dec.decode(Uint8Array.from(b, (c) => c.charCodeAt(0)));
+}
+
 async function boot() {
   // Single-file build: build.sh swaps the marker for the wasm as base64, so
   // the whole product is ONE self-contained .html (works from file:// too).
@@ -270,10 +284,22 @@ async function boot() {
       "\nOutput ONLY the program, no prose, no code fences.");
     statusLine("prompt copied — paste it into any LLM, then paste its program back here and hit verify + run");
   };
+  $("share").onclick = async () => {
+    const url = location.origin + location.pathname + "#p=" + b64u($("src").value);
+    await navigator.clipboard.writeText(url);
+    statusLine(`share link copied (${url.length} chars) — it opens this exact program, verified`);
+  };
   document.addEventListener("keydown", (e) => {
     if (e.ctrlKey && e.key === "Enter") { e.preventDefault(); run(); }
   });
-  $("src").value = EXAMPLES["counter"];
+  $("src").addEventListener("input", () => localStorage.setItem("draft", $("src").value));
+  // Boot priority: a shared link's program, else your last draft, else the demo.
+  const shared = location.hash.startsWith("#p=") ? location.hash.slice(3) : null;
+  try {
+    $("src").value = shared ? unb64u(shared) : (localStorage.getItem("draft") || EXAMPLES["counter"]);
+  } catch {
+    $("src").value = EXAMPLES["counter"];
+  }
   run();
 }
 boot().catch((e) => statusLine('<b class="bad">failed to load wasm</b> — build it first (see app/README.md): ' + e));
