@@ -95,6 +95,9 @@ conversation context is required. Heavy drafting runs as multi-agent workflows
   reward and degrades the other axis; the symmetry is the §5.8 finding.
   Repro: `cd experiment/proofbench &&
   ./target/release/p6 solve problems/heldout.jsonl results/solve_s5.jsonl`.
+  N=3 RAN 2026-07-19 (§5.8's close): applite + a8's BEHAVIORAL reward
+  (event scripts), 0/16 → 16/16 held-out behavioral pass@8 in ~1h — the
+  loop as a product (`app/` shell + local generator), not a benchmark.
   STILL PENDING:
   the frozen-big-model A/B arm — there is NO Anthropic API key and there will
   not be one; that arm stays a protocol slot unless a keyless generator fills it.

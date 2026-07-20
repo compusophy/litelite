@@ -35,6 +35,7 @@ kit pays each invariant exactly once.
 | `prooflite` | the reference language (M1+M2) | every program halts within its fuel and provably touches only its capability table |
 | `stratlite` | the strategy language (M4) | every trading decision halts within its fuel, and look-ahead is unrepresentable |
 | `backtestlite` | the strategy verifier (M4) | a backtest is one reproducible integer hash; verification is compile + halt + survive + trade |
+| `applite` | the UI-app language (M7) | every event handler halts, faults roll back atomically, and memory is bounded — no generated app can hang or corrupt a page |
 
 Zero external dependencies. Native + `wasm32-unknown-unknown`.
 
@@ -90,18 +91,39 @@ line 1, col 1
   ^^^^^^^^^^^^^^^^^^^^^
 ```
 
+## The product: a vibe-coding shell where nothing unverified runs
+
+`app/` is an app-building app on the kit: describe an app in a sentence, a
+**local 0.6B fine-tune** writes candidate `applite` programs, and the page's
+own wasm verifier keeps the first one that passes — then runs it live.
+Generate → verify → keep, visible in the UI, no cloud, no API key.
+
+```sh
+cd app && ./build.sh && python -m http.server -d . 8080   # the shell
+../experiment/train/.venv/Scripts/python.exe serve.py      # the local generator
+```
+
+What "verified" buys is mechanical, not reviewed: every event handler halts
+within its fuel, any fault rolls the state back atomically, strings are
+bounded per value and per app, and the app cannot touch anything outside its
+own widgets. The generator was trained in ~1 hour of keyless self-play
+against a **behavioral** reward (event scripts + assertions,
+`experiment/appbench`): base Qwen3-0.6B passes **0/16** held-out app specs —
+all 128 attempts fail to even compile, since the language didn't exist — and
+the fine-tune passes **16/16** at pass@8.
+
 ## Status
 
-**0.1.0** — the kernel (M0), `prooflite` (M1), `caplite` (M2), the emitters
-(M3), and the paper's core instrument (M4): `stratlite`, a strategy language
-where every per-bar decision halts within its fuel and future bars are
-grammatically unrepresentable (prefix-invariance is a test, not a promise),
-plus `backtestlite`, whose all-integer engine makes a whole backtest one
-reproducible hash and whose `verify()` is the generate→verify→keep predicate.
+**0.1.0** on crates.io — the kernel (M0), `prooflite` (M1), `caplite` (M2),
+the emitters (M3), and `stratlite` + `backtestlite` (M4). Since then, in the
+repo: the paper's experiments ran (verifier-only self-play on three invented
+languages, including the four-arm §5.8 result — each self-play arm becomes
+exactly its reward), and M7 landed `applite` plus the shell and its local
+generator.
 
-Pre-1.0: the APIs are honest but young. Still open: running the §5 experiment
-(a model + real market data) and re-homing bashlite onto the kit (M5) — the
-honest test of whether the kit carries its weight. Origin and roadmap:
+Pre-1.0: the APIs are honest but young. Still open: re-homing bashlite onto
+the kit (M5) — the honest test of whether the kit carries its weight — and
+the 0.2.0 release that ships `applite`. Origin and roadmap:
 [GENESIS.md](https://github.com/compusophy/litelite/blob/main/GENESIS.md).
 Research plan:
 [paper/OUTLINE.md](https://github.com/compusophy/litelite/blob/main/paper/OUTLINE.md).

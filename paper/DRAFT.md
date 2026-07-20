@@ -71,7 +71,11 @@ including hard families it was never trained on — while its unconditional
 generation drops to 24.2% RICH. Each arm maximizes exactly its reward and
 degrades the other axis: self-play makes the model more like its reward,
 everywhere; a verifier certifies what you ask it to certify, and the policy
-becomes it.
+becomes it. A third language applies the lesson constructively: with a
+BEHAVIORAL reward (event scripts over a UI-app language), one hour of the
+same recipe takes the same model from an exactly-zero floor to 16/16
+held-out app specs at pass@8 — the loop shipping as a working local
+app-builder, not a benchmark.
 One experiment remains unrun — a frozen-model A/B arm for which there is no API
 key — and ships as an instrument with pre-registered commands, marked PENDING.
 The deterministic verifier plus committed artifacts reproduce every number in
@@ -984,6 +988,26 @@ you hand the verifier — the design freedom §5.5 claims for verifier-as-reward
 is real, and it cuts both ways. Scoring for all four arms reproduces from the
 committed pools (`solve_s{1,3,5}.jsonl`, `solve_s5_train.jsonl`,
 `s5gen.jsonl`).
+
+A third language then applied the lesson as day-one design rather than a
+retrofit. `applite` (§2's kit, a total UI-app language: state, widgets,
+fuel-bounded atomic event handlers) shipped with a reward whose top rung is
+BEHAVIORAL — a task is a spec plus an event script (clicks by button label,
+typing, assertions over rendered labels; `experiment/appbench`), so a valid
+app that does the wrong thing scores as wrong by construction. One hour of
+the same trainer (cold start on 120 script-validated corpus programs, six
+spec-conditioned rounds) took the same base model from **0/16** held-out
+app specs — all 128 attempts compile-fail; the language predates the run by
+a day, an exactly-zero floor — to **16/16** behavioral pass@8, 107/128
+attempts passing their script outright (`a8 eval tasks/heldout.jsonl
+results/solve_{base,c5}.jsonl`). The bound stays stated: sixteen tasks,
+whose interaction grammar deliberately matches training's (fresh
+combinations, not fresh genres). What N=3 adds over N=2 is not another
+validity number but the recipe's intended form working end to end: a
+language, its behavioral verifier, and a one-evening local model that
+writes programs which provably halt AND demonstrably do what was asked —
+the generate→verify→keep loop as a running product
+(`app/`), not a benchmark.
 
 ### 5.9 PENDING (permanently keyless): the frozen-model A/B arm
 

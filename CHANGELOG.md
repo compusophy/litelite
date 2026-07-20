@@ -12,7 +12,11 @@ exists to refuse.
   name/type checker, and `REFERENCE` as the generation prompt card.
 - **`app/`** (not published; leaf artifact) — the vibe-coding shell:
   applite compiled to wasm behind a hand-rolled C ABI, one HTML page;
-  paste a program, verify, run live.
+  paste a program — or have the LOCAL fine-tune generate candidates and
+  let the page's verifier keep the first that passes — then run live.
+- **`experiment/appbench`** (not published) — the behavioral reward (`a8`):
+  event scripts + assertions as the training signal; base 0/16 → fine-tune
+  16/16 held-out behavioral pass@8 in ~1 hour of keyless self-play.
 
 ## 0.1.0 — 2026-07-15
 
