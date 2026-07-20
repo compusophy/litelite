@@ -57,12 +57,11 @@ crates/
 ├── diaglite/   Span, Diag (message+span+u16 code), line_col, render_snippet
 │               (caret snippets; floor_char_boundary guards mid-char offsets)
 ├── lexlite/    Cursor byte-lexer kit: eat/eat_while/spans, line+block comments
-│               (nested flag EXPLICIT), eat_ident/eat_decimal/eat_hex
-│               (underscore flag), next_char (UTF-8-safe — never byte-cast)
+│               (nested flag EXPLICIT), eat_ident/eat_decimal/eat_hex,
+│               next_char (UTF-8-safe — never byte-cast)
 ├── parselite/  TokCursor<T: Tok> recursive-descent harness: clamping advance
 │               (EOF-sentinel convention), eat(pred), enter/leave depth guard
-│               (DEFAULT_MAX_DEPTH=96 — wasm-stack abort rationale in the doc
-│               comment), guarded() pairs enter/leave on all paths
+│               (DEFAULT_MAX_DEPTH=96), guarded() pairs enter/leave always
 ├── fuellite/   Fuel (burn/Exhausted — pass ONE &mut Fuel into every
 │               sub-evaluation; never fork a child budget) + ByteBudget
 │               (grant/push_str clip-at-char-boundary/push_bytes)
@@ -77,29 +76,33 @@ crates/
 ├── modlite/    M3 emitter: wasm module builder (wasmlite taken) — LEB128,
 │               functype interning, locals RLE, section framing; sticky
 │               BuildError (import-after-func shift, spec-invalid limits)
-├── prooflite/  M1+M2 reference language ON the kit (not in the facade):
-│               total, fuel-bounded; i64+bool, let/assign/print/if/repeat,
-│               checked arithmetic, host calls via caplite (Host trait,
-│               run_with_host — table SNAPSHOTTED once per run); codes lex
-│               E00xx/parse E01xx/eval-host E02xx. NB: binary folds charge the
-│               depth guard — it bounds parser recursion, NOT AST depth
+├── prooflite/  M1+M2 reference language (not in the facade): total, fueled;
+│               i64+bool, let/assign/print/if/repeat, checked arithmetic,
+│               caplite host calls (table SNAPSHOTTED once/run); codes E00xx/
+│               E01xx/E02xx. NB: binary folds charge the depth guard — it
+│               bounds parser recursion, NOT AST depth
 ├── stratlite/  M4 language: total, fuel-bounded strategies. lookback pragma,
 │               var slots (bar-ATOMIC: faulted bars roll back), per-bar body →
-│               signal; fresh fuel/bar; indicator windows are static literals;
-│               no look-ahead BY CONSTRUCTION (prefix-invariance tested);
-│               REFERENCE = the prompt card, a const of the crate
+│               signal; fresh fuel/bar; static indicator windows; no look-ahead
+│               BY CONSTRUCTION (prefix-invariance tested); REFERENCE card
 ├── backtestlite/ M4 verifier: deterministic integer engine (fills at next
 │               open, adverse validated Costs), Report: Eq + equity_hash
 │               (FNV over the final curve), Gate, verify() →
 │               Reject{Compile,Run,Gate} — paper §5's predicate. Codes E03xx
+├── applite/    M7 language: total UI apps. state (literal-typed int/bool/str),
+│               widgets (label/button/input/row/col/if), fuel-bounded ATOMIC
+│               handlers (faults roll back), strings bounded per value + app,
+│               static checker; REFERENCE = the prompt card. 1,999/2,000 LOC
+app/                  M7 shell: the vibe-coding page — applite as wasm via a
+                      hand-rolled C ABI (no deps, no bindgen), one index.html.
+                      OUTSIDE the workspace (leaf artifact); ./app/build.sh
 scripts/caps.sh       the constitution's teeth (LOC + CLAUDE.md caps)
-scripts/publish.sh    dry run by default, --execute uploads; resumable (crates.io
-                      rate-limits NEW crates: a first publish can stop partway)
+scripts/publish.sh    dry run by default, --execute uploads; resumable
 CHANGELOG.md          ONE version across every crate; a tag's notes come from here
 paper/OUTLINE.md      the paper IS the product; experiments land as sections
 GENESIS.md            origin, distilled parent learnings, roadmap M0–M5
-experiment/           §5's RUN: model + pinned candles + harness. NOT a workspace
-                      member — it takes deps; rules 1+5 keep them out of the kit
+experiment/           §5's RUN: model+candles+harness (deps OK: OUTSIDE the
+                      workspace — rules 1+5 keep them out of the kit)
 
 ```
 
@@ -120,16 +123,13 @@ tag==version, CHANGELOG has that section, publish, GitHub release. Needs
 
 ## Roadmap (each milestone's consumer + lesson: GENESIS.md)
 
-- **M0–M4 (done, live on crates.io at 0.1.0):** the Map above IS the result.
-- **M5:** re-home bashlite onto the kit inside localharness (it gains the
-  depth guard + spanned errors). Consumer: localharness, −LOC there — and the
+- **M0–M4 (done, crates.io 0.1.0):** the Map IS the result. **§5 (done):**
+  the paper's experiments ran, §5.2–5.8. **M7 (done):** applite + app/.
+- **M5 (open):** re-home bashlite onto the kit inside localharness — the
   honest test of whether the kit carries its weight.
-- **§5 RUN (open):** `experiment/` tests verified SELECTION; language size is
-  §4's claim (construction cost vs the parents).
 
 ## Context / lineage (GENESIS.md has the full story)
 
-localharness (github.com/compusophy/localharness): browser-resident
-self-owning agents on Tempo. Its predecessor tempo-x402 ended as a paper —
-compiler-verified self-play lifted a 0.5B model 1.5%→16.4% pass@1 — the
-empirical seed of this repo's thesis.
+localharness (github.com/compusophy/localharness): browser agents on Tempo;
+its predecessor tempo-x402's result — verified self-play lifted a 0.5B model
+1.5%→16.4% pass@1 — is this repo's empirical seed.

@@ -1,0 +1,21 @@
+# The vibe-coding shell — OUTSIDE the kit workspace (same seam as
+# experiment/): the kit stays zero-dep and library-shaped; this is a leaf
+# artifact. It still takes NO external deps — the wasm ABI is hand-rolled
+# extern "C" + linear memory, so the whole product is applite + one page.
+[workspace]
+
+[package]
+name = "appshell"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+applite = { path = "../crates/applite" }
+
+[profile.release]
+opt-level = "s"
+lto = true

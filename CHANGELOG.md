@@ -4,6 +4,16 @@ Every release is one version across every crate: they are one kit, and a
 matrix of independently drifting versions is exactly the surface this repo
 exists to refuse.
 
+## Unreleased
+
+- **`applite`** (new crate, M7) — a total UI-app language: literal-typed
+  state, widgets (label/button/input/row/col/conditional), fuel-bounded
+  ATOMIC event handlers, per-value + per-app string bounds, a static
+  name/type checker, and `REFERENCE` as the generation prompt card.
+- **`app/`** (not published; leaf artifact) — the vibe-coding shell:
+  applite compiled to wasm behind a hand-rolled C ABI, one HTML page;
+  paste a program, verify, run live.
+
 ## 0.1.0 — 2026-07-15
 
 The first published release. Eleven crates, **zero external dependencies**,

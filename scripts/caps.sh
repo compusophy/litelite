@@ -52,6 +52,19 @@ if [ -d experiment/proofbench/src ]; then
   fi
 fi
 
+if [ -d app/src ]; then
+  # The vibe-coding shell is a THIN boundary by design: applite does the
+  # work; the shell is one ABI file + one page. index.html counts too — UI
+  # bloat is still bloat.
+  n=$(find app/src -name '*.rs' -print0 | xargs -0 cat | wc -l)
+  h=$(tr -d '\r' <app/index.html | wc -l)
+  printf '%-22s %6d LOC (cap %d)  + index.html %d (cap %d)\n' "app/" "$n" 500 "$h" 400
+  if [ "$n" -gt 500 ] || [ "$h" -gt 400 ]; then
+    echo "FAIL: app/ exceeds its cap — the shell is a boundary, not a home"
+    fail=1
+  fi
+fi
+
 if [ -d experiment/train ]; then
   # -maxdepth 1: the gitignored .venv/ holds 100K+ lines of site-packages —
   # the caps measure the repo, never the toolchain.
@@ -71,7 +84,7 @@ if [ "$chars" -gt "$CLAUDE_CAP" ]; then
   fail=1
 fi
 
-if grep -rn -- '[-]lite' crates src scripts paper .github experiment/src experiment/proofbench/src experiment/train/*.py experiment/train/*.md experiment/train/*.txt experiment/corpus experiment/results/*.md experiment/results/*.txt experiment/*.toml experiment/*.md ./*.md ./*.toml; then
+if grep -rn -- '[-]lite' crates src scripts paper .github app/src app/*.md app/*.html app/*.toml experiment/src experiment/proofbench/src experiment/train/*.py experiment/train/*.md experiment/train/*.txt experiment/corpus experiment/results/*.md experiment/results/*.txt experiment/*.toml experiment/*.md ./*.md ./*.toml; then
   echo "FAIL: dashed lite reference found (constitution rule 7)"
   fail=1
 fi

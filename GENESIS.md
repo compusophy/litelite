@@ -122,6 +122,17 @@ lesson "loop breadth, not one subsystem — rustlite=toys" is remembered here.
   migration must be a net simplification there or it doesn't happen — this is
   the honest test of whether the kit carries its weight (the "seam-tax"
   question, answered by reality instead of argument).
+- **M7 — `applite` + the vibe-coding shell (done 2026-07-19).** The product
+  surface the kit was always pointed at: a total UI-app language (state +
+  widgets + fuel-bounded ATOMIC event handlers, statically checked, strings
+  bounded per value and per app) and `app/` — one wasm cdylib with a
+  hand-rolled C ABI plus one page: paste a generated program, the verifier
+  proves it total, it runs live. Generate → verify → run, where "verified"
+  means halts-every-event / faults-roll-back / memory-bounded, by
+  construction. The language landed at 1,999 of 2,000 LOC — the cap fired
+  and was answered by shrinking (hex literals died for it). Consumer: the
+  app-building app; the M6 trainer is its keyless generator path
+  (spec-conditioned reward, per §5.8's lesson).
 
 ## Post-genesis lessons
 
