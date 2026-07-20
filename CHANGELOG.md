@@ -4,7 +4,7 @@ Every release is one version across every crate: they are one kit, and a
 matrix of independently drifting versions is exactly the surface this repo
 exists to refuse.
 
-## Unreleased
+## 0.2.0 — 2026-07-19
 
 - **`applite`** (new crate, M7) — a total UI-app language: literal-typed
   state, widgets (label/button/input/row/col/conditional), fuel-bounded

@@ -28,7 +28,7 @@ exclude = ["experiment", "app"]
 # one-line edit, and cargo itself rejects drift between it and the
 # [workspace.dependencies] versions below (a publish would fail).
 [workspace.package]
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 rust-version = "1.85"
 license = "Apache-2.0"
@@ -38,14 +38,14 @@ readme = "README.md"
 # Internal deps, declared once. `version` + `path` means a git checkout builds
 # against the local crate while a published crate depends on the registry one.
 [workspace.dependencies]
-diaglite = { path = "crates/diaglite", version = "0.1.0" }
-lexlite = { path = "crates/lexlite", version = "0.1.0" }
-parselite = { path = "crates/parselite", version = "0.1.0" }
-fuellite = { path = "crates/fuellite", version = "0.1.0" }
-caplite = { path = "crates/caplite", version = "0.1.0" }
-evmlite = { path = "crates/evmlite", version = "0.1.0" }
-modlite = { path = "crates/modlite", version = "0.1.0" }
-stratlite = { path = "crates/stratlite", version = "0.1.0" }
+diaglite = { path = "crates/diaglite", version = "0.2.0" }
+lexlite = { path = "crates/lexlite", version = "0.2.0" }
+parselite = { path = "crates/parselite", version = "0.2.0" }
+fuellite = { path = "crates/fuellite", version = "0.2.0" }
+caplite = { path = "crates/caplite", version = "0.2.0" }
+evmlite = { path = "crates/evmlite", version = "0.2.0" }
+modlite = { path = "crates/modlite", version = "0.2.0" }
+stratlite = { path = "crates/stratlite", version = "0.2.0" }
 
 [package]
 name = "litelite"
